@@ -359,3 +359,19 @@ Plus pgTAP for every policy and SQL function. Results are reported plainly: what
 6. Game framework + six games
 7. Delight features
 8. Full test pass -> independent review -> deploy after targets are confirmed
+
+---
+
+## 15. Open questions for Banks (Gate 1)
+
+1. **Q1. Targets.** Which Supabase project and Vercel project should Champzz use? Create new ones, or do some already exist? Nothing gets deployed until you confirm.
+2. **Q2. Registration approval.** Should every kid registration wait for Org Admin approval (recommended)? Or should orgs be able to turn on auto-approval when a parent registers their own child?
+3. **Q3. Pending orgs.** Can an org that has not paid yet finish the onboarding wizard (logo, colours, classes, teacher invites), with nobody else let in until it is active? Recommended, because it helps signups turn into paying orgs.
+4. **Q4. Domain.** What is the Champzz domain? Kid auth users need a synthetic email domain that we control, and auth emails need a sender domain.
+5. **Q5. Paystack.** Is there a Paystack business account with test keys yet? Are the NGN prices VAT-inclusive?
+6. **Q6. Email and SMS providers.** Which provider for transactional email (invites, reminders, weekly parent report), and which for SMS or WhatsApp credits?
+7. **Q7. AI companion.** Should it carry over? Proposed: off by default, Pro plan and above, needs parental consent, and gets its own per-kid rate limit.
+8. **Q8. CCT art and audio.** Is there a licence record for any CCT image or sound? Without one, nothing carries over and Champzz gets all-new art.
+9. **Q9. Studio credit.** CCT shows a "Built by Zebraish" footer. Should Champzz have one, or is Champzz its own brand with no studio credit?
+10. **Q10. Retention.** How long is a read_only org's data kept before an export-then-delete offer? (It is never deleted automatically on expiry.)
+11. **Q11. Quiz show.** The CCT quiz is a "Millionaire" copy and has to become an original format. Is that OK, and is there a name you want for it?
