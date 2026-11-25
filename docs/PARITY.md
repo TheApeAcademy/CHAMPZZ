@@ -36,12 +36,12 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Personal Vault | My Stuff (moderated uploads, size caps) | Planned |
 | Avatar Studio | My Champ avatar that grows with level, extras unlock by level | **Live** |
 | Digital ID card | Champ Card plus printable name tags for teachers | **Live** |
-| Class room: lessons, memory verse, assignments | Class room | Planned |
-| Messages with teacher | Messages (visible to the club, safeguarding-first) | Planned |
-| Ears for You | Talk to Someone (anonymity enforced in the database, escalation, audit log) | Planned |
+| Class room: lessons, memory verse, assignments | My Class: lessons, memory verse (faith mode), class work with hand-in and marks | **Live** |
+| Messages with teacher | Messages (visible to all club staff, locked until the kid is confirmed) | **Live** |
+| Ears for You | Talk to Someone (anonymity enforced in the database, escalation, audit log) | **Live** |
 | Bible Buddy (AI) | AI companion: off by default, Pro plan and up, parental consent | Planned |
-| Ministry calendar | Events | Planned |
-| Notifications bell | Notifications | Planned |
+| Ministry calendar | Events | **Live** |
+| Notifications bell | Notifications | **Live** |
 
 ## Teachers (CCT `/teacher`) become the club workspace `/o/{club}`
 
@@ -51,11 +51,11 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Classes, join code | Classes live, club-level join code | Live |
 | Roster claiming, Student Code enrolment | Replaced by Clubhouse registration | Live |
 | Attendance register and history | Check-in and check-out with guardian pickup codes, attendance history | Planned |
-| Lectures, Sunday calendar unlocks | Lessons calendar | Planned |
-| Assignments and grading | Assignments and grading | Planned |
+| Lectures, Sunday calendar unlocks | Lessons (draft or published, dated, per class or whole club) | **Live** |
+| Assignments and grading | Assignments and grading (+10 Champ Points on hand-in) | **Live** |
 | Certificates | Certificates (club branded, plus reading plans and levels) | Planned |
 | Host a quiz | Road to Champ host mode | Planned |
-| Ears inbox | Talk to Someone inbox | Planned |
+| Ears inbox | Talk to Someone inbox (urgent alerts, staff notes, escalation, open log) | **Live** |
 | Bible Buddy log | AI companion log | Planned |
 | Passcode reset | Picture PIN reset | Live |
 | Avatar review queue | Photo moderation queue | Planned |
@@ -70,7 +70,7 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Classes at a glance, stats | Club dashboard and analytics | Partly live, analytics Planned |
 | Seasons | Seasons | Planned |
 | Bible reading plans | Reading plans (faith mode) | Planned |
-| Ministry calendar | Events | Planned |
+| Ministry calendar | Events (Org Admin creates, in club time zone) | **Live** |
 | Digital Bank | Media library | Planned |
 | Safety tab | Safeguarding centre and audit log | Planned |
 | (none) | Super Admin console: all clubs, Mark as paid, suspend | Live |
@@ -83,5 +83,5 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Sign up, link with FAM code | Parent account plus Clubhouse registration | Live |
 | Per-child progress, star rating, printable report | Kid progress, weekly parent report | Planned |
 | Take-Home Sunday | Take-Home (per club content) | Planned |
-| Church calendar with .ics export | Events with calendar export | Planned |
+| Church calendar with .ics export | Events with .ics calendar export | **Live** |
 | See Bible Buddy history | AI companion history (non-anonymous only) | Planned |

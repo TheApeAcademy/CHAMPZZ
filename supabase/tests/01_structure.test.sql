@@ -30,7 +30,7 @@ select is(
   (select array_agg(distinct tablename::text order by tablename::text) from pg_policies
    where schemaname = 'public' and cmd in ('INSERT', 'ALL') and 'authenticated' = any (roles)
      and tablename not in ('plans', 'plan_prices', 'plan_features', 'currency_settings')),
-  array['class_teachers', 'classes', 'org_branding'],
+  array['assignments', 'class_teachers', 'classes', 'events', 'lessons', 'org_branding'],
   'client insert policies exist only where intended (catalogue writes are platform-admin only)'
 );
 
@@ -47,9 +47,11 @@ select is(
   (select array_agg(p.proname::text order by p.proname) from pg_proc p
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
-  array['approve_kid', 'archive_kid', 'confirm_kid', 'create_organization', 'get_clubhouse', 'give_star', 'hall_of_champs',
-        'mark_as_paid', 'record_my_visit', 'regenerate_join_code', 'reset_kid_pin', 'suspend_organization',
-        'unsuspend_organization', 'update_my_champ'],
+  array['add_concern_note', 'approve_kid', 'archive_kid', 'club_local_to_utc', 'confirm_kid', 'create_organization', 'get_clubhouse', 'give_star',
+        'grade_submission', 'hall_of_champs', 'mark_as_paid', 'my_concern_replies', 'my_concerns', 'record_my_visit',
+        'regenerate_join_code', 'reply_to_concern', 'reset_kid_pin', 'send_message', 'set_concern_status', 'staff_concern',
+        'staff_concern_notes', 'staff_concern_replies', 'staff_concerns', 'submit_assignment', 'submit_concern',
+        'suspend_organization', 'unsuspend_organization', 'update_my_champ'],
   'signed-in users can call exactly the intended public functions'
 );
 

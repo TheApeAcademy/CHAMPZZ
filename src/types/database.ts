@@ -26,6 +26,12 @@ export type Database = {
 "can_see_kid":
 { Args: { "p_kid": string,"p_org": string }; Returns: boolean
                            },
+"concern_handler":
+{ Args: { "p_class": string,"p_org": string }; Returns: boolean
+                           },
+"concern_handlers":
+{ Args: { "p_class": string,"p_org": string }; Returns: string[]
+                           },
 "discard_kid":
 { Args: { "p_kid": string }; Returns: undefined
                            },
@@ -46,6 +52,9 @@ export type Database = {
                            },
 "is_platform_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"kid_sees":
+{ Args: { "p_class": string,"p_org": string }; Returns: boolean
                            },
 "kid_verify_pin":
 { Args: { "p_ip": string,"p_pin": string,"p_slug": string,"p_username": string }; Returns: {
@@ -72,6 +81,9 @@ export type Database = {
 "new_username":
 { Args: { "p_org": string }; Returns: string
                            },
+"notify":
+{ Args: { "p_body": string,"p_kind": string,"p_link": string,"p_org": string,"p_severity"?: string,"p_title": string,"p_to": string }; Returns: undefined
+                           },
 "org_can_setup":
 { Args: { "p_org": string }; Returns: boolean
                            },
@@ -83,6 +95,9 @@ export type Database = {
                            },
 "org_kid_limit":
 { Args: { "p_org": string }; Returns: number
+                           },
+"org_slug":
+{ Args: { "p_org": string }; Returns: string
                            },
 "org_status":
 { Args: { "p_org": string }; Returns: Database["public"]['Enums']["org_status"]
@@ -128,6 +143,32 @@ export type Database = {
 isOneToOne: false
       referencedRelation: "kids"
       referencedColumns: ["organization_id","id"]
+    }
+                  ]
+                },"assignments": {
+                  Row: {
+                    "class_id": string | null,"created_at": string,"created_by": string | null,"due_date": string | null,"id": string,"instructions": string,"organization_id": string,"status": string,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "class_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"due_date"?: string | null,"id"?: string,"instructions"?: string,"organization_id": string,"status"?: string,"title": string
+                  }
+                  Update: {
+                    "class_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"due_date"?: string | null,"id"?: string,"instructions"?: string,"organization_id"?: string,"status"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "assignments_organization_id_class_id_fkey"
+      columns: ["organization_id","class_id"]
+isOneToOne: false
+      referencedRelation: "classes"
+      referencedColumns: ["organization_id","id"]
+    },{
+      foreignKeyName: "assignments_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
     }
                   ]
                 },"audit_log": {
@@ -256,6 +297,104 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"concern_access_log": {
+                  Row: {
+                    "action": string,"at": string,"concern_id": string,"id": number,"organization_id": string,"user_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "action": string,"at"?: string,"concern_id": string,"id"?: never,"organization_id": string,"user_id"?: string | null
+                  }
+                  Update: {
+                    "action"?: string,"at"?: string,"concern_id"?: string,"id"?: never,"organization_id"?: string,"user_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "concern_access_log_concern_id_fkey"
+      columns: ["concern_id"]
+isOneToOne: false
+      referencedRelation: "concerns"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "concern_access_log_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"concern_notes": {
+                  Row: {
+                    "author_id": string | null,"body": string,"concern_id": string,"created_at": string,"id": string,"organization_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "author_id"?: string | null,"body": string,"concern_id": string,"created_at"?: string,"id"?: string,"organization_id": string
+                  }
+                  Update: {
+                    "author_id"?: string | null,"body"?: string,"concern_id"?: string,"created_at"?: string,"id"?: string,"organization_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "concern_notes_concern_id_fkey"
+      columns: ["concern_id"]
+isOneToOne: false
+      referencedRelation: "concerns"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "concern_notes_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"concern_replies": {
+                  Row: {
+                    "author_id": string | null,"body": string,"concern_id": string,"created_at": string,"from_staff": boolean,"id": string,"organization_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "author_id"?: string | null,"body": string,"concern_id": string,"created_at"?: string,"from_staff": boolean,"id"?: string,"organization_id": string
+                  }
+                  Update: {
+                    "author_id"?: string | null,"body"?: string,"concern_id"?: string,"created_at"?: string,"from_staff"?: boolean,"id"?: string,"organization_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "concern_replies_concern_id_fkey"
+      columns: ["concern_id"]
+isOneToOne: false
+      referencedRelation: "concerns"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "concern_replies_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"concerns": {
+                  Row: {
+                    "body": string,"class_id": string | null,"created_at": string,"id": string,"is_anonymous": boolean,"kid_id": string,"organization_id": string,"status": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"class_id"?: string | null,"created_at"?: string,"id"?: string,"is_anonymous"?: boolean,"kid_id": string,"organization_id": string,"status"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "body"?: string,"class_id"?: string | null,"created_at"?: string,"id"?: string,"is_anonymous"?: boolean,"kid_id"?: string,"organization_id"?: string,"status"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "concerns_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
                 },"consents": {
                   Row: {
                     "granted_at": string,"guardian_user_id": string | null,"id": string,"kid_id": string,"method": string,"organization_id": string,"policy_version": string,"recorded_by": string | null,"scopes": NonNullable<Json>,"withdrawn_at": string | null
@@ -289,6 +428,26 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"events": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"description": string | null,"ends_at": string | null,"id": string,"location": string | null,"organization_id": string,"starts_at": string,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"ends_at"?: string | null,"id"?: string,"location"?: string | null,"organization_id": string,"starts_at": string,"title": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"ends_at"?: string | null,"id"?: string,"location"?: string | null,"organization_id"?: string,"starts_at"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "events_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"guardians": {
                   Row: {
@@ -448,6 +607,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"lessons": {
+                  Row: {
+                    "body": string,"class_id": string | null,"created_at": string,"created_by": string | null,"id": string,"lesson_date": string | null,"memory_verse": string | null,"organization_id": string,"status": string,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: string,"class_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lesson_date"?: string | null,"memory_verse"?: string | null,"organization_id": string,"status"?: string,"title": string
+                  }
+                  Update: {
+                    "body"?: string,"class_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lesson_date"?: string | null,"memory_verse"?: string | null,"organization_id"?: string,"status"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lessons_organization_id_class_id_fkey"
+      columns: ["organization_id","class_id"]
+isOneToOne: false
+      referencedRelation: "classes"
+      referencedColumns: ["organization_id","id"]
+    },{
+      foreignKeyName: "lessons_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"levels": {
                   Row: {
                     "code": string,"min_points": number,"name": string,"sort": number
@@ -476,6 +661,46 @@ isOneToOne: false
                   Relationships: [
                     {
       foreignKeyName: "memberships_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"messages": {
+                  Row: {
+                    "author_id": string | null,"body": string,"created_at": string,"from_staff": boolean,"id": string,"kid_id": string,"organization_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "author_id"?: string | null,"body": string,"created_at"?: string,"from_staff": boolean,"id"?: string,"kid_id": string,"organization_id": string
+                  }
+                  Update: {
+                    "author_id"?: string | null,"body"?: string,"created_at"?: string,"from_staff"?: boolean,"id"?: string,"kid_id"?: string,"organization_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "messages_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
+                },"notifications": {
+                  Row: {
+                    "body": string | null,"created_at": string,"id": string,"kind": string,"link": string | null,"organization_id": string,"read_at": string | null,"recipient_id": string,"severity": string,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: string | null,"created_at"?: string,"id"?: string,"kind": string,"link"?: string | null,"organization_id": string,"read_at"?: string | null,"recipient_id": string,"severity"?: string,"title": string
+                  }
+                  Update: {
+                    "body"?: string | null,"created_at"?: string,"id"?: string,"kind"?: string,"link"?: string | null,"organization_id"?: string,"read_at"?: string | null,"recipient_id"?: string,"severity"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "notifications_organization_id_fkey"
       columns: ["organization_id"]
 isOneToOne: false
       referencedRelation: "organizations"
@@ -708,6 +933,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"submissions": {
+                  Row: {
+                    "assignment_id": string,"body": string,"feedback": string | null,"grade": number | null,"graded_at": string | null,"graded_by": string | null,"id": string,"kid_id": string,"organization_id": string,"submitted_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assignment_id": string,"body": string,"feedback"?: string | null,"grade"?: number | null,"graded_at"?: string | null,"graded_by"?: string | null,"id"?: string,"kid_id": string,"organization_id": string,"submitted_at"?: string
+                  }
+                  Update: {
+                    "assignment_id"?: string,"body"?: string,"feedback"?: string | null,"grade"?: number | null,"graded_at"?: string | null,"graded_by"?: string | null,"id"?: string,"kid_id"?: string,"organization_id"?: string,"submitted_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "submissions_organization_id_assignment_id_fkey"
+      columns: ["organization_id","assignment_id"]
+isOneToOne: false
+      referencedRelation: "assignments"
+      referencedColumns: ["organization_id","id"]
+    },{
+      foreignKeyName: "submissions_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
                 },"subscriptions": {
                   Row: {
                     "billing_interval": string,"created_at": string,"currency": string,"current_period_end": string,"current_period_start": string,"grace_until": string | null,"id": string,"kid_limit_override": number | null,"organization_id": string,"plan_id": string,"price_lock_amount_minor": number | null,"price_lock_until": string | null,"provider": string | null,"provider_customer_ref": string | null,"provider_subscription_ref": string | null,"updated_at": string
@@ -746,11 +997,17 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "approve_kid":
+            "add_concern_note":
+{ Args: { "p_body": string,"p_concern": string }; Returns: undefined
+                           },
+"approve_kid":
 { Args: { "p_kid": string }; Returns: undefined
                            },
 "archive_kid":
 { Args: { "p_kid": string,"p_reason": string }; Returns: undefined
+                           },
+"club_local_to_utc":
+{ Args: { "p_local": string,"p_tz": string }; Returns: string
                            },
 "confirm_kid":
 { Args: { "p_kid": string }; Returns: undefined
@@ -766,6 +1023,9 @@ isOneToOne: false
 "give_star":
 { Args: { "p_kid": string,"p_note"?: string }; Returns: number
                            },
+"grade_submission":
+{ Args: { "p_feedback"?: string,"p_grade": number,"p_submission": string }; Returns: undefined
+                           },
 "hall_of_champs":
 { Args: { "p_class"?: string,"p_period"?: string }; Returns: {
               "avatar": Json,"first_name": string,"is_me": boolean,"kid_id": string,"last_initial": string,"points": number
@@ -774,14 +1034,59 @@ isOneToOne: false
 "mark_as_paid":
 { Args: { "p_amount_minor": number,"p_currency": string,"p_interval": string,"p_method": string,"p_note"?: string,"p_org": string,"p_period_end": string,"p_plan": string }; Returns: string
                            },
+"my_concern_replies":
+{ Args: { "p_concern": string }; Returns: {
+              "author": string,"body": string,"created_at": string,"from_staff": boolean,"id": string
+            }[]
+                           },
+"my_concerns":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "body": string,"created_at": string,"id": string,"is_anonymous": boolean,"replies": number,"status": string
+            }[]
+                           },
 "record_my_visit":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "regenerate_join_code":
 { Args: { "p_org": string }; Returns: string
                            },
+"reply_to_concern":
+{ Args: { "p_body": string,"p_concern": string }; Returns: undefined
+                           },
 "reset_kid_pin":
 { Args: { "p_kid": string,"p_pin": string }; Returns: undefined
+                           },
+"send_message":
+{ Args: { "p_body": string,"p_kid"?: string }; Returns: undefined
+                           },
+"set_concern_status":
+{ Args: { "p_concern": string,"p_status": string }; Returns: undefined
+                           },
+"staff_concern":
+{ Args: { "p_concern": string }; Returns: {
+              "body": string,"class_name": string,"created_at": string,"id": string,"is_anonymous": boolean,"kid_id": string,"kid_label": string,"status": string
+            }[]
+                           },
+"staff_concern_notes":
+{ Args: { "p_concern": string }; Returns: {
+              "author": string,"body": string,"created_at": string,"id": string
+            }[]
+                           },
+"staff_concern_replies":
+{ Args: { "p_concern": string }; Returns: {
+              "author": string,"body": string,"created_at": string,"from_staff": boolean,"id": string
+            }[]
+                           },
+"staff_concerns":
+{ Args: { "p_org": string }; Returns: {
+              "class_name": string,"created_at": string,"id": string,"is_anonymous": boolean,"kid_label": string,"preview": string,"status": string,"updated_at": string
+            }[]
+                           },
+"submit_assignment":
+{ Args: { "p_assignment": string,"p_body": string }; Returns: undefined
+                           },
+"submit_concern":
+{ Args: { "p_anonymous"?: boolean,"p_body": string }; Returns: string
                            },
 "suspend_organization":
 { Args: { "p_org": string,"p_reason": string }; Returns: undefined

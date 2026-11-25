@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { signOut } from "@/features/auth/server/actions";
+import { getViewer } from "@/lib/auth/viewer";
+import { Bell } from "@/features/notifications/components/bell";
 
 const NAV = [
   { key: "home", label: "Home", path: "home", icon: "M3 11 12 4l9 7v9H3z" },
@@ -10,12 +12,16 @@ const NAV = [
 ] as const;
 
 /** Champ Town frame: club name, sign out, content, and a big bottom nav. */
-export function KidShell({ slug, clubName, active, little, children }: { slug: string; clubName: string; active: (typeof NAV)[number]["key"]; little: boolean; children: ReactNode }) {
+export async function KidShell({ slug, clubName, active, little, children }: { slug: string; clubName: string; active: (typeof NAV)[number]["key"] | "other"; little: boolean; children: ReactNode }) {
+  const viewer = await getViewer();
   return (
     <div className="flex min-h-full flex-col bg-cream">
       <header className="mx-auto flex w-full max-w-md items-center justify-between px-4 pt-4">
         <span className="text-sm font-extrabold">{clubName}</span>
-        <form action={signOut}><button type="submit" className="min-h-11 px-2 text-sm font-extrabold underline">Sign out</button></form>
+        <div className="flex items-center gap-1">
+          {viewer.kind === "kid" ? <Bell userId={viewer.userId} href={`/k/${slug}/alerts`} /> : null}
+          <form action={signOut}><button type="submit" className="min-h-11 px-2 text-sm font-extrabold underline">Sign out</button></form>
+        </div>
       </header>
       <main data-mode={little ? "little" : "champ"} className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-4 pb-28 pt-3">{children}</main>
       <nav aria-label="Champ Town" className="fixed inset-x-0 bottom-0 z-10 mx-auto w-full max-w-md px-3 pb-3">

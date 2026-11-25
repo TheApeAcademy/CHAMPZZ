@@ -1,3 +1,4 @@
+import { upcomingSince } from "@/lib/time";
 import Link from "next/link";
 import { AdultShell } from "@/components/shell";
 import { Banner, Card, Pill } from "@/components/ui/primitives";
@@ -14,6 +15,12 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
     .from("guardians")
     .select("kid_id, kids!inner(id, first_name, last_initial, username, status, confirmed_at, avatar, organizations!inner(name, slug), kid_stats(points_total, streak_current, streak_best, stars))")
     .eq("user_id", viewer.userId);
+  const { data: events } = await supabase
+    .from("events")
+    .select("id, title, starts_at, location, organizations!inner(name, timezone)")
+    .gte("starts_at", upcomingSince())
+    .order("starts_at")
+    .limit(20);
 
   return (
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
@@ -40,6 +47,22 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
         ))}
         {(links ?? []).length === 0 ? <p className="text-sm text-muted">No kids yet. Open your club&apos;s Clubhouse page to add your child.</p> : null}
       </div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-display text-2xl font-extrabold">Club events</h2>
+        {(events ?? []).length > 0 ? <a href="/p/calendar" className="text-sm font-bold underline" data-testid="ics-link">Add to my calendar (.ics)</a> : null}
+      </div>
+      <ul className="flex flex-col gap-2" data-testid="parent-events">
+        {(events ?? []).map((e) => (
+          <li key={e.id} className="rounded-[14px] border border-line bg-surface p-3">
+            <p className="font-extrabold">{e.title}</p>
+            <p className="text-sm text-muted">
+              {new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: e.organizations.timezone }).format(new Date(e.starts_at))}
+              {" · "}{e.organizations.name}{e.location ? ` · ${e.location}` : ""}
+            </p>
+          </li>
+        ))}
+        {(events ?? []).length === 0 ? <li className="text-sm text-muted">No events yet.</li> : null}
+      </ul>
     </AdultShell>
   );
 }

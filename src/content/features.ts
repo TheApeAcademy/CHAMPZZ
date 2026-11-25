@@ -26,16 +26,18 @@ export const FEATURES: Feature[] = [
   { key: "points", audience: "kids", status: "live", name: "Champ Points, Fire Streak and Trophies", blurb: "Points for learning and playing, a daily streak, and trophies including limited-time seasonal ones.", art: "flame" },
   { key: "hall", audience: "kids", status: "live", name: "Hall of Champs", blurb: "Leaderboards inside the class only, first names only. Never public.", art: "trophy" },
   { key: "mychamp", audience: "kids", status: "live", name: "My Champ", blurb: "An avatar that grows as they level up.", art: "robot-coins" },
+  { key: "classroom", audience: "kids", status: "live", name: "My Class", blurb: "Lessons, class work and messages with their teachers, all in one place. Hand in work and earn Champ Points.", art: "school" },
   { key: "card", audience: "kids", status: "live", name: "Champ Card", blurb: "A digital ID card, plus printable name tags for check-in.", art: "champ-card" },
-  { key: "talk", audience: "kids", status: "soon", name: "Talk to Someone", blurb: "A calm, private way to tell a trusted adult something is wrong, with anonymity protected by the database itself.", art: "heart-tree" },
+  { key: "talk", audience: "kids", status: "live", name: "Talk to Someone", blurb: "A calm, private way to tell a trusted adult something is wrong, with anonymity protected by the database itself.", art: "heart-tree" },
   { key: "verse", audience: "kids", status: "soon", name: "Record-a-verse", blurb: "Kids record their memory verse and teachers award stars.", faithOnly: true, art: "book" },
   // teachers
   { key: "classes", audience: "teachers", status: "live", name: "Classes and kid list", blurb: "Every kid in your club in one list, with a one-tap confirm for new kids at their first visit.", art: "class" },
   { key: "stars", audience: "teachers", status: "live", name: "Give stars", blurb: "Spot a kid doing well? Give a star worth 10 Champ Points. Up to 5 per kid a day.", art: "trophy" },
   { key: "pinreset", audience: "teachers", status: "live", name: "PIN resets", blurb: "A kid forgot their pictures? Set new ones in seconds. Every reset is logged." },
+  { key: "inbox", audience: "teachers", status: "live", name: "Talk to Someone inbox", blurb: "Urgent alerts, replies, private staff notes and escalation. Every time a message is opened it is logged." },
   { key: "checkin", audience: "teachers", status: "soon", name: "Check-in and pickup codes", blurb: "Secure check-in and check-out with guardian pickup codes and printable name tags.", art: "school" },
   { key: "attendance", audience: "teachers", status: "soon", name: "Attendance", blurb: "Mark the register on a phone and see trends over the term." },
-  { key: "lessons", audience: "teachers", status: "soon", name: "Lessons and assignments", blurb: "Publish lessons, set work, mark it and send feedback." },
+  { key: "lessons", audience: "teachers", status: "live", name: "Lessons and assignments", blurb: "Publish lessons, set work, mark it and send feedback." },
   { key: "host", audience: "teachers", status: "soon", name: "Host Road to Champ", blurb: "Run the quiz show for the whole room from one screen.", art: "quiz" },
   { key: "certs", audience: "teachers", status: "soon", name: "Certificates", blurb: "Printable, club-branded certificates for finished plans and levels.", art: "trophy" },
   // leaders
@@ -53,7 +55,7 @@ export const FEATURES: Feature[] = [
   { key: "mykids", audience: "parents", status: "live", name: "My kids", blurb: "See each child's username and status in one place." },
   { key: "report", audience: "parents", status: "soon", name: "Weekly report", blurb: "What they learned, their streak and their new trophies, every week.", art: "rocket" },
   { key: "takehome", audience: "parents", status: "soon", name: "Take-Home", blurb: "A short talk, do and pray (or reflect) card to carry the lesson home." },
-  { key: "calendar", audience: "parents", status: "soon", name: "Club calendar", blurb: "Events you can add to your own phone calendar." },
+  { key: "calendar", audience: "parents", status: "live", name: "Club calendar", blurb: "Events you can add to your own phone calendar." },
 ];
 
 export const AUDIENCES: { key: Audience; title: string; lead: string; art: string }[] = [

@@ -6,6 +6,9 @@ import { getKidSnapshot } from "@/features/kids/server/data";
 export const metadata = { title: "Champ Town" };
 
 const LIVE_TILES = [
+  { title: "My Class", path: "class", cls: "bg-brand text-white" },
+  { title: "Messages", path: "messages", cls: "bg-surface text-ink border-2 border-line" },
+  { title: "Events", path: "events", cls: "bg-gold text-ink" },
   { title: "Trophies", path: "trophies", cls: "bg-gold text-ink" },
   { title: "Hall of Champs", path: "hall", cls: "bg-surface text-ink border-2 border-line" },
   { title: "My Champ", path: "my-champ", cls: "bg-coral text-ink" },
@@ -56,6 +59,11 @@ export default async function KidHomePage({ params }: PageProps<"/k/[org]/home">
       </div>
 
       {!k.confirmed ? <p className="rounded-[14px] bg-[#FCEBC4] px-4 py-2 text-sm font-bold text-[#5A3F00]">Welcome! Your teacher will say hi at your first visit.</p> : null}
+
+      <Link href={`/k/${org}/talk`} className="flex items-center gap-3 rounded-[20px] border-2 border-[#9CC8B0] bg-[#E8F5EE] p-4 text-ink" data-testid="talk-tile">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E6B47" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" /></svg>
+        <span><span className="block font-extrabold">Talk to Someone</span><span className="text-sm">Worried or upset? Tell a trusted adult. You can stay anonymous.</span></span>
+      </Link>
 
       <div className={big ? "flex flex-col gap-4" : "grid grid-cols-2 gap-3"}>
         {LIVE_TILES.map((t) => (

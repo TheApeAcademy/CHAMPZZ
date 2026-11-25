@@ -15,6 +15,11 @@ const messages: Record<string, string> = {
   period_end_in_past: "The paid-until date must be in the future.",
   star_limit_reached: "That is 5 stars from you today. Try again tomorrow.",
   locked_item: "Keep playing to unlock that one!",
+  empty_message: "Please write something first.",
+  messaging_locked: "Messages open after your teacher says hi at your first visit.",
+  already_graded: "Your teacher has already marked this.",
+  bad_grade: "Give a mark from 0 to 100.",
+  bad_status: "Pick a status.",
 };
 
 export function friendlyError(err: { message?: string; code?: string } | null | undefined, fallback = "Something went wrong. Please try again."): string {

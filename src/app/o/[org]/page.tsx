@@ -8,6 +8,8 @@ import { requireOrgRole } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import { addClass, approveKid, confirmKid, giveStar, regenerateJoinCode, resetKidPin, updateRegistration } from "@/features/org/server/actions";
 import { startCheckout } from "@/features/billing/server/actions";
+import { assignTeacher } from "@/features/classlife/server/actions";
+import { StaffNav } from "@/components/staff-nav";
 import { PicturePin } from "@/features/kids/components/picture-pin";
 import { env } from "@/lib/env";
 
@@ -26,7 +28,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
 
   const [{ data: details }, { data: classes }, { data: kids }, { data: code }, { data: sub }, { data: prices }] = await Promise.all([
     supabase.from("organizations").select("registration_mode, joining_paused, joining_paused_reason, billing_currency").eq("id", org.id).single(),
-    supabase.from("classes").select("id, name, age_band").eq("organization_id", org.id).eq("archived", false).order("name"),
+    supabase.from("classes").select("id, name, age_band, class_teachers(user_id)").eq("organization_id", org.id).eq("archived", false).order("name"),
     supabase
       .from("kids")
       .select("id, first_name, last_initial, username, status, confirmed_at, created_at, classes(name), kid_stats(points_total, streak_current)")
@@ -42,6 +44,13 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
       : Promise.resolve({ data: null }),
   ]);
   if (!details) notFound();
+  const { data: teachers } = isAdmin
+    ? await supabase.from("memberships").select("user_id").eq("organization_id", org.id).eq("role", "teacher").eq("status", "active")
+    : { data: [] as { user_id: string }[] };
+  const { data: teacherProfiles } = teachers && teachers.length
+    ? await supabase.from("profiles").select("id, full_name").in("id", teachers.map((t) => t.user_id))
+    : { data: [] as { id: string; full_name: string }[] };
+  const teacherName = new Map((teacherProfiles ?? []).map((p) => [p.id, p.full_name || "Teacher"]));
   const e = env();
   const bank = e.OFFLINE_BANK_NAME && e.OFFLINE_ACCOUNT_NUMBER && e.OFFLINE_ACCOUNT_NAME
     ? { name: e.OFFLINE_BANK_NAME, number: e.OFFLINE_ACCOUNT_NUMBER, accountName: e.OFFLINE_ACCOUNT_NAME }
@@ -55,6 +64,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
 
   return (
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
+      <StaffNav slug={slug} active="" />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-sm font-bold text-muted">{isAdmin ? "Org Admin" : "Teacher"}</p>
@@ -141,7 +151,8 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
             <h2 className="mb-3 text-lg font-extrabold">Classes</h2>
             <ul className="mb-4 flex flex-col gap-1" data-testid="class-list">
               {(classes ?? []).map((c) => (
-                <li key={c.id} className="flex justify-between"><span className="font-bold">{c.name}</span><span className="text-sm text-muted">{c.age_band === "little" ? "Little Champs (4 to 8)" : "Champ (9 to 14)"}</span></li>
+                <li key={c.id} className="flex flex-wrap justify-between gap-x-2"><span className="font-bold">{c.name}</span><span className="text-sm text-muted">{c.age_band === "little" ? "Little Champs (4 to 8)" : "Champ (9 to 14)"}</span>
+                  <span className="w-full text-xs text-muted">Teachers: {c.class_teachers.length ? c.class_teachers.map((ct) => teacherName.get(ct.user_id) ?? "Teacher").join(", ") : "none yet"}</span></li>
               ))}
               {(classes ?? []).length === 0 ? <li className="text-sm text-muted">No classes yet.</li> : null}
             </ul>
@@ -153,6 +164,14 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
               </Select>
               <div><Submit variant="outline">Add class</Submit></div>
             </ActionForm>
+            {(classes ?? []).length && (teachers ?? []).length ? (
+              <ActionForm action={assignTeacher.bind(null, slug)} className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
+                <p className="text-sm text-muted">Teachers of a class receive its Talk to Someone messages and handle its kids.</p>
+                <Select label="Class" name="classId">{(classes ?? []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</Select>
+                <Select label="Teacher" name="userId">{(teachers ?? []).map((tch) => <option key={tch.user_id} value={tch.user_id}>{teacherName.get(tch.user_id)}</option>)}</Select>
+                <div><Submit variant="outline">Add teacher to class</Submit></div>
+              </ActionForm>
+            ) : null}
           </Card>
           <Card>
             <h2 className="mb-3 text-lg font-extrabold">Joining</h2>
@@ -206,11 +225,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
           ))}
         </ul>
       </Card>
-      <div className="flex flex-wrap gap-3 text-sm">
-        <Link className={buttonClass("ghost")} href={`/o/${slug}/hall`}>Hall of Champs</Link>
-        <Link className={buttonClass("ghost")} href={`/o/${slug}/tags`}>Print name tags</Link>
-        <a className={buttonClass("ghost")} href={`/k/${slug}`}>Kid sign-in page</a>
-      </div>
+      <p className="text-sm"><a className={buttonClass("ghost")} href={`/k/${slug}`}>Kid sign-in page</a></p>
     </AdultShell>
   );
 }

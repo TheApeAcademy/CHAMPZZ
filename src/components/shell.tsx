@@ -2,15 +2,19 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Logo } from "@/components/ui/logo";
 import { signOut } from "@/features/auth/server/actions";
+import { getViewer } from "@/lib/auth/viewer";
+import { Bell } from "@/features/notifications/components/bell";
 
 /** Calm adult chrome: cream ground, logo, signed-in name, sign out. */
-export function AdultShell({ children, who, nav }: { children: ReactNode; who?: string; nav?: ReactNode }) {
+export async function AdultShell({ children, who, nav }: { children: ReactNode; who?: string; nav?: ReactNode }) {
+  const viewer = who ? await getViewer() : null;
   return (
     <div className="flex min-h-full flex-col">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3 sm:px-8">
         <Link href="/" aria-label="Champzz home"><Logo size={24} /></Link>
         <div className="flex flex-wrap items-center gap-3 text-sm">
           {nav}
+          {viewer?.kind === "adult" ? <Bell userId={viewer.userId} href="/notifications" /> : null}
           {who ? <span className="font-bold text-muted">{who}</span> : null}
           {who ? (
             <form action={signOut}>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AdultShell } from "@/components/shell";
 import { Card } from "@/components/ui/primitives";
+import { StaffNav } from "@/components/staff-nav";
 import { ChampAvatar } from "@/features/kids/components/champ-avatar";
 import { parseAvatar } from "@/features/kids/avatar";
 import { requireOrgRole } from "@/lib/auth/viewer";
@@ -20,7 +21,7 @@ export default async function StaffHallPage({ params, searchParams }: PageProps<
 
   return (
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
-      <Link href={`/o/${slug}`} className="text-sm font-extrabold underline">Back to {org.name}</Link>
+      <StaffNav slug={slug} active="hall" />
       <h1 className="font-display text-3xl font-extrabold">Hall of Champs</h1>
       {!current ? <p className="text-muted">Create a class first.</p> : (
         <>
