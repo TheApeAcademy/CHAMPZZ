@@ -22,7 +22,7 @@ export const FEATURES: Feature[] = [
   { key: "town", audience: "kids", status: "live", name: "Champ Town", blurb: "A bright home base that grows with them. Little Champs mode for ages 4 to 8 with big buttons and fewer words.", art: "house" },
   { key: "road", audience: "kids", status: "live", name: "Road to Champ", blurb: "The quiz show. Climb from Rookie to Champ with power-ups and a shot clock. Teams or solo, on one big screen, even offline.", art: "quiz" },
   { key: "arena", audience: "kids", status: "live", name: "The Arena", blurb: "Six games: Verse Scramble, Memory Match, Who Am I?, Word Search, Jigsaw and Ark Catch. Clubs add their own content.", art: "game-rocket" },
-  { key: "quest", audience: "kids", status: "soon", name: "Faith Quest", blurb: "Bite-size lessons with checkpoints. Called Quest in clubs that switch faith content off.", faithOnly: false, art: "bible" },
+  { key: "quest", audience: "kids", status: "live", name: "Faith Quest", blurb: "Bite-size lessons with checkpoints. Called Quest in clubs that switch faith content off.", faithOnly: false, art: "bible" },
   { key: "points", audience: "kids", status: "live", name: "Champ Points, Fire Streak and Trophies", blurb: "Points for learning and playing, a daily streak, and trophies including limited-time seasonal ones.", art: "flame" },
   { key: "hall", audience: "kids", status: "live", name: "Hall of Champs", blurb: "Leaderboards inside the class only, first names only. Never public.", art: "trophy" },
   { key: "mychamp", audience: "kids", status: "live", name: "My Champ", blurb: "An avatar that grows as they level up.", art: "robot-coins" },

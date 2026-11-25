@@ -17,7 +17,7 @@ select is(
   (select array_agg(t.table_name::text order by t.table_name) from information_schema.tables t
    where t.table_schema = 'public' and t.table_type = 'BASE TABLE'
      and t.table_name not in ('organizations', 'levels', 'platform_admins', 'profiles', 'currency_settings', 'plans', 'plan_prices',
-                              'plan_features', 'billing_events', 'audit_log', 'kid_login_attempts')
+                              'plan_features', 'billing_events', 'audit_log', 'kid_login_attempts', 'collectibles')
      and not exists (select 1 from information_schema.columns c
                      where c.table_schema = 'public' and c.table_name = t.table_name and c.column_name = 'organization_id')),
   null,
@@ -30,7 +30,7 @@ select is(
   (select array_agg(distinct tablename::text order by tablename::text) from pg_policies
    where schemaname = 'public' and cmd in ('INSERT', 'ALL') and 'authenticated' = any (roles)
      and tablename not in ('plans', 'plan_prices', 'plan_features', 'currency_settings')),
-  array['arena_content', 'assignments', 'class_teachers', 'classes', 'events', 'lessons', 'org_branding', 'question_packs', 'questions', 'seasons'],
+  array['arena_content', 'assignments', 'class_teachers', 'classes', 'events', 'journal_entries', 'lessons', 'org_branding', 'quest_steps', 'question_packs', 'questions', 'quests', 'seasons'],
   'client insert policies exist only where intended (catalogue writes are platform-admin only)'
 );
 
@@ -47,11 +47,11 @@ select is(
   (select array_agg(p.proname::text order by p.proname) from pg_proc p
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
-  array['accept_team_invite', 'add_concern_note', 'approve_kid', 'archive_kid', 'change_member_role', 'check_in_kid', 'check_out_kid',
-        'check_out_override', 'club_insights', 'club_local_to_utc', 'confirm_kid', 'create_organization', 'create_team_invite', 'finish_arena_game',
-        'get_clubhouse', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'kid_report', 'mark_as_paid',
+  array['accept_team_invite', 'add_concern_note', 'ai_status', 'approve_kid', 'archive_kid', 'change_member_role', 'check_in_kid', 'check_out_kid',
+        'check_out_override', 'club_insights', 'club_local_to_utc', 'complete_quest_step', 'confirm_kid', 'create_organization', 'create_team_invite', 'finish_arena_game',
+        'get_clubhouse', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'kid_report', 'mark_as_paid', 'moderate_upload',
         'my_concern_replies', 'my_concerns', 'my_pickup_codes', 'record_my_visit', 'regenerate_join_code', 'remove_member',
-        'reply_to_concern', 'reset_kid_pin', 'revoke_team_invite', 'save_quiz_match', 'send_message', 'set_concern_status', 'staff_concern',
+        'reply_to_concern', 'reset_kid_pin', 'revoke_team_invite', 'save_quiz_match', 'send_message', 'set_ai_consent', 'set_concern_status', 'staff_concern',
         'staff_concern_notes', 'staff_concern_replies', 'staff_concerns', 'start_training', 'submit_assignment', 'submit_concern',
         'suspend_organization', 'team_members', 'training_answer', 'training_half_time', 'training_state', 'unsuspend_organization', 'update_my_champ'],
   'signed-in users can call exactly the intended public functions'

@@ -7,7 +7,12 @@ export const metadata = { title: "Champ Town" };
 
 const LIVE_TILES = [
   { title: "My Class", path: "class", cls: "bg-brand text-white" },
+  { title: "Quest", path: "quest", cls: "bg-[#E8F5EE] text-ink" },
+  { title: "Champ Buddy", path: "buddy", cls: "bg-coral text-ink" },
   { title: "Messages", path: "messages", cls: "bg-surface text-ink border-2 border-line" },
+  { title: "My Journal", path: "journal", cls: "bg-surface text-ink border-2 border-line" },
+  { title: "My Stuff", path: "stuff", cls: "bg-brand text-white" },
+  { title: "Collection", path: "collection", cls: "bg-gold text-ink" },
   { title: "Events", path: "events", cls: "bg-gold text-ink" },
   { title: "Trophies", path: "trophies", cls: "bg-gold text-ink" },
   { title: "Hall of Champs", path: "hall", cls: "bg-surface text-ink border-2 border-line" },

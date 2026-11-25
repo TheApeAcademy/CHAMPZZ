@@ -1,4 +1,4 @@
-// A stand-in for Flutterwave's hosted checkout and verify API, for local
+// A stand-in for Flutterwave's (and, for Champ Buddy, the Anthropic API's) hosted checkout and verify API, for local
 // end-to-end tests only. Shapes follow Flutterwave's v3 docs (see
 // docs/PAYMENTS.md). Never used outside tests.
 import http from "node:http";
@@ -8,6 +8,7 @@ const KEY = process.env.FLUTTERWAVE_SECRET_KEY ?? "FLWSECK_TEST-local-fake";
 const byRef = new Map();
 const byId = new Map();
 let nextId = 9000001;
+let lastAnthropic = null;
 
 function json(res, code, body) {
   res.writeHead(code, { "Content-Type": "application/json" });
@@ -36,6 +37,17 @@ function pay(txRef) {
 http
   .createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${PORT}`);
+    // A stand-in for the Anthropic Messages API (Champ Buddy tests only).
+    // It records the last request so tests can check what was (and was not) sent.
+    if (url.pathname === "/anthropic/v1/messages" && req.method === "POST") {
+      lastAnthropic = { url: req.url, headers: req.headers, body: JSON.parse(await readBody(req)) };
+      return json(res, 200, {
+        id: "msg_fake_1", type: "message", role: "assistant", model: lastAnthropic.body.model,
+        content: [{ type: "text", text: "Great question, Champ! Rainbows happen when sunlight shines through raindrops." }],
+        stop_reason: "end_turn", stop_sequence: null, usage: { input_tokens: 10, output_tokens: 12 },
+      });
+    }
+    if (url.pathname === "/anthropic/last") return json(res, 200, lastAnthropic ?? {});
     if (req.method === "POST" && url.pathname === "/v3/payments") {
       if (req.headers.authorization !== `Bearer ${KEY}`) return json(res, 401, { status: "error" });
       const body = JSON.parse((await readBody(req)) || "{}");

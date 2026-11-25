@@ -7,6 +7,7 @@ import { requireOrgRole } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import { logoUrl } from "@/lib/branding";
 import { updateClubSettings, uploadLogo } from "@/features/admin/server/actions";
+import { setBuddyEnabled } from "@/features/delight/server/actions";
 
 export const metadata = { title: "Club settings" };
 
@@ -17,10 +18,13 @@ export default async function SettingsPage({ params }: PageProps<"/o/[org]/setti
   const { viewer, org } = await requireOrgRole(slug, ["org_admin"]);
   const supabase = await supabaseServer();
   const [{ data: o }, { data: b }] = await Promise.all([
-    supabase.from("organizations").select("name, timezone, faith_mode").eq("id", org.id).single(),
+    supabase.from("organizations").select("name, timezone, faith_mode, ai_enabled").eq("id", org.id).single(),
     supabase.from("org_branding").select("tagline, motto, primary_color, logo_path").eq("organization_id", org.id).maybeSingle(),
   ]);
   const logo = logoUrl(b?.logo_path);
+  const { data: sub } = await supabase.from("subscriptions").select("plan_id").eq("organization_id", org.id).maybeSingle();
+  const { data: feat } = sub ? await supabase.from("plan_features").select("enabled").eq("plan_id", sub.plan_id).eq("feature_key", "ai_companion").maybeSingle() : { data: null };
+  const aiPlan = Boolean(feat?.enabled);
   return (
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
       <StaffNav slug={slug} active="settings" />
@@ -60,6 +64,16 @@ export default async function SettingsPage({ params }: PageProps<"/o/[org]/setti
           </label>
           <div><Submit variant="outline">Upload logo</Submit></div>
         </ActionForm>
+      </Card>
+      <Card>
+        <h2 className="mb-1 text-lg font-extrabold">Champ Buddy (AI helper)</h2>
+        <p className="mb-3 max-w-2xl text-sm text-muted">A friendly AI helper for kids&apos; questions and ideas. Off until you switch it on, and then each child also needs a yes from their parent. Children&apos;s names are never sent to the AI; every chat is kept for your team and the child&apos;s parents to read.</p>
+        {aiPlan ? (
+          <ActionForm action={setBuddyEnabled.bind(null, slug)} className="flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-2 font-bold"><input type="checkbox" name="enabled" defaultChecked={Boolean(o?.ai_enabled)} className="h-5 w-5" /> Switch on Champ Buddy for our club</label>
+            <Submit variant="outline">Save</Submit>
+          </ActionForm>
+        ) : <p className="rounded-[12px] bg-[#FCEBC4] p-3 text-sm font-bold text-[#5A3F00]" data-testid="buddy-plan">Champ Buddy comes with the Pro plan and up.</p>}
       </Card>
     </AdultShell>
   );

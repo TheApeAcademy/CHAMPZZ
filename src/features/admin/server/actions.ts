@@ -7,6 +7,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getViewer, requireOrgRole } from "@/lib/auth/viewer";
 import { env } from "@/lib/env";
 import { friendlyError } from "@/lib/errors";
+import { mimeFor, sniffImage } from "@/lib/images";
 import type { ActionState } from "@/components/ui/action-form";
 
 const uuid = z.uuid();
@@ -189,13 +190,6 @@ export async function updateClubSettings(slug: string, _prev: ActionState, data:
   return { ok: "Club settings saved." };
 }
 
-function sniffImage(b: Uint8Array): "png" | "jpg" | "webp" | null {
-  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
-  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpg";
-  if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return "webp";
-  return null;
-}
-
 export async function uploadLogo(slug: string, _prev: ActionState, data: FormData): Promise<ActionState> {
   const { org } = await requireOrgRole(slug, ["org_admin"]);
   const file = data.get("logo");
@@ -211,7 +205,7 @@ export async function uploadLogo(slug: string, _prev: ActionState, data: FormDat
   const path = `${org.id}/logo-${crypto.randomUUID()}.${kind}`;
   const admin = supabaseAdmin();
   const { error: upErr } = await admin.storage.from("branding")
-    .upload(path, bytes, { contentType: kind === "jpg" ? "image/jpeg" : `image/${kind}`, upsert: false });
+    .upload(path, bytes, { contentType: mimeFor(kind), upsert: false });
   if (upErr) return { error: "Upload failed. Please try again." };
   // the user's own session writes the path, so RLS still decides (Org Admin, club can be set up)
   const { data: updated, error } = await supabase.from("org_branding")

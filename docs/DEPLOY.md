@@ -21,5 +21,6 @@
 1. Vercel > champzz > Settings > Environment Variables: add `SUPABASE_SECRET_KEY` (type Sensitive, Production and Preview), copied from Supabase > champzz > Project Settings > API keys > secret key. Then redeploy. Until then every page errors on purpose: the app refuses to start without it.
 2. Supabase > champzz > Authentication > URL Configuration: Site URL `https://champzz.vercel.app`, add redirect URL `https://champzz.vercel.app/auth/callback`.
 3. Sign up on the live app, then send the email so it can be made Super Admin.
-4. Flutterwave keys later (`FLUTTERWAVE_SECRET_KEY`, `FLUTTERWAVE_WEBHOOK_HASH`). Until then: bank transfer plus Mark as paid.
+4. Champ Buddy (AI helper): add `ANTHROPIC_API_KEY` to the Vercel project when you want it live. Until then the kid page says it is not set up yet. Do not set `CHAMPZZ_ANTHROPIC_BASE_URL` in production (local tests only).
+5. Flutterwave keys later (`FLUTTERWAVE_SECRET_KEY`, `FLUTTERWAVE_WEBHOOK_HASH`). Until then: bank transfer plus Mark as paid.
 5. Before real families use it: buy the domain, attach it in Vercel, and turn on email confirmation with a proper sender.

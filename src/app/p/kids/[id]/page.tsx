@@ -7,6 +7,8 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { ChampAvatar } from "@/features/kids/components/champ-avatar";
 import { parseAvatar } from "@/features/kids/avatar";
 import { getWeekReport } from "@/features/parents/server/data";
+import { signedUploadUrls } from "@/lib/uploads";
+import { setBuddyConsent } from "@/features/delight/server/actions";
 
 export const metadata = { title: "Progress" };
 
@@ -25,6 +27,13 @@ export default async function KidProgressPage({ params }: PageProps<"/p/kids/[id
     supabase.from("submissions").select("id, submitted_at, grade, feedback, assignments!inner(title)").eq("kid_id", id).order("submitted_at", { ascending: false }).limit(10),
     supabase.from("attendance").select("day, checked_in_at, checked_out_at").eq("kid_id", id).order("day", { ascending: false }).limit(10),
   ]);
+  const [{ data: consent }, { data: chats }, { data: stuff }] = await Promise.all([
+    supabase.from("ai_consents").select("granted_at, withdrawn_at").eq("kid_id", id).maybeSingle(),
+    supabase.from("ai_messages").select("id, role, body, flagged, created_at").eq("kid_id", id).order("id", { ascending: false }).limit(20),
+    supabase.from("kid_uploads").select("id, path, caption").eq("kid_id", id).eq("status", "approved").order("created_at", { ascending: false }).limit(12),
+  ]);
+  const buddyYes = Boolean(consent?.granted_at && !consent.withdrawn_at);
+  const stuffUrls = await signedUploadUrls((stuff ?? []).map((s) => s.path));
   const name = `${r.kid.first_name}${r.kid.last_initial ? ` ${r.kid.last_initial}.` : ""}`;
   return (
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
@@ -90,6 +99,32 @@ export default async function KidProgressPage({ params }: PageProps<"/p/kids/[id
           </ul>
         </Card>
       </div>
+      {(stuff ?? []).length > 0 ? (
+        <Card>
+          <h2 className="mb-2 text-lg font-extrabold">My Stuff</h2>
+          <ul className="grid grid-cols-3 gap-2 sm:grid-cols-6" data-testid="parent-stuff">
+            {(stuff ?? []).map((s) => stuffUrls.get(s.path) ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <li key={s.id}><img src={stuffUrls.get(s.path)} alt={s.caption ?? "A picture"} className="aspect-square w-full rounded-[10px] object-cover" /></li>
+            ) : null)}
+          </ul>
+        </Card>
+      ) : null}
+      <Card>
+        <h2 className="mb-1 text-lg font-extrabold">Champ Buddy</h2>
+        <p className="mb-3 max-w-2xl text-sm text-muted">An AI helper for questions and ideas, if your club has switched it on. It never asks for or receives {r.kid.first_name}&apos;s name. Every chat is kept here for you to read, and the club&apos;s team can read them too. Messages that sound like a child needing help are never sent to the AI: your child is pointed to a trusted adult, and the club is alerted.</p>
+        <form action={setBuddyConsent.bind(null, id, !buddyYes)} className="mb-3">
+          <p className="mb-2 font-bold" data-testid="buddy-consent">{buddyYes ? `You have said yes to Champ Buddy for ${r.kid.first_name}.` : `Champ Buddy is off for ${r.kid.first_name}.`}</p>
+          <button type="submit" className="min-h-11 rounded-full border-2 border-ink px-4 text-sm font-extrabold">{buddyYes ? "Switch it off" : `Yes, ${r.kid.first_name} may use Champ Buddy`}</button>
+        </form>
+        {(chats ?? []).length > 0 ? (
+          <ul className="flex flex-col gap-1 text-sm" data-testid="parent-buddy">
+            {(chats ?? []).slice().reverse().map((m) => (
+              <li key={m.id}><strong>{m.role === "kid" ? r.kid.first_name : "Champ Buddy"}:</strong> {m.body}{m.flagged ? " (flagged for the club)" : ""}</li>
+            ))}
+          </ul>
+        ) : null}
+      </Card>
     </AdultShell>
   );
 }
