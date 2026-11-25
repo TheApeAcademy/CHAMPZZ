@@ -12,7 +12,7 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
   const supabase = await supabaseServer();
   const { data: links } = await supabase
     .from("guardians")
-    .select("kid_id, kids!inner(id, first_name, last_initial, username, status, confirmed_at, organizations!inner(name, slug))")
+    .select("kid_id, kids!inner(id, first_name, last_initial, username, status, confirmed_at, avatar, organizations!inner(name, slug), kid_stats(points_total, streak_current, streak_best, stars))")
     .eq("user_id", viewer.userId);
 
   return (
@@ -30,6 +30,11 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
             <p className="font-display text-2xl font-extrabold">{k.first_name}{k.last_initial ? ` ${k.last_initial}.` : ""}</p>
             <p className="text-sm text-muted">{k.organizations.name}</p>
             <p className="mt-2 text-sm">Username: <strong>{k.username}</strong></p>
+            <dl className="mt-3 grid grid-cols-3 gap-2 text-center" data-testid={`parent-stats-${k.username}`}>
+              <div className="rounded-[12px] bg-cream p-2"><dt className="text-[11px] font-bold text-muted">Champ Points</dt><dd className="font-extrabold">{k.kid_stats?.[0]?.points_total ?? 0}</dd></div>
+              <div className="rounded-[12px] bg-cream p-2"><dt className="text-[11px] font-bold text-muted">Best streak</dt><dd className="font-extrabold">{k.kid_stats?.[0]?.streak_best ?? 0}</dd></div>
+              <div className="rounded-[12px] bg-cream p-2"><dt className="text-[11px] font-bold text-muted">Stars</dt><dd className="font-extrabold">{k.kid_stats?.[0]?.stars ?? 0}</dd></div>
+            </dl>
             <div className="mt-2">{k.status === "pending" ? <Pill tone="warn">Waiting for the club to approve</Pill> : k.confirmed_at ? <Pill tone="ok">Confirmed</Pill> : <Pill tone="new">New: confirmed at first visit</Pill>}</div>
           </Card>
         ))}

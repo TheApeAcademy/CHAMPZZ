@@ -16,7 +16,7 @@ select is(
 select is(
   (select array_agg(t.table_name::text order by t.table_name) from information_schema.tables t
    where t.table_schema = 'public' and t.table_type = 'BASE TABLE'
-     and t.table_name not in ('organizations', 'platform_admins', 'profiles', 'currency_settings', 'plans', 'plan_prices',
+     and t.table_name not in ('organizations', 'levels', 'platform_admins', 'profiles', 'currency_settings', 'plans', 'plan_prices',
                               'plan_features', 'billing_events', 'audit_log', 'kid_login_attempts')
      and not exists (select 1 from information_schema.columns c
                      where c.table_schema = 'public' and c.table_name = t.table_name and c.column_name = 'organization_id')),
@@ -47,8 +47,9 @@ select is(
   (select array_agg(p.proname::text order by p.proname) from pg_proc p
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
-  array['approve_kid', 'archive_kid', 'confirm_kid', 'create_organization', 'get_clubhouse', 'mark_as_paid',
-        'regenerate_join_code', 'reset_kid_pin', 'suspend_organization', 'unsuspend_organization'],
+  array['approve_kid', 'archive_kid', 'confirm_kid', 'create_organization', 'get_clubhouse', 'give_star', 'hall_of_champs',
+        'mark_as_paid', 'record_my_visit', 'regenerate_join_code', 'reset_kid_pin', 'suspend_organization',
+        'unsuspend_organization', 'update_my_champ'],
   'signed-in users can call exactly the intended public functions'
 );
 

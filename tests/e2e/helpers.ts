@@ -98,4 +98,5 @@ export async function kidSignIn(page: Page, slug: string, username: string, pin:
   await page.getByLabel("Your username").fill(username);
   await tapPin(page, pin);
   await page.getByRole("button", { name: "Let's go" }).click();
+  await expect(alert(page).or(page.getByTestId("kid-greeting"))).toBeVisible();
 }

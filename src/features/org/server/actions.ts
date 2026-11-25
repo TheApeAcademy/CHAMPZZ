@@ -102,3 +102,15 @@ export async function resetKidPin(slug: string, kidId: string, _prev: ActionStat
   if (error) return { error: friendlyError(error) };
   return { ok: "New PIN set. Any lockout is cleared." };
 }
+
+export async function giveStar(slug: string, kidId: string, _prev: ActionState, data: FormData): Promise<ActionState> {
+  await requireOrgRole(slug, ["org_admin", "teacher"]);
+  const id = uuid.safeParse(kidId);
+  const note = z.string().trim().max(140).safeParse(data.get("note") ?? "");
+  if (!id.success || !note.success) return { error: "Unknown kid." };
+  const supabase = await supabaseServer();
+  const { error } = await supabase.rpc("give_star", { p_kid: id.data, p_note: note.data || undefined });
+  if (error) return { error: error.message === "star_limit_reached" ? "That is 5 stars from you today. Try again tomorrow." : friendlyError(error) };
+  revalidatePath(`/o/${slug}`);
+  return { ok: "Star given! +10 Champ Points." };
+}

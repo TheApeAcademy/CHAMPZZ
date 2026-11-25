@@ -20,8 +20,20 @@ export type Database = {
 "audit":
 { Args: { "p_action": string,"p_actor": string,"p_details"?: Json,"p_org": string,"p_target_id": string,"p_target_type": string }; Returns: undefined
                            },
+"award_points":
+{ Args: { "p_by"?: string,"p_kid": string,"p_note"?: string,"p_ref": string,"p_source": string }; Returns: number
+                           },
+"can_see_kid":
+{ Args: { "p_kid": string,"p_org": string }; Returns: boolean
+                           },
 "discard_kid":
 { Args: { "p_kid": string }; Returns: undefined
+                           },
+"ensure_stats":
+{ Args: { "p_kid": string }; Returns: undefined
+                           },
+"evaluate_badges":
+{ Args: { "p_kid": string }; Returns: number
                            },
 "has_org_role":
 { Args: { "p_org": string,"p_roles": (Database["public"]['Enums']["org_role"])[] }; Returns: boolean
@@ -40,6 +52,14 @@ export type Database = {
               "locked_until": string,"result": string,"user_id": string
             }[]
                            },
+"level_of":
+{ Args: { "p_points": number }; Returns: Database["public"]['Tables']["levels"]['Row']
+                          SetofOptions: {
+        from: "*"
+        to: "levels"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "lifecycle_tick":
 { Args: { "p_now"?: string }; Returns: number
                            },
@@ -67,8 +87,14 @@ export type Database = {
 "org_status":
 { Args: { "p_org": string }; Returns: Database["public"]['Enums']["org_status"]
                            },
+"points_for":
+{ Args: { "p_org": string,"p_source": string }; Returns: number
+                           },
 "random_code":
 { Args: { "p_len": number }; Returns: string
+                           },
+"record_activity":
+{ Args: { "p_day": string,"p_kid": string }; Returns: undefined
                            },
 "register_kid":
 { Args: { "p_class_id": string,"p_first_name": string,"p_join_code": string,"p_last_initial": string,"p_parent": string,"p_pin": string,"p_policy_version": string,"p_scopes": Json }; Returns: {
@@ -84,7 +110,27 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "audit_log": {
+            "activity_days": {
+                  Row: {
+                    "day": string,"kid_id": string,"organization_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "day": string,"kid_id": string,"organization_id": string
+                  }
+                  Update: {
+                    "day"?: string,"kid_id"?: string,"organization_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "activity_days_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
+                },"audit_log": {
                   Row: {
                     "action": string,"actor_id": string | null,"at": string,"details": NonNullable<Json>,"id": number,"organization_id": string | null,"target_id": string | null,"target_type": string | null
                   }
@@ -98,6 +144,26 @@ export type Database = {
                   Relationships: [
                     {
       foreignKeyName: "audit_log_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"badges": {
+                  Row: {
+                    "active": boolean,"code": string,"criteria": NonNullable<Json>,"description": string,"icon": string,"id": string,"name": string,"organization_id": string | null,"sort": number,"window_end": string | null,"window_start": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"code": string,"criteria": NonNullable<Json>,"description": string,"icon"?: string,"id"?: string,"name": string,"organization_id"?: string | null,"sort"?: number,"window_end"?: string | null,"window_start"?: string | null
+                  }
+                  Update: {
+                    "active"?: boolean,"code"?: string,"criteria"?: NonNullable<Json>,"description"?: string,"icon"?: string,"id"?: string,"name"?: string,"organization_id"?: string | null,"sort"?: number,"window_end"?: string | null,"window_start"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "badges_organization_id_fkey"
       columns: ["organization_id"]
 isOneToOne: false
       referencedRelation: "organizations"
@@ -264,6 +330,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"kid_badges": {
+                  Row: {
+                    "badge_id": string,"earned_at": string,"kid_id": string,"organization_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "badge_id": string,"earned_at"?: string,"kid_id": string,"organization_id": string
+                  }
+                  Update: {
+                    "badge_id"?: string,"earned_at"?: string,"kid_id"?: string,"organization_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "kid_badges_badge_id_fkey"
+      columns: ["badge_id"]
+isOneToOne: false
+      referencedRelation: "badges"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "kid_badges_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
                 },"kid_credentials": {
                   Row: {
                     "failed_attempts": number,"kid_id": string,"locked_until": string | null,"lockouts": number,"organization_id": string,"pin_hash": string,"updated_at": string
@@ -310,16 +402,36 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"kids": {
+                },"kid_stats": {
                   Row: {
-                    "class_id": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"created_at": string,"created_by": string | null,"first_name": string,"id": string,"last_initial": string | null,"organization_id": string,"status": Database["public"]['Enums']["kid_status"],"user_id": string | null,"username": string
+                    "kid_id": string,"last_active_day": string | null,"organization_id": string,"points_total": number,"stars": number,"streak_best": number,"streak_current": number,"updated_at": string,"visits": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "class_id"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"created_at"?: string,"created_by"?: string | null,"first_name": string,"id"?: string,"last_initial"?: string | null,"organization_id": string,"status"?: Database["public"]['Enums']["kid_status"],"user_id"?: string | null,"username": string
+                    "kid_id": string,"last_active_day"?: string | null,"organization_id": string,"points_total"?: number,"stars"?: number,"streak_best"?: number,"streak_current"?: number,"updated_at"?: string,"visits"?: number
                   }
                   Update: {
-                    "class_id"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"created_at"?: string,"created_by"?: string | null,"first_name"?: string,"id"?: string,"last_initial"?: string | null,"organization_id"?: string,"status"?: Database["public"]['Enums']["kid_status"],"user_id"?: string | null,"username"?: string
+                    "kid_id"?: string,"last_active_day"?: string | null,"organization_id"?: string,"points_total"?: number,"stars"?: number,"streak_best"?: number,"streak_current"?: number,"updated_at"?: string,"visits"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "kid_stats_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
+                },"kids": {
+                  Row: {
+                    "avatar": NonNullable<Json>,"class_id": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"created_at": string,"created_by": string | null,"first_name": string,"id": string,"last_initial": string | null,"organization_id": string,"status": Database["public"]['Enums']["kid_status"],"user_id": string | null,"username": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "avatar"?: NonNullable<Json>,"class_id"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"created_at"?: string,"created_by"?: string | null,"first_name": string,"id"?: string,"last_initial"?: string | null,"organization_id": string,"status"?: Database["public"]['Enums']["kid_status"],"user_id"?: string | null,"username": string
+                  }
+                  Update: {
+                    "avatar"?: NonNullable<Json>,"class_id"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"created_at"?: string,"created_by"?: string | null,"first_name"?: string,"id"?: string,"last_initial"?: string | null,"organization_id"?: string,"status"?: Database["public"]['Enums']["kid_status"],"user_id"?: string | null,"username"?: string
                   }
                   Relationships: [
                     {
@@ -335,6 +447,20 @@ isOneToOne: false
       referencedRelation: "organizations"
       referencedColumns: ["id"]
     }
+                  ]
+                },"levels": {
+                  Row: {
+                    "code": string,"min_points": number,"name": string,"sort": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "code": string,"min_points": number,"name": string,"sort": number
+                  }
+                  Update: {
+                    "code"?: string,"min_points"?: number,"name"?: string,"sort"?: number
+                  }
+                  Relationships: [
+                    
                   ]
                 },"memberships": {
                   Row: {
@@ -502,6 +628,46 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"point_events": {
+                  Row: {
+                    "at": string,"awarded_by": string | null,"id": number,"kid_id": string,"note": string | null,"organization_id": string,"points": number,"ref": string,"source": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "at"?: string,"awarded_by"?: string | null,"id"?: never,"kid_id": string,"note"?: string | null,"organization_id": string,"points": number,"ref": string,"source": string
+                  }
+                  Update: {
+                    "at"?: string,"awarded_by"?: string | null,"id"?: never,"kid_id"?: string,"note"?: string | null,"organization_id"?: string,"points"?: number,"ref"?: string,"source"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "point_events_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
+                },"point_rules": {
+                  Row: {
+                    "id": string,"organization_id": string | null,"points": number,"source": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"organization_id"?: string | null,"points": number,"source": string
+                  }
+                  Update: {
+                    "id"?: string,"organization_id"?: string | null,"points"?: number,"source"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "point_rules_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "created_at": string,"full_name": string,"id": string,"phone": string | null,"updated_at": string
@@ -597,8 +763,19 @@ isOneToOne: false
               "faith_mode": boolean,"joinable": boolean,"kind": string,"logo_path": string,"name": string,"organization_id": string,"primary_color": string,"slug": string,"tagline": string
             }[]
                            },
+"give_star":
+{ Args: { "p_kid": string,"p_note"?: string }; Returns: number
+                           },
+"hall_of_champs":
+{ Args: { "p_class"?: string,"p_period"?: string }; Returns: {
+              "avatar": Json,"first_name": string,"is_me": boolean,"kid_id": string,"last_initial": string,"points": number
+            }[]
+                           },
 "mark_as_paid":
 { Args: { "p_amount_minor": number,"p_currency": string,"p_interval": string,"p_method": string,"p_note"?: string,"p_org": string,"p_period_end": string,"p_plan": string }; Returns: string
+                           },
+"record_my_visit":
+{ Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "regenerate_join_code":
 { Args: { "p_org": string }; Returns: string
@@ -633,6 +810,9 @@ isOneToOne: false
                            },
 "unsuspend_organization":
 { Args: { "p_org": string }; Returns: undefined
+                           },
+"update_my_champ":
+{ Args: { "p_avatar": Json }; Returns: undefined
                            }
           }
           Enums: {

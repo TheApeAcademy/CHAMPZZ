@@ -6,7 +6,7 @@ import { Banner, Card, Field, Pill, Select, buttonClass } from "@/components/ui/
 import { Submit } from "@/components/ui/submit";
 import { requireOrgRole } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
-import { addClass, approveKid, confirmKid, regenerateJoinCode, resetKidPin, updateRegistration } from "@/features/org/server/actions";
+import { addClass, approveKid, confirmKid, giveStar, regenerateJoinCode, resetKidPin, updateRegistration } from "@/features/org/server/actions";
 import { startCheckout } from "@/features/billing/server/actions";
 import { PicturePin } from "@/features/kids/components/picture-pin";
 import { env } from "@/lib/env";
@@ -29,7 +29,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
     supabase.from("classes").select("id, name, age_band").eq("organization_id", org.id).eq("archived", false).order("name"),
     supabase
       .from("kids")
-      .select("id, first_name, last_initial, username, status, confirmed_at, created_at, classes(name)")
+      .select("id, first_name, last_initial, username, status, confirmed_at, created_at, classes(name), kid_stats(points_total, streak_current)")
       .eq("organization_id", org.id)
       .neq("status", "archived")
       .order("created_at", { ascending: false }),
@@ -182,10 +182,14 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
                 <span className="text-sm text-muted">{k.username}</span>
                 {k.classes?.name ? <span className="text-sm text-muted">· {k.classes.name}</span> : null}
                 {k.status === "pending" ? <Pill tone="warn">Waiting for approval</Pill> : k.confirmed_at ? <Pill tone="ok">Confirmed</Pill> : <Pill tone="new">New</Pill>}
+                <span className="text-sm font-bold" data-testid="kid-points">{k.kid_stats?.[0]?.points_total ?? 0} pts</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {k.status === "pending" ? (
                   <ActionForm action={approveKid.bind(null, slug, k.id)} className="flex flex-col gap-2"><Submit variant="outline">Approve</Submit></ActionForm>
+                ) : null}
+                {k.status === "active" ? (
+                  <ActionForm action={giveStar.bind(null, slug, k.id)} className="flex flex-col gap-2"><Submit variant="outline">Give a star</Submit></ActionForm>
                 ) : null}
                 {k.status === "active" && !k.confirmed_at ? (
                   <ActionForm action={confirmKid.bind(null, slug, k.id)} className="flex flex-col gap-2"><Submit variant="outline">Confirm</Submit></ActionForm>
@@ -202,7 +206,11 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
           ))}
         </ul>
       </Card>
-      {isAdmin ? <p className="text-sm"><a className={buttonClass("ghost")} href={`/k/${slug}`}>Kid sign-in page</a></p> : null}
+      <div className="flex flex-wrap gap-3 text-sm">
+        <Link className={buttonClass("ghost")} href={`/o/${slug}/hall`}>Hall of Champs</Link>
+        <Link className={buttonClass("ghost")} href={`/o/${slug}/tags`}>Print name tags</Link>
+        <a className={buttonClass("ghost")} href={`/k/${slug}`}>Kid sign-in page</a>
+      </div>
     </AdultShell>
   );
 }

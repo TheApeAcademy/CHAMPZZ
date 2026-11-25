@@ -13,6 +13,8 @@ const messages: Record<string, string> = {
   kid_not_pending: "That kid is not waiting for approval.",
   bad_pin: "A picture PIN is 4 pictures.",
   period_end_in_past: "The paid-until date must be in the future.",
+  star_limit_reached: "That is 5 stars from you today. Try again tomorrow.",
+  locked_item: "Keep playing to unlock that one!",
 };
 
 export function friendlyError(err: { message?: string; code?: string } | null | undefined, fallback = "Something went wrong. Please try again."): string {

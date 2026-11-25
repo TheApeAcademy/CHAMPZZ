@@ -1,6 +1,10 @@
 "use server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { getViewer } from "@/lib/auth/viewer";
+import { toDbAvatar } from "@/features/kids/avatar";
 import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { kidPassword } from "@/lib/auth/kid-credentials";
@@ -39,4 +43,24 @@ export async function kidSignIn(slug: string, _prev: ActionState, data: FormData
   }
   if (signInErr) return { error: "Something went wrong. Please try again." };
   redirect(`/k/${s.data}/home`);
+}
+
+const avatarSchema = z.object({
+  skin: z.coerce.number().int().min(0).max(5),
+  hair: z.coerce.number().int().min(0).max(5),
+  hairColor: z.coerce.number().int().min(0).max(5),
+  outfit: z.coerce.number().int().min(0).max(7),
+  extra: z.enum(["none", "headband", "cape", "medal", "crown"]),
+});
+
+export async function saveMyChamp(slug: string, _prev: ActionState, data: FormData): Promise<ActionState> {
+  const viewer = await getViewer();
+  if (viewer.kind !== "kid" || viewer.org.slug !== slug) return { error: "Please sign in again." };
+  const parsed = avatarSchema.safeParse(Object.fromEntries(data));
+  if (!parsed.success) return { error: "Something looks wrong. Try again." };
+  const supabase = await supabaseServer();
+  const { error } = await supabase.rpc("update_my_champ", { p_avatar: toDbAvatar(parsed.data) });
+  if (error) return { error: error.message === "locked_item" ? "Keep playing to unlock that one!" : "Could not save. Try again." };
+  revalidatePath(`/k/${slug}`, "layout");
+  return { ok: "Saved! Looking great, Champ." };
 }

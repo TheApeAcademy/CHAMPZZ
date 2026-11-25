@@ -26,16 +26,16 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | CCT | Champzz | Status |
 |---|---|---|
 | Kid sign-in (name + guessable passcode) | Username + picture PIN with lockout | Live |
-| Village Map home | Champ Town home, Champ and Little Champs age modes | Shell live, full **Next** |
+| Village Map home | Champ Town home, Champ and Little Champs age modes | **Live** |
 | Bible Journey lessons | Faith Quest (Quest in secular clubs), content from the database | Planned |
-| XP, streaks, badges | Champ Points ledger, Fire Streak, Trophies, levels | Planned |
+| XP, streaks, badges | Champ Points ledger, Fire Streak (club time zone), Trophies incl. seasonal, five levels | **Live** (earned by daily visits and teacher stars; games and lessons add more later) |
 | Character collection | Champ collection (data-driven, original art) | Planned |
-| Leaderboard | Hall of Champs (class scoped, first names only, "new" kids hidden) | Planned |
+| Leaderboard | Hall of Champs (class scoped, first names only, "new" kids hidden) | **Live** |
 | Bible Arcade (3 games) | The Arena: six games on one framework, XP on completion | Planned (games phase) |
 | Pray for the World, Prayer Journal and Diary | Prayer and journal (faith mode), private notes | Planned |
 | Personal Vault | My Stuff (moderated uploads, size caps) | Planned |
-| Avatar Studio | My Champ avatar that grows with level | Planned |
-| Digital ID card | Champ Card plus printable name tag | Planned |
+| Avatar Studio | My Champ avatar that grows with level, extras unlock by level | **Live** |
+| Digital ID card | Champ Card plus printable name tags for teachers | **Live** |
 | Class room: lessons, memory verse, assignments | Class room | Planned |
 | Messages with teacher | Messages (visible to the club, safeguarding-first) | Planned |
 | Ears for You | Talk to Someone (anonymity enforced in the database, escalation, audit log) | Planned |
