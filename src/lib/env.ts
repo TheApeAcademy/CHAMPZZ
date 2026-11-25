@@ -7,9 +7,10 @@ const serverSchema = z.object({
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(20),
   SUPABASE_SECRET_KEY: z.string().min(20),
   APP_URL: z.url(),
-  // Derives each kid's real auth password. Rotating it signs every kid out
-  // until their next PIN sign-in re-derives it, which is handled on login.
-  KID_AUTH_SECRET: z.string().min(32),
+  // Derives each kid's real auth password. Optional: when unset it is derived
+  // from SUPABASE_SECRET_KEY, so production needs only one secret. Rotating
+  // either is safe: the next PIN sign-in re-derives the password.
+  KID_AUTH_SECRET: z.string().min(32).optional(),
   // Synthetic emails for kid auth users. Never emailed. Must be a domain
   // Champzz controls once one exists.
   KID_EMAIL_DOMAIN: z.string().regex(/^[a-z0-9.-]+\.[a-z]{2,}$/),

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { supabaseServer } from "@/lib/supabase/server";
 import { getViewer, homeFor } from "@/lib/auth/viewer";
+import { env } from "@/lib/env";
 import type { ActionState } from "@/components/ui/action-form";
 
 const signUpSchema = z.object({
@@ -31,7 +32,10 @@ export async function signUp(_prev: ActionState, data: FormData): Promise<Action
   const { data: res, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
-    options: { data: { full_name: parsed.data.fullName } },
+    options: {
+      data: { full_name: parsed.data.fullName },
+      emailRedirectTo: `${env().APP_URL}/auth/callback?next=${encodeURIComponent(safeNext(parsed.data.next) ?? "/onboarding")}`,
+    },
   });
   if (error) return { error: error.code === "user_already_exists" ? "An account with that email already exists. Sign in instead." : "We could not create your account. Please try again." };
   if (!res.session) return { ok: "Check your email to confirm your account, then sign in." };

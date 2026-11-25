@@ -12,6 +12,11 @@ export function kidEmail(kidId: string): string {
  * person ever sees it, so guessing at the auth endpoint is pointless. The only
  * way in is the throttled picture-PIN check.
  */
+function kidSecret(): string {
+  const e = env();
+  return e.KID_AUTH_SECRET ?? createHmac("sha256", e.SUPABASE_SECRET_KEY).update("champzz-kid-auth-v1").digest("base64url");
+}
+
 export function kidPassword(kidId: string): string {
-  return createHmac("sha256", env().KID_AUTH_SECRET).update(`kid:${kidId}`).digest("base64url");
+  return createHmac("sha256", kidSecret()).update(`kid:${kidId}`).digest("base64url");
 }
