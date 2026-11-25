@@ -31,7 +31,17 @@ let cached: ServerEnv | undefined;
 
 export function env(): ServerEnv {
   if (!cached) {
-    const parsed = serverSchema.safeParse(process.env);
+    // On Vercel, fall back to the deployment's own address before a custom
+    // domain exists: the branch URL for previews, the production URL otherwise.
+    const vercelHost = process.env.VERCEL_ENV === "production"
+      ? process.env.VERCEL_PROJECT_PRODUCTION_URL
+      : process.env.VERCEL_BRANCH_URL ?? process.env.VERCEL_URL;
+    const prodHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    const parsed = serverSchema.safeParse({
+      ...process.env,
+      APP_URL: process.env.APP_URL || (vercelHost ? `https://${vercelHost}` : undefined),
+      KID_EMAIL_DOMAIN: process.env.KID_EMAIL_DOMAIN || (prodHost ? `kids.${prodHost}` : undefined),
+    });
     if (!parsed.success) {
       throw new Error(`Invalid server environment: ${parsed.error.issues.map((i) => i.path.join(".")).join(", ")}`);
     }
