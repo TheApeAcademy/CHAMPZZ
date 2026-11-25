@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/* Champzz design tokens, direction D (docs/DESIGN.md). --brand is replaced
+   by an org's own colour inside its space; gold, coral and ink never change. */
+:root {
+  --brand: #2f5bff;
+  --brand-ink: #ffffff;
+  --gold: #f2b33d;
+  --coral: #ff5a3c;
+  --ink: #0b1026;
+  --cream: #fff8ec;
+  --surface: #ffffff;
+  --line: #e6dcc6;
+  --muted: #4d5172;
+  --danger: #b4231a;
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-gold: var(--gold);
+  --color-coral: var(--coral);
+  --color-ink: var(--ink);
+  --color-cream: var(--cream);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-nunito-sans);
+  --font-display: var(--font-archivo);
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-nunito-sans), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+}
