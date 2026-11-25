@@ -16,6 +16,7 @@ async function signUpAndCreateOrg(page: import("@playwright/test").Page) {
   await expect(page).toHaveURL(new RegExp(`/o/${slug}$`));
   await expect(page.getByTestId("org-status")).toHaveText("pending");
   await expect(page.getByTestId("join-code")).toHaveCount(0);
+  await expect(page.getByTestId("bank-details")).toContainText(slug);
   return { email, slug };
 }
 

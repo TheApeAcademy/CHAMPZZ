@@ -16,6 +16,10 @@ const serverSchema = z.object({
   FLUTTERWAVE_SECRET_KEY: z.string().optional(),
   FLUTTERWAVE_WEBHOOK_HASH: z.string().optional(),
   FLUTTERWAVE_API_BASE: z.url().default("https://api.flutterwave.com/v3"),
+  // Offline payment instructions shown to unpaid orgs. Changeable without a deploy.
+  OFFLINE_BANK_NAME: z.string().max(80).optional(),
+  OFFLINE_ACCOUNT_NUMBER: z.string().regex(/^[0-9]{6,20}$/).optional(),
+  OFFLINE_ACCOUNT_NAME: z.string().max(120).optional(),
   // Lets Playwright drive the daily lifecycle job. Off in production.
   ENABLE_TEST_HOOKS: z.enum(["0", "1"]).default("0"),
 });

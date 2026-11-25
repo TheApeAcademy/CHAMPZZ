@@ -9,6 +9,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { addClass, approveKid, confirmKid, regenerateJoinCode, resetKidPin, updateRegistration } from "@/features/org/server/actions";
 import { startCheckout } from "@/features/billing/server/actions";
 import { PicturePin } from "@/features/kids/components/picture-pin";
+import { env } from "@/lib/env";
 
 export const metadata = { title: "Your club" };
 
@@ -41,6 +42,10 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
       : Promise.resolve({ data: null }),
   ]);
   if (!details) notFound();
+  const e = env();
+  const bank = e.OFFLINE_BANK_NAME && e.OFFLINE_ACCOUNT_NUMBER && e.OFFLINE_ACCOUNT_NAME
+    ? { name: e.OFFLINE_BANK_NAME, number: e.OFFLINE_ACCOUNT_NUMBER, accountName: e.OFFLINE_ACCOUNT_NAME }
+    : null;
 
   const active = (kids ?? []).filter((k) => k.status === "active").length;
   const limit = sub ? (sub.kid_limit_override ?? sub.plans?.kid_limit ?? 0) : 0;
@@ -62,7 +67,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
 
       {paid === "1" && org.status === "active" ? <Banner tone="ok">Payment received. Your club is active.</Banner> : null}
       {org.status === "pending" ? (
-        <Banner tone="warn">Your club is set up but not active yet. Choose a plan to unlock teachers, parents and kids. Paying by bank transfer or cash? Contact Champzz and we will activate you once it arrives.</Banner>
+        <Banner tone="warn">Your club is set up but not active yet. Choose a plan to unlock teachers, parents and kids.</Banner>
       ) : null}
       {org.status === "grace" ? <Banner tone="warn">Your plan has ended. Everything still works for a few days. Renew now to avoid read-only mode.</Banner> : null}
       {org.status === "read_only" ? <Banner tone="error">Your club is read-only. Nothing has been deleted. Renew to switch everything back on.</Banner> : null}
@@ -87,6 +92,19 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
               <div><Submit>Pay online</Submit></div>
             </ActionForm>
           )}
+        </Card>
+      ) : null}
+
+      {isAdmin && bank && org.status !== "active" && org.status !== "suspended" ? (
+        <Card>
+          <h2 className="mb-2 text-lg font-extrabold">Pay by bank transfer</h2>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm" data-testid="bank-details">
+            <dt className="font-bold text-muted">Bank</dt><dd className="font-extrabold">{bank.name}</dd>
+            <dt className="font-bold text-muted">Account number</dt><dd className="font-extrabold tracking-wider">{bank.number}</dd>
+            <dt className="font-bold text-muted">Account name</dt><dd className="font-extrabold">{bank.accountName}</dd>
+            <dt className="font-bold text-muted">Reference</dt><dd className="font-extrabold">{slug}</dd>
+          </dl>
+          <p className="mt-2 text-sm text-muted">Use your club address ({slug}) as the transfer reference. We activate your club as soon as the payment arrives.</p>
         </Card>
       ) : null}
 
