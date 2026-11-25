@@ -35,6 +35,12 @@ export default async function LessonsPage({ params }: PageProps<"/o/[org]/lesson
             <Field label="Date (optional)" name="lessonDate" type="date" />
             <ClassSelect classes={classes ?? []} />
           </div>
+          <fieldset className="flex flex-col gap-3 rounded-[16px] border border-line p-4">
+            <legend className="px-1 text-sm font-extrabold">Take-Home card for parents (optional)</legend>
+            <Field label="Talk: a question to ask at home" name="talk" maxLength={300} />
+            <Field label="Do: something to do together" name="do" maxLength={300} />
+            <Field label={o?.faith_mode ? "Pray: something to pray about" : "Reflect: something to think about"} name="pray" maxLength={300} />
+          </fieldset>
           <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" name="publish" className="h-5 w-5" /> Publish now so kids can see it</label>
           <div><Submit>Save lesson</Submit></div>
         </ActionForm>

@@ -12,7 +12,7 @@ export default async function KidClassPage({ params }: PageProps<"/k/[org]/class
   const k = await getKidSnapshot(org);
   const supabase = await supabaseServer();
   const [{ data: lessons }, { data: work }, { data: subs }] = await Promise.all([
-    supabase.from("lessons").select("id, title, body, memory_verse, lesson_date").order("created_at", { ascending: false }).limit(20),
+    supabase.from("lessons").select("id, title, body, memory_verse, lesson_date, take_home_talk, take_home_do").order("created_at", { ascending: false }).limit(20),
     supabase.from("assignments").select("id, title, instructions, due_date, status").order("created_at", { ascending: false }).limit(20),
     supabase.from("submissions").select("assignment_id, body, grade, feedback").eq("kid_id", k.kidId),
   ]);
@@ -53,6 +53,13 @@ export default async function KidClassPage({ params }: PageProps<"/k/[org]/class
             {l.lesson_date ? <p className="text-xs font-bold text-muted">{l.lesson_date}</p> : null}
             {l.body ? <p className="whitespace-pre-wrap text-sm">{l.body}</p> : null}
             {l.memory_verse ? <p className="rounded-[12px] bg-cream p-3 text-sm font-bold">Memory verse: {l.memory_verse}</p> : null}
+            {l.take_home_talk || l.take_home_do ? (
+              <div className="rounded-[12px] border-2 border-dashed border-gold p-3 text-sm">
+                <p className="font-extrabold">Take it home</p>
+                {l.take_home_talk ? <p>Ask your family: {l.take_home_talk}</p> : null}
+                {l.take_home_do ? <p>Do together: {l.take_home_do}</p> : null}
+              </div>
+            ) : null}
           </li>
         ))}
         {(lessons ?? []).length === 0 ? <li className="text-sm text-muted">No lessons yet.</li> : null}

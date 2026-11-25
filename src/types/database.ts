@@ -529,14 +529,14 @@ isOneToOne: false
                   ]
                 },"lessons": {
                   Row: {
-                    "body": string,"class_id": string | null,"created_at": string,"created_by": string | null,"id": string,"lesson_date": string | null,"memory_verse": string | null,"organization_id": string,"status": string,"title": string
+                    "body": string,"class_id": string | null,"created_at": string,"created_by": string | null,"id": string,"lesson_date": string | null,"memory_verse": string | null,"organization_id": string,"status": string,"take_home_do": string | null,"take_home_pray": string | null,"take_home_talk": string | null,"title": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "body"?: string,"class_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lesson_date"?: string | null,"memory_verse"?: string | null,"organization_id": string,"status"?: string,"title": string
+                    "body"?: string,"class_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lesson_date"?: string | null,"memory_verse"?: string | null,"organization_id": string,"status"?: string,"take_home_do"?: string | null,"take_home_pray"?: string | null,"take_home_talk"?: string | null,"title": string
                   }
                   Update: {
-                    "body"?: string,"class_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lesson_date"?: string | null,"memory_verse"?: string | null,"organization_id"?: string,"status"?: string,"title"?: string
+                    "body"?: string,"class_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lesson_date"?: string | null,"memory_verse"?: string | null,"organization_id"?: string,"status"?: string,"take_home_do"?: string | null,"take_home_pray"?: string | null,"take_home_talk"?: string | null,"title"?: string
                   }
                   Relationships: [
                     {
@@ -1016,6 +1016,9 @@ isOneToOne: false
                            },
 "issue_certificate":
 { Args: { "p_kid": string,"p_reason"?: string,"p_title": string }; Returns: string
+                           },
+"kid_report":
+{ Args: { "p_kid": string,"p_week"?: string }; Returns: Json
                            },
 "mark_as_paid":
 { Args: { "p_amount_minor": number,"p_currency": string,"p_interval": string,"p_method": string,"p_note"?: string,"p_org": string,"p_period_end": string,"p_plan": string }; Returns: string

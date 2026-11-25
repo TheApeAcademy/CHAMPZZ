@@ -58,6 +58,12 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
               <div className="rounded-[12px] bg-cream p-2"><dt className="text-[11px] font-bold text-muted">Best streak</dt><dd className="font-extrabold">{k.kid_stats?.[0]?.streak_best ?? 0}</dd></div>
               <div className="rounded-[12px] bg-cream p-2"><dt className="text-[11px] font-bold text-muted">Stars</dt><dd className="font-extrabold">{k.kid_stats?.[0]?.stars ?? 0}</dd></div>
             </dl>
+            {k.status === "active" ? (
+              <div className="mt-3 flex flex-wrap gap-3 text-sm font-extrabold">
+                <Link className="underline" href={`/p/kids/${k.id}`} data-testid={`progress-link-${k.username}`}>Progress</Link>
+                <Link className="underline" href={`/p/kids/${k.id}/report`}>This week&apos;s report</Link>
+              </div>
+            ) : null}
             <div className="mt-2">{k.status === "pending" ? <Pill tone="warn">Waiting for the club to approve</Pill> : k.confirmed_at ? <Pill tone="ok">Confirmed</Pill> : <Pill tone="new">New: confirmed at first visit</Pill>}</div>
           </Card>
         ))}

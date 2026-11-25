@@ -53,8 +53,8 @@ export const FEATURES: Feature[] = [
   // parents
   { key: "addchild", audience: "parents", status: "live", name: "Add your child safely", blurb: "Sign in, enter the club's code, give consent. We only ask for a first name and a surname initial.", art: "heart-tree" },
   { key: "mykids", audience: "parents", status: "live", name: "My kids", blurb: "See each child's username and status in one place." },
-  { key: "report", audience: "parents", status: "soon", name: "Weekly report", blurb: "What they learned, their streak and their new trophies, every week.", art: "rocket" },
-  { key: "takehome", audience: "parents", status: "soon", name: "Take-Home", blurb: "A short talk, do and pray (or reflect) card to carry the lesson home." },
+  { key: "report", audience: "parents", status: "live", name: "Weekly report", blurb: "What they learned, their streak and their new trophies, every week.", art: "rocket" },
+  { key: "takehome", audience: "parents", status: "live", name: "Take-Home", blurb: "A short talk, do and pray (or reflect) card to carry the lesson home." },
   { key: "calendar", audience: "parents", status: "live", name: "Club calendar", blurb: "Events you can add to your own phone calendar." },
 ];
 

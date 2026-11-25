@@ -83,7 +83,7 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | CCT | Champzz | Status |
 |---|---|---|
 | Sign up, link with FAM code | Parent account plus Clubhouse registration | Live |
-| Per-child progress, star rating, printable report | Kid progress, weekly parent report | Planned |
-| Take-Home Sunday | Take-Home (per club content) | Planned |
+| Per-child progress, star rating, printable report | Progress page (level bar, trophies, grades, visits) and a printable weekly report with stars, Sunday alert | **Live** |
+| Take-Home Sunday | Take-Home card on every lesson: Talk, Do, Pray (Reflect when faith mode is off) | **Live** |
 | Church calendar with .ics export | Events with .ics calendar export | **Live** |
 | See Bible Buddy history | AI companion history (non-anonymous only) | Planned |

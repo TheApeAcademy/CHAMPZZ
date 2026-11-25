@@ -28,6 +28,9 @@ const lessonSchema = z.object({
   lessonDate: z.union([z.literal(""), z.iso.date()]).optional(),
   classId: optionalClass,
   publish: z.literal("on").optional(),
+  talk: z.string().trim().max(300, "Keep each Take-Home line under 300 characters.").optional(),
+  do: z.string().trim().max(300, "Keep each Take-Home line under 300 characters.").optional(),
+  pray: z.string().trim().max(300, "Keep each Take-Home line under 300 characters.").optional(),
 });
 
 export async function createLesson(slug: string, _prev: ActionState, data: FormData): Promise<ActionState> {
@@ -40,6 +43,7 @@ export async function createLesson(slug: string, _prev: ActionState, data: FormD
     organization_id: org.id, class_id: p.data.classId, title: p.data.title, body: p.data.body,
     memory_verse: p.data.memoryVerse || null, lesson_date: p.data.lessonDate || null,
     status: p.data.publish ? "published" : "draft", created_by: auth.user?.id,
+    take_home_talk: p.data.talk || null, take_home_do: p.data.do || null, take_home_pray: p.data.pray || null,
   });
   if (error) return { error: friendlyError(error) };
   revalidatePath(`/o/${slug}/lessons`);

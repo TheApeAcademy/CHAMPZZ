@@ -49,7 +49,7 @@ select is(
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
   array['accept_team_invite', 'add_concern_note', 'approve_kid', 'archive_kid', 'change_member_role', 'check_in_kid', 'check_out_kid',
         'check_out_override', 'club_insights', 'club_local_to_utc', 'confirm_kid', 'create_organization', 'create_team_invite',
-        'get_clubhouse', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'mark_as_paid',
+        'get_clubhouse', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'kid_report', 'mark_as_paid',
         'my_concern_replies', 'my_concerns', 'my_pickup_codes', 'record_my_visit', 'regenerate_join_code', 'remove_member',
         'reply_to_concern', 'reset_kid_pin', 'revoke_team_invite', 'send_message', 'set_concern_status', 'staff_concern',
         'staff_concern_notes', 'staff_concern_replies', 'staff_concerns', 'submit_assignment', 'submit_concern',
