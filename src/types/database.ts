@@ -3,127 +3,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 
 export type Database = {
   
-  "app": {
-          Tables: {
-            [_ in never]: never
-          }
-          Views: {
-            [_ in never]: never
-          }
-          Functions: {
-            "apply_payment":
-{ Args: { "p_amount_minor": number,"p_approved_by"?: string,"p_currency": string,"p_interval": string,"p_method": string,"p_note"?: string,"p_org": string,"p_period_end": string,"p_plan": string,"p_provider": string,"p_ref": string }; Returns: string
-                           },
-"attach_kid_user":
-{ Args: { "p_kid": string,"p_user": string }; Returns: undefined
-                           },
-"audit":
-{ Args: { "p_action": string,"p_actor": string,"p_details"?: Json,"p_org": string,"p_target_id": string,"p_target_type": string }; Returns: undefined
-                           },
-"award_points":
-{ Args: { "p_by"?: string,"p_kid": string,"p_note"?: string,"p_ref": string,"p_source": string }; Returns: number
-                           },
-"can_see_kid":
-{ Args: { "p_kid": string,"p_org": string }; Returns: boolean
-                           },
-"concern_handler":
-{ Args: { "p_class": string,"p_org": string }; Returns: boolean
-                           },
-"concern_handlers":
-{ Args: { "p_class": string,"p_org": string }; Returns: string[]
-                           },
-"discard_kid":
-{ Args: { "p_kid": string }; Returns: undefined
-                           },
-"ensure_stats":
-{ Args: { "p_kid": string }; Returns: undefined
-                           },
-"evaluate_badges":
-{ Args: { "p_kid": string }; Returns: number
-                           },
-"has_org_role":
-{ Args: { "p_org": string,"p_roles": (Database["public"]['Enums']["org_role"])[] }; Returns: boolean
-                           },
-"is_guardian_of":
-{ Args: { "p_kid": string }; Returns: boolean
-                           },
-"is_org_member":
-{ Args: { "p_org": string }; Returns: boolean
-                           },
-"is_platform_admin":
-{ Args: Record<PropertyKey, never>; Returns: boolean
-                           },
-"kid_sees":
-{ Args: { "p_class": string,"p_org": string }; Returns: boolean
-                           },
-"kid_verify_pin":
-{ Args: { "p_ip": string,"p_pin": string,"p_slug": string,"p_username": string }; Returns: {
-              "locked_until": string,"result": string,"user_id": string
-            }[]
-                           },
-"level_of":
-{ Args: { "p_points": number }; Returns: Database["public"]['Tables']["levels"]['Row']
-                          SetofOptions: {
-        from: "*"
-        to: "levels"
-        isOneToOne: true
-        isSetofReturn: false
-      } },
-"lifecycle_tick":
-{ Args: { "p_now"?: string }; Returns: number
-                           },
-"my_kid_org":
-{ Args: Record<PropertyKey, never>; Returns: string
-                           },
-"new_join_code":
-{ Args: { "p_actor": string,"p_org": string }; Returns: string
-                           },
-"new_username":
-{ Args: { "p_org": string }; Returns: string
-                           },
-"notify":
-{ Args: { "p_body": string,"p_kind": string,"p_link": string,"p_org": string,"p_severity"?: string,"p_title": string,"p_to": string }; Returns: undefined
-                           },
-"org_can_setup":
-{ Args: { "p_org": string }; Returns: boolean
-                           },
-"org_has_feature":
-{ Args: { "p_key": string,"p_org": string }; Returns: boolean
-                           },
-"org_is_writable":
-{ Args: { "p_org": string }; Returns: boolean
-                           },
-"org_kid_limit":
-{ Args: { "p_org": string }; Returns: number
-                           },
-"org_slug":
-{ Args: { "p_org": string }; Returns: string
-                           },
-"org_status":
-{ Args: { "p_org": string }; Returns: Database["public"]['Enums']["org_status"]
-                           },
-"points_for":
-{ Args: { "p_org": string,"p_source": string }; Returns: number
-                           },
-"random_code":
-{ Args: { "p_len": number }; Returns: string
-                           },
-"record_activity":
-{ Args: { "p_day": string,"p_kid": string }; Returns: undefined
-                           },
-"register_kid":
-{ Args: { "p_class_id": string,"p_first_name": string,"p_join_code": string,"p_last_initial": string,"p_parent": string,"p_pin": string,"p_policy_version": string,"p_scopes": Json }; Returns: {
-              "kid_id": string,"organization_id": string,"status": Database["public"]['Enums']["kid_status"],"username": string
-            }[]
-                           }
-          }
-          Enums: {
-            [_ in never]: never
-          }
-          CompositeTypes: {
-            [_ in never]: never
-          }
-        },"public": {
+  "public": {
           Tables: {
             "activity_days": {
                   Row: {
@@ -169,6 +49,26 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "organizations"
       referencedColumns: ["id"]
+    }
+                  ]
+                },"attendance": {
+                  Row: {
+                    "checked_in_at": string,"checked_in_by": string | null,"checked_out_at": string | null,"checked_out_by": string | null,"checkout_note": string | null,"class_id": string | null,"day": string,"failed_pickups": number,"id": string,"kid_id": string,"organization_id": string,"pickup_code": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "checked_in_at"?: string,"checked_in_by"?: string | null,"checked_out_at"?: string | null,"checked_out_by"?: string | null,"checkout_note"?: string | null,"class_id"?: string | null,"day": string,"failed_pickups"?: number,"id"?: string,"kid_id": string,"organization_id": string,"pickup_code": string
+                  }
+                  Update: {
+                    "checked_in_at"?: string,"checked_in_by"?: string | null,"checked_out_at"?: string | null,"checked_out_by"?: string | null,"checkout_note"?: string | null,"class_id"?: string | null,"day"?: string,"failed_pickups"?: number,"id"?: string,"kid_id"?: string,"organization_id"?: string,"pickup_code"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "attendance_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
     }
                   ]
                 },"audit_log": {
@@ -224,6 +124,26 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"certificates": {
+                  Row: {
+                    "id": string,"issued_at": string,"issued_by": string | null,"kid_id": string,"organization_id": string,"reason": string | null,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"issued_at"?: string,"issued_by"?: string | null,"kid_id": string,"organization_id": string,"reason"?: string | null,"title": string
+                  }
+                  Update: {
+                    "id"?: string,"issued_at"?: string,"issued_by"?: string | null,"kid_id"?: string,"organization_id"?: string,"reason"?: string | null,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "certificates_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
                   ]
                 },"checkout_sessions": {
                   Row: {
@@ -709,14 +629,14 @@ isOneToOne: false
                   ]
                 },"org_branding": {
                   Row: {
-                    "logo_path": string | null,"organization_id": string,"primary_color": string | null,"tagline": string | null,"updated_at": string
+                    "logo_path": string | null,"motto": string | null,"organization_id": string,"primary_color": string | null,"tagline": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "logo_path"?: string | null,"organization_id": string,"primary_color"?: string | null,"tagline"?: string | null,"updated_at"?: string
+                    "logo_path"?: string | null,"motto"?: string | null,"organization_id": string,"primary_color"?: string | null,"tagline"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "logo_path"?: string | null,"organization_id"?: string,"primary_color"?: string | null,"tagline"?: string | null,"updated_at"?: string
+                    "logo_path"?: string | null,"motto"?: string | null,"organization_id"?: string,"primary_color"?: string | null,"tagline"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -933,6 +853,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"seasons": {
+                  Row: {
+                    "created_at": string,"ends_on": string,"id": string,"name": string,"organization_id": string,"starts_on": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"ends_on": string,"id"?: string,"name": string,"organization_id": string,"starts_on": string
+                  }
+                  Update: {
+                    "created_at"?: string,"ends_on"?: string,"id"?: string,"name"?: string,"organization_id"?: string,"starts_on"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "seasons_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"submissions": {
                   Row: {
                     "assignment_id": string,"body": string,"feedback": string | null,"grade": number | null,"graded_at": string | null,"graded_by": string | null,"id": string,"kid_id": string,"organization_id": string,"submitted_at": string
@@ -991,13 +931,36 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"team_invites": {
+                  Row: {
+                    "accepted_at": string | null,"accepted_by": string | null,"created_at": string,"created_by": string | null,"email": string | null,"expires_at": string,"id": string,"organization_id": string,"revoked_at": string | null,"role": Database["public"]['Enums']["org_role"],"token_hash": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "accepted_at"?: string | null,"accepted_by"?: string | null,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"expires_at": string,"id"?: string,"organization_id": string,"revoked_at"?: string | null,"role": Database["public"]['Enums']["org_role"],"token_hash": string
+                  }
+                  Update: {
+                    "accepted_at"?: string | null,"accepted_by"?: string | null,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"expires_at"?: string,"id"?: string,"organization_id"?: string,"revoked_at"?: string | null,"role"?: Database["public"]['Enums']["org_role"],"token_hash"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "team_invites_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
             [_ in never]: never
           }
           Functions: {
-            "add_concern_note":
+            "accept_team_invite":
+{ Args: { "p_token": string }; Returns: string
+                           },
+"add_concern_note":
 { Args: { "p_body": string,"p_concern": string }; Returns: undefined
                            },
 "approve_kid":
@@ -1005,6 +968,23 @@ isOneToOne: false
                            },
 "archive_kid":
 { Args: { "p_kid": string,"p_reason": string }; Returns: undefined
+                           },
+"change_member_role":
+{ Args: { "p_membership": string,"p_role": string }; Returns: undefined
+                           },
+"check_in_kid":
+{ Args: { "p_kid": string }; Returns: {
+              "already": boolean,"attendance_id": string,"pickup_code": string
+            }[]
+                           },
+"check_out_kid":
+{ Args: { "p_attendance": string,"p_code": string }; Returns: string
+                           },
+"check_out_override":
+{ Args: { "p_attendance": string,"p_reason": string }; Returns: undefined
+                           },
+"club_insights":
+{ Args: { "p_org": string }; Returns: Json
                            },
 "club_local_to_utc":
 { Args: { "p_local": string,"p_tz": string }; Returns: string
@@ -1015,9 +995,12 @@ isOneToOne: false
 "create_organization":
 { Args: { "p_country"?: string,"p_currency"?: string,"p_faith_mode"?: boolean,"p_kind": string,"p_name": string,"p_slug": string,"p_timezone"?: string }; Returns: string
                            },
+"create_team_invite":
+{ Args: { "p_email"?: string,"p_org": string,"p_role": string }; Returns: string
+                           },
 "get_clubhouse":
 { Args: { "p_slug": string }; Returns: {
-              "faith_mode": boolean,"joinable": boolean,"kind": string,"logo_path": string,"name": string,"organization_id": string,"primary_color": string,"slug": string,"tagline": string
+              "faith_mode": boolean,"joinable": boolean,"kind": string,"logo_path": string,"motto": string,"name": string,"organization_id": string,"primary_color": string,"slug": string,"tagline": string
             }[]
                            },
 "give_star":
@@ -1030,6 +1013,9 @@ isOneToOne: false
 { Args: { "p_class"?: string,"p_period"?: string }; Returns: {
               "avatar": Json,"first_name": string,"is_me": boolean,"kid_id": string,"last_initial": string,"points": number
             }[]
+                           },
+"issue_certificate":
+{ Args: { "p_kid": string,"p_reason"?: string,"p_title": string }; Returns: string
                            },
 "mark_as_paid":
 { Args: { "p_amount_minor": number,"p_currency": string,"p_interval": string,"p_method": string,"p_note"?: string,"p_org": string,"p_period_end": string,"p_plan": string }; Returns: string
@@ -1044,17 +1030,28 @@ isOneToOne: false
               "body": string,"created_at": string,"id": string,"is_anonymous": boolean,"replies": number,"status": string
             }[]
                            },
+"my_pickup_codes":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "attendance_id": string,"checked_in_at": string,"club": string,"day": string,"first_name": string,"kid_id": string,"pickup_code": string
+            }[]
+                           },
 "record_my_visit":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "regenerate_join_code":
 { Args: { "p_org": string }; Returns: string
                            },
+"remove_member":
+{ Args: { "p_membership": string }; Returns: undefined
+                           },
 "reply_to_concern":
 { Args: { "p_body": string,"p_concern": string }; Returns: undefined
                            },
 "reset_kid_pin":
 { Args: { "p_kid": string,"p_pin": string }; Returns: undefined
+                           },
+"revoke_team_invite":
+{ Args: { "p_invite": string }; Returns: undefined
                            },
 "send_message":
 { Args: { "p_body": string,"p_kid"?: string }; Returns: undefined
@@ -1111,6 +1108,11 @@ isOneToOne: false
 "svc_register_kid":
 { Args: { "p_class_id": string,"p_first_name": string,"p_join_code": string,"p_last_initial": string,"p_parent": string,"p_pin": string,"p_policy_version": string,"p_scopes": Json }; Returns: {
               "kid_id": string,"organization_id": string,"status": Database["public"]['Enums']["kid_status"],"username": string
+            }[]
+                           },
+"team_members":
+{ Args: { "p_org": string }; Returns: {
+              "email": string,"full_name": string,"is_me": boolean,"joined_at": string,"membership_id": string,"role": Database["public"]['Enums']["org_role"],"user_id": string
             }[]
                            },
 "unsuspend_organization":
@@ -1235,11 +1237,7 @@ export type CompositeTypes<
   : never
 
 export const Constants = {
-  "app": {
-          Enums: {
-            
-          }
-        },"public": {
+  "public": {
           Enums: {
             "kid_status": ["pending", "active", "archived"],"org_role": ["org_admin", "teacher", "parent"],"org_status": ["pending", "active", "grace", "read_only", "suspended"]
           }

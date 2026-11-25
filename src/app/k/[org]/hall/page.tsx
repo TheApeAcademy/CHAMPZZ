@@ -4,16 +4,18 @@ import { ChampAvatar } from "@/features/kids/components/champ-avatar";
 import { getKidSnapshot } from "@/features/kids/server/data";
 import { parseAvatar } from "@/features/kids/avatar";
 import { supabaseServer } from "@/lib/supabase/server";
+import { currentSeason } from "@/lib/seasons";
 
 export const metadata = { title: "Hall of Champs" };
 
 export default async function HallPage({ params, searchParams }: PageProps<"/k/[org]/hall">) {
   const { org } = await params;
   const { period } = await searchParams;
-  const p = period === "all" ? "all" : "week";
+  const p = period === "all" ? "all" : period === "season" ? "season" : "week";
   const k = await getKidSnapshot(org);
   const supabase = await supabaseServer();
-  const { data: rows } = await supabase.rpc("hall_of_champs", { p_period: p });
+  const season = await currentSeason(supabase, k.org.id, k.org.timezone);
+  const { data: rows } = await supabase.rpc("hall_of_champs", { p_period: p === "season" && !season ? "all" : p });
 
   return (
     <KidShell slug={org} clubName={k.org.name} active="hall" little={k.little}>
@@ -21,6 +23,7 @@ export default async function HallPage({ params, searchParams }: PageProps<"/k/[
       <p className="text-sm font-bold text-muted">{k.className ?? "Your club"}</p>
       <div className="flex gap-2" role="tablist" aria-label="Time period">
         <Link href={`/k/${org}/hall`} role="tab" aria-selected={p === "week"} className={`min-h-11 rounded-full px-4 py-2.5 text-sm font-extrabold ${p === "week" ? "bg-ink text-white" : "bg-surface"}`}>This week</Link>
+        {season ? <Link href={`/k/${org}/hall?period=season`} role="tab" aria-selected={p === "season"} className={`min-h-11 rounded-full px-4 py-2.5 text-sm font-extrabold ${p === "season" ? "bg-ink text-white" : "bg-surface"}`}>{season.name}</Link> : null}
         <Link href={`/k/${org}/hall?period=all`} role="tab" aria-selected={p === "all"} className={`min-h-11 rounded-full px-4 py-2.5 text-sm font-extrabold ${p === "all" ? "bg-ink text-white" : "bg-surface"}`}>All time</Link>
       </div>
       <ol className="flex flex-col gap-2" data-testid="hall-list">

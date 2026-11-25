@@ -20,6 +20,13 @@ const messages: Record<string, string> = {
   already_graded: "Your teacher has already marked this.",
   bad_grade: "Give a mark from 0 to 100.",
   bad_status: "Pick a status.",
+  bad_role: "Pick teacher or Org Admin.",
+  too_many_invites: "You have a lot of open invites. Revoke some first.",
+  invite_invalid: "This invite link has expired, been used, or been cancelled. Ask the club leader for a new one.",
+  last_admin: "A club always needs at least one Org Admin. Make someone else an Org Admin first.",
+  already_checked_out: "Already checked out.",
+  reason_required: "Write a short reason.",
+  title_required: "Give the certificate a title.",
 };
 
 export function friendlyError(err: { message?: string; code?: string } | null | undefined, fallback = "Something went wrong. Please try again."): string {

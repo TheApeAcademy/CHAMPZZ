@@ -2,7 +2,7 @@
 -- RLS, forgets organization_id, or quietly exposes a function or a write path.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(7);
+select plan(9);
 
 select is(
   (select array_agg(c.relname::text order by c.relname) from pg_class c
@@ -30,7 +30,7 @@ select is(
   (select array_agg(distinct tablename::text order by tablename::text) from pg_policies
    where schemaname = 'public' and cmd in ('INSERT', 'ALL') and 'authenticated' = any (roles)
      and tablename not in ('plans', 'plan_prices', 'plan_features', 'currency_settings')),
-  array['assignments', 'class_teachers', 'classes', 'events', 'lessons', 'org_branding'],
+  array['assignments', 'class_teachers', 'classes', 'events', 'lessons', 'org_branding', 'seasons'],
   'client insert policies exist only where intended (catalogue writes are platform-admin only)'
 );
 
@@ -47,11 +47,13 @@ select is(
   (select array_agg(p.proname::text order by p.proname) from pg_proc p
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
-  array['add_concern_note', 'approve_kid', 'archive_kid', 'club_local_to_utc', 'confirm_kid', 'create_organization', 'get_clubhouse', 'give_star',
-        'grade_submission', 'hall_of_champs', 'mark_as_paid', 'my_concern_replies', 'my_concerns', 'record_my_visit',
-        'regenerate_join_code', 'reply_to_concern', 'reset_kid_pin', 'send_message', 'set_concern_status', 'staff_concern',
+  array['accept_team_invite', 'add_concern_note', 'approve_kid', 'archive_kid', 'change_member_role', 'check_in_kid', 'check_out_kid',
+        'check_out_override', 'club_insights', 'club_local_to_utc', 'confirm_kid', 'create_organization', 'create_team_invite',
+        'get_clubhouse', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'mark_as_paid',
+        'my_concern_replies', 'my_concerns', 'my_pickup_codes', 'record_my_visit', 'regenerate_join_code', 'remove_member',
+        'reply_to_concern', 'reset_kid_pin', 'revoke_team_invite', 'send_message', 'set_concern_status', 'staff_concern',
         'staff_concern_notes', 'staff_concern_replies', 'staff_concerns', 'submit_assignment', 'submit_concern',
-        'suspend_organization', 'unsuspend_organization', 'update_my_champ'],
+        'suspend_organization', 'team_members', 'unsuspend_organization', 'update_my_champ'],
   'signed-in users can call exactly the intended public functions'
 );
 
@@ -72,6 +74,23 @@ select is(
      and (has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute'))),
   null,
   'server-only svc_ wrappers are callable by the service role only'
+);
+
+select is(
+  (select array_agg(column_name::text order by column_name) from information_schema.column_privileges
+   where table_schema = 'public' and grantee = 'authenticated' and privilege_type = 'SELECT'
+     and ((table_name = 'attendance' and column_name in ('pickup_code', 'failed_pickups', 'checked_in_by', 'checked_out_by'))
+       or (table_name = 'team_invites' and column_name in ('token_hash', 'created_by', 'accepted_by')))),
+  null,
+  'pickup codes and invite token hashes are never readable by a signed-in client'
+);
+
+select is(
+  (select array_agg(c.relname::text order by c.relname) from pg_class c join pg_namespace n on n.oid = c.relnamespace
+   where n.nspname = 'public' and c.relname in ('attendance', 'team_invites', 'certificates')
+     and has_table_privilege('authenticated', c.oid, 'INSERT')),
+  null,
+  'attendance, invites and certificates are written only through functions'
 );
 
 select * from finish();

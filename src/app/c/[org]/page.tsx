@@ -7,6 +7,7 @@ import { Submit } from "@/components/ui/submit";
 import { getViewer } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import { slugSchema } from "@/lib/validation";
+import { logoUrl, textOn } from "@/lib/branding";
 import { registerKid } from "@/features/registration/server/actions";
 import { PicturePin } from "@/features/kids/components/picture-pin";
 
@@ -19,14 +20,28 @@ export default async function ClubhousePage({ params }: PageProps<"/c/[org]">) {
   const club = data?.[0];
   if (!club) notFound();
   const viewer = await getViewer();
+  const logo = logoUrl(club.logo_path);
 
   return (
     <AdultShell who={viewer.kind === "adult" ? viewer.fullName || viewer.email || undefined : undefined}>
-      <section className="rounded-[28px] bg-ink p-8 text-cream" style={club.primary_color ? { background: club.primary_color } : undefined}>
-        <p className="text-sm font-extrabold uppercase tracking-widest text-gold">Clubhouse</p>
-        <h1 className="font-display text-4xl font-black italic uppercase" data-testid="clubhouse-name">{club.name}</h1>
-        {club.tagline ? <p className="mt-2 max-w-xl">{club.tagline}</p> : null}
+      <section className="flex flex-wrap items-center gap-5 rounded-[28px] bg-ink p-8 text-cream"
+        style={club.primary_color ? { background: club.primary_color, color: textOn(club.primary_color) } : undefined}>
+        {logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logo} alt={`${club.name} logo`} className="h-20 w-20 rounded-[18px] bg-cream object-contain p-2" />
+        ) : null}
+        <div>
+          <p className={`text-sm font-extrabold uppercase tracking-widest ${club.primary_color ? "" : "text-gold"}`}>Clubhouse</p>
+          <h1 className="font-display text-4xl font-black italic uppercase" data-testid="clubhouse-name">{club.name}</h1>
+          {club.tagline ? <p className="mt-2 max-w-xl">{club.tagline}</p> : null}
+        </div>
       </section>
+      {club.motto ? (
+        <figure className="rounded-[20px] border-2 border-gold bg-surface p-5 text-center" data-testid="clubhouse-motto">
+          <figcaption className="mb-1 text-xs font-extrabold uppercase tracking-widest text-muted">Our motto</figcaption>
+          <blockquote className="whitespace-pre-line font-display text-xl font-extrabold">{club.motto}</blockquote>
+        </figure>
+      ) : null}
 
       <Card className="mx-auto w-full max-w-xl">
         <h2 className="mb-1 font-display text-2xl font-extrabold">Add your child</h2>

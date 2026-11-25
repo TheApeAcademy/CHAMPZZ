@@ -11,7 +11,7 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Landing (`/`) | `/` full marketing site: hero, every feature section (kids, teachers, admins, parents), Road to Champ, games, safety, pricing, FAQ, CTA, "Built by Zebraish" at the end | No MFM content; light and fast on mobile data; real pricing from the database; unfinished features tagged Coming soon | **Live** |
 | Everything Inside (`/features`) | `/features` | Every feature, by role, with live or Coming soon status | **Live** |
 | Safety (`/safety`) | `/safety` | Promises backed by tests (CCT's page promised things its database did not enforce) | **Live** |
-| Anthem (`/anthem`) | Org-defined song or motto on each Clubhouse | Per org, not fixed MFM lyrics | Planned |
+| Anthem (`/anthem`) | Org-defined song or motto on each Clubhouse | Per org, not fixed MFM lyrics | **Live** |
 | (none) | `/pricing`, `/privacy`, `/terms` | New SaaS pages (privacy and terms are drafts pending legal review) | **Live** |
 | (none) | Clubhouse `/c/{club}` | Each club's own branded page with posts and events | Registration live, posts and events Planned |
 
@@ -47,34 +47,36 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 
 | CCT | Champzz | Status |
 |---|---|---|
-| Apply to teach | Invite by Org Admin (plus optional request to join) | Planned |
+| Apply to teach | Invite link from an Org Admin (works once, 7 days); request-to-join later | **Live** |
 | Classes, join code | Classes live, club-level join code | Live |
 | Roster claiming, Student Code enrolment | Replaced by Clubhouse registration | Live |
-| Attendance register and history | Check-in and check-out with guardian pickup codes, attendance history | Planned |
+| Attendance register and history | Check-in and check-out with guardian pickup codes (5-try lock, logged Org Admin release), attendance history, +10 Champ Points | **Live** |
 | Lectures, Sunday calendar unlocks | Lessons (draft or published, dated, per class or whole club) | **Live** |
 | Assignments and grading | Assignments and grading (+10 Champ Points on hand-in) | **Live** |
-| Certificates | Certificates (club branded, plus reading plans and levels) | Planned |
+| Certificates | Club-branded printable certificates, seen by the kid and their parents | **Live** |
 | Host a quiz | Road to Champ host mode | Planned |
 | Ears inbox | Talk to Someone inbox (urgent alerts, staff notes, escalation, open log) | **Live** |
 | Bible Buddy log | AI companion log | Planned |
 | Passcode reset | Picture PIN reset | Live |
-| Avatar review queue | Photo moderation queue | Planned |
-| Search | Search | Planned |
+| Avatar review queue | Photo moderation queue (arrives with My Stuff uploads; nothing uploads photos yet) | Planned |
+| Search | Search kids, lessons, class work and events | **Live** |
 | Confirm new kids | Confirm at first visit | Live |
 
 ## Admins (CCT `/admin`) become the Org Admin workspace plus the Super Admin console
 
 | CCT | Champzz | Status |
 |---|---|---|
-| Teacher applications, promote admins | Team management (invites, roles) | Planned |
-| Classes at a glance, stats | Club dashboard and analytics | Partly live, analytics Planned |
-| Seasons | Seasons | Planned |
+| Teacher applications, promote admins | Team: invites, roles, remove (last Org Admin protected) | **Live** |
+| Classes at a glance, stats | Club dashboard plus Insights (attendance trend, not seen in 3 weeks, weekly points) | **Live** |
+| Seasons | Seasons with a fresh Hall of Champs board each season | **Live** |
 | Bible reading plans | Reading plans (faith mode) | Planned |
 | Ministry calendar | Events (Org Admin creates, in club time zone) | **Live** |
 | Digital Bank | Media library | Planned |
-| Safety tab | Safeguarding centre and audit log | Planned |
+| Safety tab | Safeguarding centre and audit log | Talk to Someone inbox Live; audit log viewer Planned |
 | (none) | Super Admin console: all clubs, Mark as paid, suspend | Live |
 | (none) | Billing, plans, joining settings, kid limit | Live |
+| (none) | Club settings: logo, colour, tagline, motto, faith mode, time zone | **Live** |
+| (none) | Data export (kids, attendance, Champ Points as CSV) | **Live** |
 
 ## Parents (CCT `/parent`)
 

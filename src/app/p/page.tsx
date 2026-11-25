@@ -21,10 +21,26 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
     .gte("starts_at", upcomingSince())
     .order("starts_at")
     .limit(20);
+  const [{ data: pickups }, { data: certs }] = await Promise.all([
+    supabase.rpc("my_pickup_codes"),
+    supabase.from("certificates").select("id, title, issued_at, kids!inner(first_name)").order("issued_at", { ascending: false }).limit(20),
+  ]);
 
   return (
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
       <h1 className="font-display text-3xl font-extrabold">My kids</h1>
+      {(pickups ?? []).length > 0 ? (
+        <section className="flex flex-col gap-2 rounded-[20px] border-2 border-gold bg-[#FFF3D6] p-4" data-testid="pickup-codes">
+          <h2 className="font-extrabold">At the club now</h2>
+          {(pickups ?? []).map((p) => (
+            <p key={p.attendance_id} className="text-lg">
+              <strong>{p.first_name}</strong> at {p.club}. Pickup code{" "}
+              <span className="rounded-[8px] bg-ink px-2 py-0.5 font-mono text-2xl font-extrabold tracking-[0.2em] text-white" data-testid={`pickup-${p.first_name}`}>{p.pickup_code}</span>
+            </p>
+          ))}
+          <p className="text-sm">Show this code to the teacher when you collect your child. Do not share it with anyone who is not collecting them.</p>
+        </section>
+      ) : null}
       {typeof added === "string" ? (
         <Banner tone="ok">
           Added. Their username is <strong data-testid="new-username">{added}</strong>. They sign in at{" "}
@@ -47,6 +63,19 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
         ))}
         {(links ?? []).length === 0 ? <p className="text-sm text-muted">No kids yet. Open your club&apos;s Clubhouse page to add your child.</p> : null}
       </div>
+      {(certs ?? []).length > 0 ? (
+        <>
+          <h2 className="font-display text-2xl font-extrabold">Certificates</h2>
+          <ul className="flex flex-col gap-2" data-testid="parent-certificates">
+            {(certs ?? []).map((c) => (
+              <li key={c.id} className="rounded-[14px] border border-line bg-surface p-3">
+                <Link href={`/p/certificates/${c.id}`} className="font-extrabold underline">{c.title}</Link>
+                <span className="text-sm text-muted"> · {c.kids.first_name} · {new Date(c.issued_at).toLocaleDateString("en-GB")}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-display text-2xl font-extrabold">Club events</h2>
         {(events ?? []).length > 0 ? <a href="/p/calendar" className="text-sm font-bold underline" data-testid="ics-link">Add to my calendar (.ics)</a> : null}

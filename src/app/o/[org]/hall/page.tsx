@@ -6,6 +6,7 @@ import { ChampAvatar } from "@/features/kids/components/champ-avatar";
 import { parseAvatar } from "@/features/kids/avatar";
 import { requireOrgRole } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
+import { currentSeason } from "@/lib/seasons";
 
 export const metadata = { title: "Hall of Champs" };
 
@@ -16,7 +17,9 @@ export default async function StaffHallPage({ params, searchParams }: PageProps<
   const supabase = await supabaseServer();
   const { data: classes } = await supabase.from("classes").select("id, name").eq("organization_id", org.id).eq("archived", false).order("name");
   const current = (classes ?? []).find((c) => c.id === classParam) ?? (classes ?? [])[0];
-  const p = period === "all" ? "all" : "week";
+  const { data: o } = await supabase.from("organizations").select("timezone").eq("id", org.id).single();
+  const season = await currentSeason(supabase, org.id, o?.timezone ?? "UTC");
+  const p = period === "all" ? "all" : period === "season" && season ? "season" : "week";
   const { data: rows } = current ? await supabase.rpc("hall_of_champs", { p_class: current.id, p_period: p }) : { data: [] };
 
   return (
@@ -33,6 +36,7 @@ export default async function StaffHallPage({ params, searchParams }: PageProps<
           </nav>
           <div className="flex gap-2">
             <Link href={`/o/${slug}/hall?class=${current.id}`} className={`min-h-11 rounded-full px-4 py-2.5 text-sm font-extrabold ${p === "week" ? "bg-brand text-white" : "bg-surface"}`}>This week</Link>
+            {season ? <Link href={`/o/${slug}/hall?class=${current.id}&period=season`} className={`min-h-11 rounded-full px-4 py-2.5 text-sm font-extrabold ${p === "season" ? "bg-brand text-white" : "bg-surface"}`}>{season.name}</Link> : null}
             <Link href={`/o/${slug}/hall?class=${current.id}&period=all`} className={`min-h-11 rounded-full px-4 py-2.5 text-sm font-extrabold ${p === "all" ? "bg-brand text-white" : "bg-surface"}`}>All time</Link>
           </div>
           <Card>
