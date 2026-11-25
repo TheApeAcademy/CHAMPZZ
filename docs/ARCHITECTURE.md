@@ -382,7 +382,7 @@ Plus pgTAP for every policy and SQL function. Results are reported plainly: what
 ## 14. Build order (unchanged from the brief)
 
 1. Audit + architecture -> **Gate 1** (this document)
-2. Design directions (2 to 3) -> Banks picks one
+2. Design directions -> **D, Champ Mix, locked 2026-11-25** (see `docs/DESIGN.md`)
 3. Foundation: schema, RLS + tests, auth (adults and kids), roles, org lifecycle, plans, payments, join codes -> **Gate 2**
 4. Port and improve CCT features
 5. SaaS essentials: onboarding wizard, Super Admin console, check-in, analytics, audit log, export
