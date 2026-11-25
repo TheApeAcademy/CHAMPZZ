@@ -11,7 +11,7 @@ for (const path of PAGES) {
 
     const text = await page.locator("body").innerText();
     expect(text).not.toMatch(/\bMFM\b|Wuye|Mountain of Fire/i);
-    expect(text).not.toMatch(/[—–]/);
+    expect(text).not.toMatch(/[\u2014\u2013]/);
 
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
