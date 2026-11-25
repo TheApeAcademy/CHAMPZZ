@@ -30,7 +30,7 @@ select is(
   (select array_agg(distinct tablename::text order by tablename::text) from pg_policies
    where schemaname = 'public' and cmd in ('INSERT', 'ALL') and 'authenticated' = any (roles)
      and tablename not in ('plans', 'plan_prices', 'plan_features', 'currency_settings')),
-  array['assignments', 'class_teachers', 'classes', 'events', 'lessons', 'org_branding', 'seasons'],
+  array['arena_content', 'assignments', 'class_teachers', 'classes', 'events', 'lessons', 'org_branding', 'question_packs', 'questions', 'seasons'],
   'client insert policies exist only where intended (catalogue writes are platform-admin only)'
 );
 
@@ -48,12 +48,12 @@ select is(
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
   array['accept_team_invite', 'add_concern_note', 'approve_kid', 'archive_kid', 'change_member_role', 'check_in_kid', 'check_out_kid',
-        'check_out_override', 'club_insights', 'club_local_to_utc', 'confirm_kid', 'create_organization', 'create_team_invite',
+        'check_out_override', 'club_insights', 'club_local_to_utc', 'confirm_kid', 'create_organization', 'create_team_invite', 'finish_arena_game',
         'get_clubhouse', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'kid_report', 'mark_as_paid',
         'my_concern_replies', 'my_concerns', 'my_pickup_codes', 'record_my_visit', 'regenerate_join_code', 'remove_member',
-        'reply_to_concern', 'reset_kid_pin', 'revoke_team_invite', 'send_message', 'set_concern_status', 'staff_concern',
-        'staff_concern_notes', 'staff_concern_replies', 'staff_concerns', 'submit_assignment', 'submit_concern',
-        'suspend_organization', 'team_members', 'unsuspend_organization', 'update_my_champ'],
+        'reply_to_concern', 'reset_kid_pin', 'revoke_team_invite', 'save_quiz_match', 'send_message', 'set_concern_status', 'staff_concern',
+        'staff_concern_notes', 'staff_concern_replies', 'staff_concerns', 'start_training', 'submit_assignment', 'submit_concern',
+        'suspend_organization', 'team_members', 'training_answer', 'training_half_time', 'training_state', 'unsuspend_organization', 'update_my_champ'],
   'signed-in users can call exactly the intended public functions'
 );
 

@@ -25,6 +25,46 @@ isOneToOne: false
       referencedColumns: ["organization_id","id"]
     }
                   ]
+                },"arena_content": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"data": NonNullable<Json>,"faith": boolean,"game": string,"id": string,"organization_id": string | null,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"data": NonNullable<Json>,"faith"?: boolean,"game": string,"id"?: string,"organization_id"?: string | null,"title": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"data"?: NonNullable<Json>,"faith"?: boolean,"game"?: string,"id"?: string,"organization_id"?: string | null,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "arena_content_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"arena_plays": {
+                  Row: {
+                    "game": string,"id": number,"kid_id": string,"organization_id": string,"played_at": string,"score": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "game": string,"id"?: never,"kid_id": string,"organization_id": string,"played_at"?: string,"score": number
+                  }
+                  Update: {
+                    "game"?: string,"id"?: never,"kid_id"?: string,"organization_id"?: string,"played_at"?: string,"score"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "arena_plays_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
                 },"assignments": {
                   Row: {
                     "class_id": string | null,"created_at": string,"created_by": string | null,"due_date": string | null,"id": string,"instructions": string,"organization_id": string,"status": string,"title": string
@@ -827,6 +867,84 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"question_packs": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"faith": boolean,"id": string,"name": string,"organization_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"faith"?: boolean,"id"?: string,"name": string,"organization_id"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"faith"?: boolean,"id"?: string,"name"?: string,"organization_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "question_packs_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"questions": {
+                  Row: {
+                    "answer_index": number,"choices": (string)[],"created_at": string,"explanation": string | null,"id": string,"organization_id": string | null,"pack_id": string,"prompt": string,"tier": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "answer_index": number,"choices": (string)[],"created_at"?: string,"explanation"?: string | null,"id"?: string,"organization_id"?: string | null,"pack_id": string,"prompt": string,"tier": number
+                  }
+                  Update: {
+                    "answer_index"?: number,"choices"?: (string)[],"created_at"?: string,"explanation"?: string | null,"id"?: string,"organization_id"?: string | null,"pack_id"?: string,"prompt"?: string,"tier"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "questions_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "questions_pack_id_fkey"
+      columns: ["pack_id"]
+isOneToOne: false
+      referencedRelation: "question_packs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"quiz_matches": {
+                  Row: {
+                    "client_id": string,"host_id": string | null,"id": string,"organization_id": string,"pack_id": string | null,"pack_name": string,"played_at": string,"questions_played": number,"season_id": string | null,"teams": NonNullable<Json>
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "client_id": string,"host_id"?: string | null,"id"?: string,"organization_id": string,"pack_id"?: string | null,"pack_name": string,"played_at"?: string,"questions_played": number,"season_id"?: string | null,"teams": NonNullable<Json>
+                  }
+                  Update: {
+                    "client_id"?: string,"host_id"?: string | null,"id"?: string,"organization_id"?: string,"pack_id"?: string | null,"pack_name"?: string,"played_at"?: string,"questions_played"?: number,"season_id"?: string | null,"teams"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "quiz_matches_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quiz_matches_pack_id_fkey"
+      columns: ["pack_id"]
+isOneToOne: false
+      referencedRelation: "question_packs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quiz_matches_season_id_fkey"
+      columns: ["season_id"]
+isOneToOne: false
+      referencedRelation: "seasons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"registration_events": {
                   Row: {
                     "at": string,"by_user": string | null,"id": number,"join_code_id": string | null,"kid_id": string | null,"organization_id": string
@@ -951,6 +1069,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"training_runs": {
+                  Row: {
+                    "correct": number,"created_at": string,"finished_at": string | null,"half_time_question": number | null,"half_time_used": boolean,"id": string,"idx": number,"kid_id": string,"organization_id": string,"pack_id": string | null,"question_ids": (string)[]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "correct"?: number,"created_at"?: string,"finished_at"?: string | null,"half_time_question"?: number | null,"half_time_used"?: boolean,"id"?: string,"idx"?: number,"kid_id": string,"organization_id": string,"pack_id"?: string | null,"question_ids": (string)[]
+                  }
+                  Update: {
+                    "correct"?: number,"created_at"?: string,"finished_at"?: string | null,"half_time_question"?: number | null,"half_time_used"?: boolean,"id"?: string,"idx"?: number,"kid_id"?: string,"organization_id"?: string,"pack_id"?: string | null,"question_ids"?: (string)[]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "training_runs_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    },{
+      foreignKeyName: "training_runs_pack_id_fkey"
+      columns: ["pack_id"]
+isOneToOne: false
+      referencedRelation: "question_packs"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
@@ -997,6 +1141,9 @@ isOneToOne: false
                            },
 "create_team_invite":
 { Args: { "p_email"?: string,"p_org": string,"p_role": string }; Returns: string
+                           },
+"finish_arena_game":
+{ Args: { "p_game": string,"p_score": number }; Returns: number
                            },
 "get_clubhouse":
 { Args: { "p_slug": string }; Returns: {
@@ -1056,6 +1203,9 @@ isOneToOne: false
 "revoke_team_invite":
 { Args: { "p_invite": string }; Returns: undefined
                            },
+"save_quiz_match":
+{ Args: { "p_client_id": string,"p_org": string,"p_pack": string,"p_played_at"?: string,"p_questions": number,"p_teams": Json }; Returns: string
+                           },
 "send_message":
 { Args: { "p_body": string,"p_kid"?: string }; Returns: undefined
                            },
@@ -1081,6 +1231,9 @@ isOneToOne: false
 { Args: { "p_org": string }; Returns: {
               "class_name": string,"created_at": string,"id": string,"is_anonymous": boolean,"kid_label": string,"preview": string,"status": string,"updated_at": string
             }[]
+                           },
+"start_training":
+{ Args: { "p_pack": string }; Returns: string
                            },
 "submit_assignment":
 { Args: { "p_assignment": string,"p_body": string }; Returns: undefined
@@ -1117,6 +1270,15 @@ isOneToOne: false
 { Args: { "p_org": string }; Returns: {
               "email": string,"full_name": string,"is_me": boolean,"joined_at": string,"membership_id": string,"role": Database["public"]['Enums']["org_role"],"user_id": string
             }[]
+                           },
+"training_answer":
+{ Args: { "p_choice": number,"p_run": string }; Returns: Json
+                           },
+"training_half_time":
+{ Args: { "p_run": string }; Returns: (number)[]
+                           },
+"training_state":
+{ Args: { "p_run": string }; Returns: Json
                            },
 "unsuspend_organization":
 { Args: { "p_org": string }; Returns: undefined

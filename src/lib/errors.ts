@@ -27,6 +27,11 @@ const messages: Record<string, string> = {
   already_checked_out: "Already checked out.",
   reason_required: "Write a short reason.",
   title_required: "Give the certificate a title.",
+  bad_pack: "That question pack is not available here.",
+  pack_too_small: "That pack needs at least 5 questions first.",
+  bad_teams: "Check the team names.",
+  run_finished: "That round is already over.",
+  power_up_used: "You already used that power-up.",
 };
 
 export function friendlyError(err: { message?: string; code?: string } | null | undefined, fallback = "Something went wrong. Please try again."): string {

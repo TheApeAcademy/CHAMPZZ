@@ -20,8 +20,8 @@ export const FEATURES: Feature[] = [
   // kids
   { key: "pin", audience: "kids", status: "live", name: "Picture PIN sign-in", blurb: "No email, no password to forget. Kids tap 4 pictures. Too many wrong tries and the account locks until a teacher helps.", art: "champ-card" },
   { key: "town", audience: "kids", status: "live", name: "Champ Town", blurb: "A bright home base that grows with them. Little Champs mode for ages 4 to 8 with big buttons and fewer words.", art: "house" },
-  { key: "road", audience: "kids", status: "soon", name: "Road to Champ", blurb: "The quiz show. Climb from Rookie to Champ with power-ups and a shot clock. Teams or solo, on one big screen, even offline.", art: "quiz" },
-  { key: "arena", audience: "kids", status: "soon", name: "The Arena", blurb: "Six games: Verse Scramble, Memory Match, Who Am I?, Word Search, Jigsaw and Ark Catch. Clubs add their own content.", art: "game-rocket" },
+  { key: "road", audience: "kids", status: "live", name: "Road to Champ", blurb: "The quiz show. Climb from Rookie to Champ with power-ups and a shot clock. Teams or solo, on one big screen, even offline.", art: "quiz" },
+  { key: "arena", audience: "kids", status: "live", name: "The Arena", blurb: "Six games: Verse Scramble, Memory Match, Who Am I?, Word Search, Jigsaw and Ark Catch. Clubs add their own content.", art: "game-rocket" },
   { key: "quest", audience: "kids", status: "soon", name: "Faith Quest", blurb: "Bite-size lessons with checkpoints. Called Quest in clubs that switch faith content off.", faithOnly: false, art: "bible" },
   { key: "points", audience: "kids", status: "live", name: "Champ Points, Fire Streak and Trophies", blurb: "Points for learning and playing, a daily streak, and trophies including limited-time seasonal ones.", art: "flame" },
   { key: "hall", audience: "kids", status: "live", name: "Hall of Champs", blurb: "Leaderboards inside the class only, first names only. Never public.", art: "trophy" },
@@ -38,7 +38,7 @@ export const FEATURES: Feature[] = [
   { key: "checkin", audience: "teachers", status: "live", name: "Check-in and pickup codes", blurb: "Secure check-in and check-out with guardian pickup codes and printable name tags.", art: "school" },
   { key: "attendance", audience: "teachers", status: "live", name: "Attendance", blurb: "Mark the register on a phone and see trends over the term." },
   { key: "lessons", audience: "teachers", status: "live", name: "Lessons and assignments", blurb: "Publish lessons, set work, mark it and send feedback." },
-  { key: "host", audience: "teachers", status: "soon", name: "Host Road to Champ", blurb: "Run the quiz show for the whole room from one screen.", art: "quiz" },
+  { key: "host", audience: "teachers", status: "live", name: "Host Road to Champ", blurb: "Run the quiz show for the whole room from one screen.", art: "quiz" },
   { key: "certs", audience: "teachers", status: "live", name: "Certificates", blurb: "Printable, club-branded certificates for finished plans and levels.", art: "trophy" },
   // leaders
   { key: "clubhouse", audience: "leaders", status: "live", name: "Your Clubhouse", blurb: "Your club's own page where families join with your code. Your name, your link.", art: "cabin" },

@@ -19,7 +19,7 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 
 | CCT | Champzz | Status |
 |---|---|---|
-| Game Setup, Ground Rules, Gameplay, Results, Match Results, History, Seasons, Question Bank, Training | **Road to Champ**: setup, rules screen, host-led play on one screen, five tiers, Half Time / Ask the Squad / Coach's Call power-ups, Shot Clock, results, match history, seasons, question bank per club plus Champzz default packs, Training Ground solo mode, offline play | Planned (games phase) |
+| Game Setup, Ground Rules, Gameplay, Results, Match Results, History, Seasons, Question Bank, Training | **Road to Champ**: setup, rules screen, host-led play on one screen, five tiers, Half Time / Ask the Squad / Coach's Call power-ups, Shot Clock, results, match history, seasons, question bank per club plus Champzz default packs, Training Ground solo mode, offline play | **Live** (host results save later when offline; question bank per club; Training Ground answers checked by the server) |
 
 ## Kids (CCT `/student`) becomes Champ Town `/k/{club}`
 
@@ -31,7 +31,7 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | XP, streaks, badges | Champ Points ledger, Fire Streak (club time zone), Trophies incl. seasonal, five levels | **Live** (earned by daily visits and teacher stars; games and lessons add more later) |
 | Character collection | Champ collection (data-driven, original art) | Planned |
 | Leaderboard | Hall of Champs (class scoped, first names only, "new" kids hidden) | **Live** |
-| Bible Arcade (3 games) | The Arena: six games on one framework, XP on completion | Planned (games phase) |
+| Bible Arcade (3 games) | The Arena: Verse/Word Scramble, Memory Match, Who Am I?, Word Search, Jigsaw, Ark/Star Catch; Champ Points once per game per day; clubs add their own content | **Live** |
 | Pray for the World, Prayer Journal and Diary | Prayer and journal (faith mode), private notes | Planned |
 | Personal Vault | My Stuff (moderated uploads, size caps) | Planned |
 | Avatar Studio | My Champ avatar that grows with level, extras unlock by level | **Live** |
@@ -54,7 +54,7 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Lectures, Sunday calendar unlocks | Lessons (draft or published, dated, per class or whole club) | **Live** |
 | Assignments and grading | Assignments and grading (+10 Champ Points on hand-in) | **Live** |
 | Certificates | Club-branded printable certificates, seen by the kid and their parents | **Live** |
-| Host a quiz | Road to Champ host mode | Planned |
+| Host a quiz | Road to Champ host mode, match history, seasons | **Live** |
 | Ears inbox | Talk to Someone inbox (urgent alerts, staff notes, escalation, open log) | **Live** |
 | Bible Buddy log | AI companion log | Planned |
 | Passcode reset | Picture PIN reset | Live |
