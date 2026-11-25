@@ -8,11 +8,11 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 
 | CCT page | Champzz page | Upgrade | Status |
 |---|---|---|---|
-| Landing (`/`) | `/` full marketing site: hero, every feature section (kids, teachers, admins, parents), Road to Champ, games, safety, pricing, FAQ, CTA, "Built by Zebraish" at the end | No MFM content; light and fast on mobile data; real pricing from the database | Placeholder live, full page **Next** |
-| Everything Inside (`/features`) | `/features` | Every feature, by role, with screenshots of the real product | **Next** |
-| Safety (`/safety`) | `/safety` | Promises backed by tests (CCT's page promised things its database did not enforce) | **Next** |
+| Landing (`/`) | `/` full marketing site: hero, every feature section (kids, teachers, admins, parents), Road to Champ, games, safety, pricing, FAQ, CTA, "Built by Zebraish" at the end | No MFM content; light and fast on mobile data; real pricing from the database; unfinished features tagged Coming soon | **Live** |
+| Everything Inside (`/features`) | `/features` | Every feature, by role, with live or Coming soon status | **Live** |
+| Safety (`/safety`) | `/safety` | Promises backed by tests (CCT's page promised things its database did not enforce) | **Live** |
 | Anthem (`/anthem`) | Org-defined song or motto on each Clubhouse | Per org, not fixed MFM lyrics | Planned |
-| (none) | `/pricing`, `/privacy`, `/terms` | New SaaS pages | **Next** |
+| (none) | `/pricing`, `/privacy`, `/terms` | New SaaS pages (privacy and terms are drafts pending legal review) | **Live** |
 | (none) | Clubhouse `/c/{club}` | Each club's own branded page with posts and events | Registration live, posts and events Planned |
 
 ## Quiz (CCT's centrepiece)
