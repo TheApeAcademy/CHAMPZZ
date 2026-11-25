@@ -13,7 +13,7 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Safety (`/safety`) | `/safety` | Promises backed by tests (CCT's page promised things its database did not enforce) | **Live** |
 | Anthem (`/anthem`) | Org-defined song or motto on each Clubhouse | Per org, not fixed MFM lyrics | **Live** |
 | (none) | `/pricing`, `/privacy`, `/terms` | New SaaS pages (privacy and terms are drafts pending legal review) | **Live** |
-| (none) | Clubhouse `/c/{club}` | Each club's own branded page with posts and events | Registration live, posts and events Planned |
+| (none) | Clubhouse `/c/{club}` | Each club's own branded page: logo, colour, motto, news posts and registration (events stay members-only for safety) | **Live** |
 
 ## Quiz (CCT's centrepiece)
 
@@ -38,6 +38,7 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Digital ID card | Champ Card plus printable name tags for teachers | **Live** |
 | Class room: lessons, memory verse, assignments | My Class: lessons, memory verse (faith mode), class work with hand-in and marks | **Live** |
 | Messages with teacher | Messages (visible to all club staff, locked until the kid is confirmed) | **Live** |
+| Memory verse | Record-a-verse: kids record, teachers listen and give stars (faith mode) | **Live** |
 | Ears for You | Talk to Someone (anonymity enforced in the database, escalation, audit log) | **Live** |
 | Bible Buddy (AI) | Champ Buddy: Pro plan, club switch and per-child parental consent; names never sent; distress and contact details never reach the AI | **Live** (needs `ANTHROPIC_API_KEY` in production) |
 | Ministry calendar | Events | **Live** |
@@ -69,9 +70,9 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 | Teacher applications, promote admins | Team: invites, roles, remove (last Org Admin protected) | **Live** |
 | Classes at a glance, stats | Club dashboard plus Insights (attendance trend, not seen in 3 weeks, weekly points) | **Live** |
 | Seasons | Seasons with a fresh Hall of Champs board each season | **Live** |
-| Bible reading plans | Reading plans (faith mode) | Planned |
+| Bible reading plans | Reading plans (faith mode): references and summaries, 5 Champ Points a day, a certificate at the end | **Live** |
 | Ministry calendar | Events (Org Admin creates, in club time zone) | **Live** |
-| Digital Bank | Media library | Planned |
+| Digital Bank | Digital Bank: private club files (PDF and images), team-only or shared with families | **Live** |
 | Safety tab | Safeguarding centre and audit log | **Live** (Talk to Someone inbox, audit log viewer) |
 | (none) | Super Admin console: all clubs, Mark as paid, suspend | Live |
 | (none) | Billing, plans, joining settings, kid limit | Live |

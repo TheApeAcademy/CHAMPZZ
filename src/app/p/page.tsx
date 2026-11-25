@@ -21,9 +21,10 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
     .gte("starts_at", upcomingSince())
     .order("starts_at")
     .limit(20);
-  const [{ data: pickups }, { data: certs }] = await Promise.all([
+  const [{ data: pickups }, { data: certs }, { data: files }] = await Promise.all([
     supabase.rpc("my_pickup_codes"),
     supabase.from("certificates").select("id, title, issued_at, kids!inner(first_name)").order("issued_at", { ascending: false }).limit(20),
+    supabase.from("media_items").select("id, title, organizations!inner(name)").eq("audience", "families").order("created_at", { ascending: false }).limit(20),
   ]);
 
   return (
@@ -78,6 +79,16 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
                 <Link href={`/p/certificates/${c.id}`} className="font-extrabold underline">{c.title}</Link>
                 <span className="text-sm text-muted"> · {c.kids.first_name} · {new Date(c.issued_at).toLocaleDateString("en-GB")}</span>
               </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+      {(files ?? []).length > 0 ? (
+        <>
+          <h2 className="font-display text-2xl font-extrabold">Files from the club</h2>
+          <ul className="flex flex-col gap-2" data-testid="parent-files">
+            {(files ?? []).map((f) => (
+              <li key={f.id} className="rounded-[14px] border border-line bg-surface p-3"><a href={`/media/${f.id}`} className="font-extrabold underline">{f.title}</a><span className="text-sm text-muted"> · {f.organizations.name}</span></li>
             ))}
           </ul>
         </>

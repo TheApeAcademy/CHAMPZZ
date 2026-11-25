@@ -27,6 +27,7 @@ const messages: Record<string, string> = {
   already_checked_out: "Already checked out.",
   reason_required: "Write a short reason.",
   title_required: "Give the certificate a title.",
+  step_locked: "Finish the step before this one first.",
   bad_pack: "That question pack is not available here.",
   pack_too_small: "That pack needs at least 5 questions first.",
   bad_teams: "Check the team names.",

@@ -8,6 +8,8 @@ export const metadata = { title: "Champ Town" };
 const LIVE_TILES = [
   { title: "My Class", path: "class", cls: "bg-brand text-white" },
   { title: "Quest", path: "quest", cls: "bg-[#E8F5EE] text-ink" },
+  { title: "Reading plans", path: "reading", cls: "bg-surface text-ink border-2 border-line", faithOnly: true },
+  { title: "Record-a-verse", path: "verse", cls: "bg-gold text-ink", faithOnly: true },
   { title: "Champ Buddy", path: "buddy", cls: "bg-coral text-ink" },
   { title: "Messages", path: "messages", cls: "bg-surface text-ink border-2 border-line" },
   { title: "My Journal", path: "journal", cls: "bg-surface text-ink border-2 border-line" },
@@ -71,7 +73,7 @@ export default async function KidHomePage({ params }: PageProps<"/k/[org]/home">
       </Link>
 
       <div className={big ? "flex flex-col gap-4" : "grid grid-cols-2 gap-3"}>
-        {LIVE_TILES.map((t) => (
+        {LIVE_TILES.filter((t) => !("faithOnly" in t) || k.org.faithMode).map((t) => (
           <Link key={t.title} href={`/k/${org}/${t.path}`} className={`${t.cls} flex ${big ? "h-24 border-[3px] border-ink shadow-[5px_5px_0_var(--ink)]" : "h-28"} items-end rounded-[24px] p-4`}>
             <span className="font-display text-xl font-black italic uppercase leading-tight">{t.title}</span>
           </Link>

@@ -16,7 +16,10 @@ export default async function ClubhousePage({ params }: PageProps<"/c/[org]">) {
   const slug = slugSchema.safeParse(rawSlug);
   if (!slug.success) notFound();
   const supabase = await supabaseServer();
-  const { data } = await supabase.rpc("get_clubhouse", { p_slug: slug.data });
+  const [{ data }, { data: posts }] = await Promise.all([
+    supabase.rpc("get_clubhouse", { p_slug: slug.data }),
+    supabase.rpc("get_clubhouse_posts", { p_slug: slug.data }),
+  ]);
   const club = data?.[0];
   if (!club) notFound();
   const viewer = await getViewer();
@@ -36,6 +39,18 @@ export default async function ClubhousePage({ params }: PageProps<"/c/[org]">) {
           {club.tagline ? <p className="mt-2 max-w-xl">{club.tagline}</p> : null}
         </div>
       </section>
+      {(posts ?? []).length > 0 ? (
+        <section className="flex flex-col gap-3" data-testid="clubhouse-posts">
+          <h2 className="font-display text-2xl font-extrabold">News</h2>
+          {(posts ?? []).map((p) => (
+            <article key={p.id} className="rounded-[20px] border border-line bg-surface p-5">
+              <h3 className="text-lg font-extrabold">{p.title}</h3>
+              <p className="text-xs font-bold text-muted">{new Date(p.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>
+              <p className="mt-2 whitespace-pre-wrap">{p.body}</p>
+            </article>
+          ))}
+        </section>
+      ) : null}
       {club.motto ? (
         <figure className="rounded-[20px] border-2 border-gold bg-surface p-5 text-center" data-testid="clubhouse-motto">
           <figcaption className="mb-1 text-xs font-extrabold uppercase tracking-widest text-muted">Our motto</figcaption>

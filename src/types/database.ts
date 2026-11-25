@@ -297,6 +297,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"club_posts": {
+                  Row: {
+                    "body": string,"created_at": string,"created_by": string | null,"id": string,"organization_id": string,"published": boolean,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"organization_id": string,"published"?: boolean,"title": string
+                  }
+                  Update: {
+                    "body"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"organization_id"?: string,"published"?: boolean,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "club_posts_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"collectibles": {
                   Row: {
                     "blurb": string,"code": string,"color": string,"icon": number,"min_points": number,"name": string,"rarity": string,"sort": number
@@ -700,6 +720,26 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"media_items": {
+                  Row: {
+                    "audience": string,"created_at": string,"created_by": string | null,"id": string,"mime": string,"organization_id": string,"path": string,"size_bytes": number,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "audience"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"mime": string,"organization_id": string,"path": string,"size_bytes": number,"title": string
+                  }
+                  Update: {
+                    "audience"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"mime"?: string,"organization_id"?: string,"path"?: string,"size_bytes"?: number,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "media_items_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"memberships": {
                   Row: {
@@ -1111,6 +1151,78 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"reading_plan_days": {
+                  Row: {
+                    "day": number,"id": string,"organization_id": string | null,"plan_id": string,"reference": string,"summary": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "day": number,"id"?: string,"organization_id"?: string | null,"plan_id": string,"reference": string,"summary": string
+                  }
+                  Update: {
+                    "day"?: number,"id"?: string,"organization_id"?: string | null,"plan_id"?: string,"reference"?: string,"summary"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "reading_plan_days_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reading_plan_days_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "reading_plans"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"reading_plans": {
+                  Row: {
+                    "created_at": string,"id": string,"organization_id": string | null,"summary": string | null,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"organization_id"?: string | null,"summary"?: string | null,"title": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"organization_id"?: string | null,"summary"?: string | null,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "reading_plans_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"reading_progress": {
+                  Row: {
+                    "day_id": string,"kid_id": string,"organization_id": string,"read_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "day_id": string,"kid_id": string,"organization_id": string,"read_at"?: string
+                  }
+                  Update: {
+                    "day_id"?: string,"kid_id"?: string,"organization_id"?: string,"read_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "reading_progress_day_id_fkey"
+      columns: ["day_id"]
+isOneToOne: false
+      referencedRelation: "reading_plan_days"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reading_progress_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
                 },"registration_events": {
                   Row: {
                     "at": string,"by_user": string | null,"id": number,"join_code_id": string | null,"kid_id": string | null,"organization_id": string
@@ -1261,6 +1373,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"verse_recordings": {
+                  Row: {
+                    "created_at": string,"heard_by": string | null,"id": string,"kid_id": string,"lesson_id": string | null,"organization_id": string,"path": string,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"heard_by"?: string | null,"id"?: string,"kid_id": string,"lesson_id"?: string | null,"organization_id": string,"path": string,"status"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"heard_by"?: string | null,"id"?: string,"kid_id"?: string,"lesson_id"?: string | null,"organization_id"?: string,"path"?: string,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "verse_recordings_lesson_id_fkey"
+      columns: ["lesson_id"]
+isOneToOne: false
+      referencedRelation: "lessons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "verse_recordings_organization_id_kid_id_fkey"
+      columns: ["organization_id","kid_id"]
+isOneToOne: false
+      referencedRelation: "kids"
+      referencedColumns: ["organization_id","id"]
+    }
+                  ]
                 }
           }
           Views: {
@@ -1322,6 +1460,11 @@ isOneToOne: false
               "faith_mode": boolean,"joinable": boolean,"kind": string,"logo_path": string,"motto": string,"name": string,"organization_id": string,"primary_color": string,"slug": string,"tagline": string
             }[]
                            },
+"get_clubhouse_posts":
+{ Args: { "p_slug": string }; Returns: {
+              "body": string,"created_at": string,"id": string,"title": string
+            }[]
+                           },
 "give_star":
 { Args: { "p_kid": string,"p_note"?: string }; Returns: number
                            },
@@ -1341,6 +1484,12 @@ isOneToOne: false
                            },
 "mark_as_paid":
 { Args: { "p_amount_minor": number,"p_currency": string,"p_interval": string,"p_method": string,"p_note"?: string,"p_org": string,"p_period_end": string,"p_plan": string }; Returns: string
+                           },
+"mark_reading_day":
+{ Args: { "p_day": string }; Returns: Json
+                           },
+"mark_verse_heard":
+{ Args: { "p_recording": string }; Returns: undefined
                            },
 "moderate_upload":
 { Args: { "p_approve": boolean,"p_upload": string }; Returns: string
@@ -1449,6 +1598,9 @@ isOneToOne: false
                            },
 "svc_register_upload":
 { Args: { "p_caption": string,"p_kid": string,"p_path": string }; Returns: string
+                           },
+"svc_register_verse":
+{ Args: { "p_kid": string,"p_lesson"?: string,"p_path": string }; Returns: string
                            },
 "team_members":
 { Args: { "p_org": string }; Returns: {

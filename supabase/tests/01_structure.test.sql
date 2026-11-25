@@ -30,7 +30,7 @@ select is(
   (select array_agg(distinct tablename::text order by tablename::text) from pg_policies
    where schemaname = 'public' and cmd in ('INSERT', 'ALL') and 'authenticated' = any (roles)
      and tablename not in ('plans', 'plan_prices', 'plan_features', 'currency_settings')),
-  array['arena_content', 'assignments', 'class_teachers', 'classes', 'events', 'journal_entries', 'lessons', 'org_branding', 'quest_steps', 'question_packs', 'questions', 'quests', 'seasons'],
+  array['arena_content', 'assignments', 'class_teachers', 'classes', 'club_posts', 'events', 'journal_entries', 'lessons', 'org_branding', 'quest_steps', 'question_packs', 'questions', 'quests', 'reading_plan_days', 'reading_plans', 'seasons'],
   'client insert policies exist only where intended (catalogue writes are platform-admin only)'
 );
 
@@ -39,8 +39,8 @@ select is(
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname in ('public', 'app') and has_function_privilege('anon', p.oid, 'execute')
      and n.nspname || '.' || p.proname not like 'app.%'),
-  array['get_clubhouse'],
-  'anon can call exactly one public function: get_clubhouse'
+  array['get_clubhouse', 'get_clubhouse_posts'],
+  'anon can call exactly two public functions: the Clubhouse page and its published posts'
 );
 
 select is(
@@ -49,7 +49,7 @@ select is(
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
   array['accept_team_invite', 'add_concern_note', 'ai_status', 'approve_kid', 'archive_kid', 'change_member_role', 'check_in_kid', 'check_out_kid',
         'check_out_override', 'club_insights', 'club_local_to_utc', 'complete_quest_step', 'confirm_kid', 'create_organization', 'create_team_invite', 'finish_arena_game',
-        'get_clubhouse', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'kid_report', 'mark_as_paid', 'moderate_upload',
+        'get_clubhouse', 'get_clubhouse_posts', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'kid_report', 'mark_as_paid', 'mark_reading_day', 'mark_verse_heard', 'moderate_upload',
         'my_concern_replies', 'my_concerns', 'my_pickup_codes', 'record_my_visit', 'regenerate_join_code', 'remove_member',
         'reply_to_concern', 'reset_kid_pin', 'revoke_team_invite', 'save_quiz_match', 'send_message', 'set_ai_consent', 'set_concern_status', 'staff_concern',
         'staff_concern_notes', 'staff_concern_replies', 'staff_concerns', 'start_training', 'submit_assignment', 'submit_concern',

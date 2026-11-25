@@ -9,3 +9,16 @@ export function sniffImage(b: Uint8Array): "png" | "jpg" | "webp" | null {
 export function mimeFor(kind: "png" | "jpg" | "webp") {
   return kind === "jpg" ? "image/jpeg" : `image/${kind}`;
 }
+
+/** PDFs start with "%PDF-". */
+export function isPdf(b: Uint8Array): boolean {
+  return b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46 && b[4] === 0x2d;
+}
+
+/** Audio from a browser recorder: WebM, Ogg or MP4, recognised by their first bytes. */
+export function sniffAudio(b: Uint8Array): { ext: "webm" | "ogg" | "m4a"; mime: "audio/webm" | "audio/ogg" | "audio/mp4" } | null {
+  if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return { ext: "webm", mime: "audio/webm" };
+  if (b[0] === 0x4f && b[1] === 0x67 && b[2] === 0x67 && b[3] === 0x53) return { ext: "ogg", mime: "audio/ogg" };
+  if (b[4] === 0x66 && b[5] === 0x74 && b[6] === 0x79 && b[7] === 0x70) return { ext: "m4a", mime: "audio/mp4" };
+  return null;
+}

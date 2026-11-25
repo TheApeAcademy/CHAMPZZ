@@ -4,7 +4,7 @@ import { getViewer } from "@/lib/auth/viewer";
 const ITEMS = [
   ["", "Overview", false], ["checkin", "Check-in", false], ["talk", "Talk to Someone", false], ["messages", "Messages", false],
   ["lessons", "Lessons", false], ["assignments", "Assignments", false], ["events", "Events", false], ["hall", "Hall of Champs", false], ["quiz", "Road to Champ", false], ["arena", "Arena", false],
-  ["certificates", "Certificates", false], ["quests", "Quests", false], ["moderation", "Photo checks", false], ["buddy", "Champ Buddy", false], ["insights", "Insights", false], ["search", "Search", false], ["tags", "Name tags", false],
+  ["certificates", "Certificates", false], ["quests", "Quests", false], ["moderation", "Photo checks", false], ["verses", "Verse recordings", false], ["posts", "Clubhouse posts", false], ["media", "Digital Bank", false], ["buddy", "Champ Buddy", false], ["insights", "Insights", false], ["search", "Search", false], ["tags", "Name tags", false],
   ["team", "Team", true], ["seasons", "Seasons", true], ["settings", "Settings", true], ["audit", "Audit log", true],
 ] as const;
 

@@ -29,7 +29,7 @@ export const FEATURES: Feature[] = [
   { key: "classroom", audience: "kids", status: "live", name: "My Class", blurb: "Lessons, class work and messages with their teachers, all in one place. Hand in work and earn Champ Points.", art: "school" },
   { key: "card", audience: "kids", status: "live", name: "Champ Card", blurb: "A digital ID card, plus printable name tags for check-in.", art: "champ-card" },
   { key: "talk", audience: "kids", status: "live", name: "Talk to Someone", blurb: "A calm, private way to tell a trusted adult something is wrong, with anonymity protected by the database itself.", art: "heart-tree" },
-  { key: "verse", audience: "kids", status: "soon", name: "Record-a-verse", blurb: "Kids record their memory verse and teachers award stars.", faithOnly: true, art: "book" },
+  { key: "verse", audience: "kids", status: "live", name: "Record-a-verse", blurb: "Kids record their memory verse and teachers award stars.", faithOnly: true, art: "book" },
   // teachers
   { key: "classes", audience: "teachers", status: "live", name: "Classes and kid list", blurb: "Every kid in your club in one list, with a one-tap confirm for new kids at their first visit.", art: "class" },
   { key: "stars", audience: "teachers", status: "live", name: "Give stars", blurb: "Spot a kid doing well? Give a star worth 10 Champ Points. Up to 5 per kid a day.", art: "trophy" },
