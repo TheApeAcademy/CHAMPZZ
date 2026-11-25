@@ -1,18 +1,19 @@
-/** Champzz wordmark: italic CHAMP plus two Trophy Gold lightning bolts. */
+/**
+ * Champzz wordmark. It must always read as the full brand name, CHAMPZZ:
+ * "CHAMP" in ink (or cream on dark) and "ZZ" in Trophy Gold, both in the
+ * heavy italic display face, so the double z reads as speed, never sleep.
+ * ("Champ" on its own means a kid, as in Road to Champ; "Champzz" is the brand.)
+ */
 export function Logo({ size = 28, tone = "ink" }: { size?: number; tone?: "ink" | "cream" }) {
   return (
-    <span className="inline-flex items-center gap-0.5" aria-label="Champzz">
-      <span
-        aria-hidden="true"
-        className="font-display font-black italic leading-none tracking-tight"
-        style={{ fontSize: size, color: tone === "ink" ? "var(--ink)" : "var(--cream)" }}
-      >
-        CHAMP
-      </span>
-      <svg aria-hidden="true" width={size * 1.25} height={size} viewBox="44 0 128 112">
-        <polygon points="58,8 110,8 82,52 104,52 54,108 70,64 50,64" fill="var(--gold)" />
-        <polygon points="114,8 166,8 138,52 160,52 110,108 126,64 106,64" fill="var(--gold)" />
-      </svg>
+    <span
+      role="img"
+      aria-label="Champzz"
+      className="inline-flex items-baseline font-display font-black italic leading-none tracking-tight"
+      style={{ fontSize: size }}
+    >
+      <span aria-hidden="true" style={{ color: tone === "ink" ? "var(--ink)" : "var(--cream)" }}>CHAMP</span>
+      <span aria-hidden="true" style={{ color: "var(--gold)", letterSpacing: "-0.04em" }}>ZZ</span>
     </span>
   );
 }

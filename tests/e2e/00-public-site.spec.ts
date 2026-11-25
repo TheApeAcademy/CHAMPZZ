@@ -74,3 +74,10 @@ test("phone header keeps sign in and start, section links live in the footer", a
   await page.getByRole("navigation", { name: "Product" }).getByRole("link", { name: "Features" }).click();
   await expect(page).toHaveURL(/\/features$/);
 });
+
+test("the logo reads CHAMPZZ, never just CHAMP", async ({ page }) => {
+  await page.goto("/");
+  const logos = page.getByRole("img", { name: "Champzz" });
+  await expect(logos.first()).toBeVisible();
+  for (const text of await logos.allInnerTexts()) expect(text.replace(/\s/g, "")).toBe("CHAMPZZ");
+});

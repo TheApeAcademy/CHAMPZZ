@@ -4,9 +4,14 @@ Direction **D, Champ Mix**, chosen by Banks. Canvas with every board: https://cl
 
 ## Logo
 
-- Wordmark `CHAMP` in Archivo, weight 900, italic, tight tracking (-3px at 108px).
-- The `ZZ` is two lightning bolts in Trophy Gold, with three short speed streaks trailing on the left at 55% opacity. Energy and speed, never sleep.
-- On dark (Night Ink) the wordmark is Warm Cream; on light it is Night Ink. The bolts are always Trophy Gold.
+- The wordmark must always read **CHAMPZZ** (Banks, 2026-11-25: the earlier bolt-only zz read as "CHAMP").
+- Archivo, weight 900, italic, tight tracking. `CHAMP` in Night Ink (Warm Cream on dark), `ZZ` in Trophy Gold. Energy and speed, never sleep.
+- Lightning bolts and speed streaks stay as supporting graphics, never in place of the letters.
+
+## Champ vs Champzz
+
+- **Champzz** is the product, the company and the brand: page titles, emails, legal pages, "Built with Champzz".
+- **champ** means a kid: "Hi, Champ!", Road to Champ, Champ Points, Hall of Champs, My Champ, Champ Card, Champ Town, Little Champs.
 
 ## Colour tokens
 
