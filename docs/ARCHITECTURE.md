@@ -1,6 +1,6 @@
 # Champzz Architecture (proposal)
 
-Status: **proposal for Gate 1**. Nothing here is built yet. Read with `docs/AUDIT.md`, which explains why each choice fixes something CCT got wrong.
+Status: **Gate 1 answers folded in (2026-11-25), see section 15**. Nothing here is built yet. Read with `docs/AUDIT.md`, which explains why each choice fixes something CCT got wrong.
 
 ---
 
@@ -29,6 +29,7 @@ champzz/
   src/
     app/                          Next.js routes only. Thin: compose features, no business logic.
       (marketing)/                champzz public site, pricing, legal pages
+      c/[org]/                    the org's Clubhouse: public page, posts, events, Join
       (auth)/                     sign in, sign up, invite accept, password reset
       console/                    Super Admin console (platform owner)
       o/[org]/                    Org Admin + Teacher workspace
@@ -53,7 +54,7 @@ champzz/
         admin.ts                  service-role client, imports "server-only"
       billing/
         provider.ts               BillingProvider interface
-        paystack.ts               Paystack implementation
+        flutterwave.ts            Flutterwave implementation
         manual.ts                 offline payment (Mark as paid)
       entitlements/               plan feature flags and limits
       auth/                       role guards, kid login
@@ -81,7 +82,7 @@ Rules that keep it clean:
 
 ### 3.1 Tenant addressing
 
-Path based for launch: `/o/{slug}` for staff, `/k/{slug}` for kids. No wildcard DNS or per-org certificates needed. Custom subdomains (`{slug}.champzz...`) can be added later for the Network plan without changing the data model, because the org is always resolved to an `organization_id` server-side and never trusted from the client.
+Path based for launch: `/c/{slug}` for the org's Clubhouse, `/o/{slug}` for staff, `/k/{slug}` for kids. No wildcard DNS or per-org certificates needed. Custom subdomains (`{slug}.champzz...`) can be added later for the Network plan without changing the data model, because the org is always resolved to an `organization_id` server-side and never trusted from the client.
 
 ### 3.2 The rules
 
@@ -158,7 +159,7 @@ Grouped by area. All tenant tables carry `organization_id`, `created_at`, `updat
 - `plan_features` (plan_id, feature_key, enabled, limit_value)
 - `org_overrides` (org_id, feature_key or kid_limit, value, reason, set_by) for custom and Network deals
 - `subscriptions` (org_id, plan_id, interval, status, current_period_start, current_period_end, grace_until, provider, provider_customer_ref, provider_subscription_ref, price_lock_amount_minor, price_lock_currency, price_lock_until)
-- `payments` (org_id, subscription_id, provider `paystack|stripe|manual`, method `card|bank_transfer|cash|other`, provider_ref unique, amount_minor, currency, status, period_end_granted, approved_by, approved_at, note)
+- `payments` (org_id, subscription_id, provider `flutterwave|stripe|manual`, method `card|bank_transfer|cash|other`, provider_ref unique, amount_minor, currency, status, period_end_granted, approved_by, approved_at, note)
 - `billing_events` (provider, provider_event_id, payload, received_at, processed_at, error) with `unique (provider, provider_event_id)` for idempotency
 - `message_credit_ledger` (org_id, delta, reason, ref) and a balance view
 - `join_codes` (org_id, code, active, created_by, revoked_at). One active per org; regenerating revokes the old one in the same transaction.
@@ -217,9 +218,9 @@ pending --payment--> active --period ends unpaid--> grace (7 days) --> read_only
    grace / read_only --payment--> active
 ```
 
-- **pending**: Org Admin can finish the onboarding wizard (open question Q3); no teacher, parent or kid access.
+- **pending**: Org Admin can finish the onboarding wizard (logo, colours, classes, Clubhouse page, teacher invites are drafted). No teacher, parent or kid access until active. Invites are queued and sent on activation.
 - **active / grace**: everything the plan allows. Grace shows a banner and sends reminders (day 0, 3, 6).
-- **read_only**: everyone can read and export, nobody can write. Data is never deleted on expiry.
+- **read_only**: everyone can read and export, nobody can write. Data is never deleted on expiry. Retention after that is in 6.4.
 - **suspended**: only Super Admin and Org Admin billing pages.
 
 Transitions happen in exactly two SQL functions:
@@ -230,20 +231,20 @@ Transitions happen in exactly two SQL functions:
 
 ```ts
 interface BillingProvider {
-  id: 'paystack' | 'stripe' | 'manual'
+  id: 'flutterwave' | 'stripe' | 'manual'
   createCheckout(input: CheckoutInput): Promise<{ url: string; reference: string }>
   verifyWebhook(rawBody: string, headers: Headers): Promise<VerifiedEvent | null>
   fetchTransaction(reference: string): Promise<ProviderTransaction>
 }
 ```
 
-Paystack webhook route (`/api/webhooks/paystack`):
-1. Read the raw body, verify the signature header against the secret key with a constant-time compare. Reject otherwise.
+Flutterwave webhook route (`/api/webhooks/flutterwave`):
+1. Read the raw body, verify the webhook signature header against the secret hash configured in the Flutterwave dashboard, with a constant-time compare. Reject otherwise.
 2. Insert into `billing_events`; on unique conflict return 200 and stop (idempotent).
-3. Re-fetch the transaction from Paystack's verify endpoint and check amount, currency and reference match what we created. Never trust the webhook body alone.
+3. Re-fetch the transaction from Flutterwave's verify endpoint and check status, amount, currency and our `tx_ref` match what we created. Never trust the webhook body alone.
 4. Call `app.apply_payment` in one transaction; mark the event processed.
 
-The exact Paystack header name, hash algorithm and verify endpoint are confirmed against Paystack's current docs at build time, not taken from memory. Tests use Paystack test mode keys plus locally signed fake events.
+The exact Flutterwave header name, signing scheme, API version and verify endpoint are confirmed against Flutterwave's current docs at build time, not taken from memory. Keys live only in environment variables (Vercel and Supabase secrets), never in the repo or in chat. Tests use Flutterwave test mode keys plus locally signed fake events.
 
 Stripe later is a second `BillingProvider`; nothing else changes.
 
@@ -255,22 +256,49 @@ Stripe later is a second `BillingProvider`; nothing else changes.
 - **Messaging**: usage-based credits in `message_credit_ledger`. A send debits atomically and fails cleanly at zero. Never unlimited.
 - **Feature flags per plan**: `plan_features` + `org_overrides`, read through `app.org_has_feature()` in SQL and `can(org, 'feature')` in server code. UI hides locked features and shows an upgrade prompt; the DB enforces.
 
+### 6.4 Retention after an org stops paying
+
+Nigeria's NDPA and GDPR both say personal data should not be kept longer than needed, so "keep kids' data forever" is not the safe default. Proposed schedule, all days counted from the day the org enters `read_only`:
+
+| Day | What happens |
+|---|---|
+| 0 to 90 | Read-only. Everyone can still sign in, view and export. Paying restores everything instantly. |
+| 90 | Archived. Only the Org Admin can sign in, to pay or export. Kids, parents and teachers see "this club is paused". Org Admin is emailed an export link. |
+| 335 | Final notice by email: deletion in 30 days unless they pay or ask to keep it. |
+| 365 | Kids' personal data is deleted (names, credentials, consents, recordings, sensitive fields). Anonymised totals are kept for analytics. Payment and audit records are kept as the law requires for financial records. |
+
+An org can ask for export or deletion at any time (section 11). Super Admin can extend any deadline with a logged reason. The numbers are settings on the platform, not hardcoded.
+
 ---
 
-## 7. Join codes, registration and the kid limit
+## 7. Clubhouse, join codes, registration and the kid limit
 
-Flow (recommended, see Q2):
+### 7.1 The Clubhouse (each org's own page)
 
-1. A parent with a Champzz account enters the org's join code and their child's details, gives consent. This creates a `registration_request`, never an active kid.
-2. Org Admin (or a teacher with permission) approves and picks a class. Only then does the kid become `active`, get a username and picture PIN, and count against the limit.
-3. Org Admin can also add a kid directly (walk-in, no parent account yet), recording paper consent.
+Like a subreddit, every org gets its own page inside Champzz: its **Clubhouse** at `/c/{slug}`. Branded with the org's logo and colours, it holds the org's posts, announcements, events and the "Join" button. It is where families land from a shared link or a QR code on the church noticeboard.
 
-A forwarded code alone gives a stranger nothing: it only lets them *ask*, and an adult who knows the families decides. The code never reveals any child's name (fixes S5).
+What a Clubhouse never shows, signed in or not: any kid's name, photo, profile or scores. Posts are written by Org Admins and teachers only, and an org can make the whole Clubhouse members-only.
+
+### 7.2 Registration: parent-vouched, no approval queue by default
+
+Banks's call: Org Admins must not have to approve kids one by one. The rule from the brief still holds: a forwarded code alone must not let a stranger in. The design meets both:
+
+1. A parent opens the Clubhouse, taps Join, enters the org's join code, and creates or signs in to a parent account **with a verified phone or email (one-time code)**. An unverified account cannot register kids.
+2. The parent adds their child (first name, last initial, class or age group) and gives consent. The kid is **active immediately**: they get a username and picture PIN, and count against the kid limit. No admin click needed.
+3. New kids start as **"new"** for safety. They can play, learn and earn XP straight away, but their first name stays hidden from leaderboards and Friends, and messaging is off, until a teacher confirms them. Confirming is not a separate chore: it happens naturally the first time the kid is checked in or marked present at a real session (one tap the teacher is already doing). Orgs can switch this off.
+4. The Org Admin gets a **daily digest** ("6 new kids joined this week"), not a notification per kid, and can remove a kid, block a parent account, pause joining, or regenerate the join code (old code dies at once) from one screen.
+5. Guard rails against a leaked code: each parent account can register at most 6 kids per org without review, registrations per code are rate-limited per hour, and a spike (for example 20 sign-ups in an hour) pauses joining automatically and alerts the Org Admin.
+6. **Approval mode** is one setting per org. Orgs that want to handpick every kid (some schools and clubs will) switch it on, and step 2 becomes a request in a queue.
+7. The Org Admin can also add a kid directly (walk-in, no parent account yet), recording paper consent.
+
+The code never reveals any child's name (fixes S5). Every registration, removal and code change goes into `audit_log`.
+
+### 7.3 Kid limit
 
 **Kid limit in the database:**
 
 ```sql
--- inside app.approve_registration(request_id, class_id)
+-- inside app.activate_kid(...), called by both parent registration and approval mode
 select kid_limit into v_limit from app.org_limits where org_id = v_org;
 perform 1 from organizations where id = v_org for update;   -- serialises approvals per org
 select count(*) into v_active from kids where organization_id = v_org and status = 'active';
@@ -279,7 +307,7 @@ if v_active >= v_limit then
 end if;
 ```
 
-The `for update` lock on the org row makes two simultaneous approvals queue, so the cap can never be exceeded. New requests are also refused once active kids reach the limit, and the Org Admin sees "Upgrade your plan". A Playwright test fires parallel approvals at the cap and asserts exactly the allowed number succeed.
+The `for update` lock on the org row makes simultaneous registrations queue, so the cap can never be exceeded. At the cap, parents see "This club is full right now, ask the club leader", and the Org Admin sees "Upgrade your plan". A Playwright test fires parallel registrations at the cap and asserts exactly the allowed number succeed.
 
 ---
 
@@ -339,8 +367,8 @@ Every phase ends with tests that actually run and pass. The required Playwright 
 
 | Spec | Covers |
 |---|---|
-| `org-lifecycle.spec.ts` | sign up -> pending -> active by Paystack test webhook; and by Mark as paid; grace and read_only via a time-shifted `lifecycle_tick` |
-| `registration.spec.ts` | join code request, approval, regenerate code (old code dead), parallel approvals at the cap, blocked at cap with upgrade prompt |
+| `org-lifecycle.spec.ts` | sign up -> pending -> active by Flutterwave test webhook; and by Mark as paid; grace and read_only via a time-shifted `lifecycle_tick` |
+| `registration.spec.ts` | Clubhouse join with code and verified parent, kid active at once, "new" until first check-in, regenerate code (old code dead), approval mode on, parallel registrations at the cap, blocked at cap with upgrade prompt |
 | `auth.spec.ts` | sign in and out for Super Admin, Org Admin, Teacher, Parent, Kid (picture PIN), plus lockout after 5 wrong PINs |
 | `isolation.spec.ts` | org A users of every role cannot reach org B pages or data |
 | `games.spec.ts` | each game loads, plays to completion with scripted input, and records XP once |
@@ -362,16 +390,25 @@ Plus pgTAP for every policy and SQL function. Results are reported plainly: what
 
 ---
 
-## 15. Open questions for Banks (Gate 1)
+## 15. Gate 1 decisions (Banks, 2026-11-25)
 
-1. **Q1. Targets.** Which Supabase project and Vercel project should Champzz use? Create new ones, or do some already exist? Nothing gets deployed until you confirm.
-2. **Q2. Registration approval.** Should every kid registration wait for Org Admin approval (recommended)? Or should orgs be able to turn on auto-approval when a parent registers their own child?
-3. **Q3. Pending orgs.** Can an org that has not paid yet finish the onboarding wizard (logo, colours, classes, teacher invites), with nobody else let in until it is active? Recommended, because it helps signups turn into paying orgs.
-4. **Q4. Domain.** What is the Champzz domain? Kid auth users need a synthetic email domain that we control, and auth emails need a sender domain.
-5. **Q5. Paystack.** Is there a Paystack business account with test keys yet? Are the NGN prices VAT-inclusive?
-6. **Q6. Email and SMS providers.** Which provider for transactional email (invites, reminders, weekly parent report), and which for SMS or WhatsApp credits?
-7. **Q7. AI companion.** Should it carry over? Proposed: off by default, Pro plan and above, needs parental consent, and gets its own per-kid rate limit.
-8. **Q8. CCT art and audio.** Is there a licence record for any CCT image or sound? Without one, nothing carries over and Champzz gets all-new art.
-9. **Q9. Studio credit.** CCT shows a "Built by Zebraish" footer. Should Champzz have one, or is Champzz its own brand with no studio credit?
-10. **Q10. Retention.** How long is a read_only org's data kept before an export-then-delete offer? (It is never deleted automatically on expiry.)
-11. **Q11. Quiz show.** The CCT quiz is a "Millionaire" copy and has to become an original format. Is that OK, and is there a name you want for it?
+| # | Question | Decision |
+|---|---|---|
+| Q1 | Targets | New Supabase project and new Vercel project, both for Champzz only. Created at the foundation phase after Banks confirms the account, region and names. |
+| Q2 | Registration | No approval queue by default. Clubhouse page per org, parent-vouched registration, "new" status cleared at first check-in, daily digest, optional approval mode. See 7.2. |
+| Q3 | Pending orgs | Yes, the onboarding wizard works while pending. |
+| Q4 | Domain | Not bought yet. Banks buys it after the Vercel project exists. Build uses env vars, so nothing waits on it. |
+| Q5 | Payments | **Flutterwave**, not Paystack. Banks has the account. Keys go into env vars, never chat or git. VAT-inclusive pricing still to confirm. |
+| Q6 | Email and SMS | Banks is setting up both and will send the details. |
+| Q7 | AI companion | Carries over: off by default, Pro plan and up, parental consent required. |
+| Q8 | Art and audio | No licence for CCT assets. All new original art and audio. |
+| Q9 | Studio credit | Yes, "Built by Zebraish" at the very end of the landing page. |
+| Q10 | Retention | Banks asked for a recommendation. See 6.4 (90 days read-only, archive, deletion at 365 days with notices). |
+| Q11 | Quiz show | Original format, champion themed. Name to settle; see `docs/NAMING.md`. |
+
+### Still open
+
+- Supabase account or organization, region, and project names for Champzz.
+- Whether the NGN prices include VAT.
+- Email and SMS provider details (Banks to send).
+- Quiz show name (see `docs/NAMING.md`).
