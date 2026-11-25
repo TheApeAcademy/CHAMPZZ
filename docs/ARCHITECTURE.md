@@ -253,6 +253,8 @@ Stripe later is a second `BillingProvider`; nothing else changes.
 - Plans and prices are rows. The proposed seed matches the brief (Starter 50 kids, Basic 150, Pro 400, Network custom; NGN 20,000 / 45,000 / 85,000 a month). Super Admin edits them in the console.
 - **Founding price lock**: `subscriptions.price_lock_amount_minor` + `price_lock_until`. Checkout uses the lock while it is valid, whatever the current plan price.
 - **Annual**: a `plan_prices` row with `interval = 'year'`.
+- **Multi-currency** (NGN, GBP, USD, EUR, CAD): each plan has a hand-set price per currency in `plan_prices`, not a live exchange-rate conversion, so a UK church sees a clean price like a round pound figure and Banks controls every price. An org picks its billing currency at signup (default from its country) and its subscription stays in that currency. Amounts are stored in minor units (kobo, pence, cents). Flutterwave handles collection; which of the five currencies it can settle for Banks's account is confirmed against Flutterwave's docs and dashboard at build time. Final multi-currency pricing is a later discussion; the schema supports it from day one.
+- **VAT**: prices are shown and charged without VAT for now. The schema keeps a `tax_rate` and `tax_inclusive` field per currency (both off) so tax can be switched on later without a migration.
 - **Messaging**: usage-based credits in `message_credit_ledger`. A send debits atomically and fails cleanly at zero. Never unlimited.
 - **Feature flags per plan**: `plan_features` + `org_overrides`, read through `app.org_has_feature()` in SQL and `can(org, 'feature')` in server code. UI hides locked features and shows an upgrade prompt; the DB enforces.
 
@@ -398,7 +400,7 @@ Plus pgTAP for every policy and SQL function. Results are reported plainly: what
 | Q2 | Registration | No approval queue by default. Clubhouse page per org, parent-vouched registration, "new" status cleared at first check-in, daily digest, optional approval mode. See 7.2. |
 | Q3 | Pending orgs | Yes, the onboarding wizard works while pending. |
 | Q4 | Domain | Not bought yet. Banks buys it after the Vercel project exists. Build uses env vars, so nothing waits on it. |
-| Q5 | Payments | **Flutterwave**, not Paystack. Banks has the account. Keys go into env vars, never chat or git. VAT-inclusive pricing still to confirm. |
+| Q5 | Payments | **Flutterwave**, not Paystack. Banks has the account. Keys go into env vars, never chat or git. No VAT for now. Five currencies supported in the schema: NGN, GBP, USD, EUR, CAD (see 6.3). |
 | Q6 | Email and SMS | Banks is setting up both and will send the details. |
 | Q7 | AI companion | Carries over: off by default, Pro plan and up, parental consent required. |
 | Q8 | Art and audio | No licence for CCT assets. All new original art and audio. |
@@ -409,6 +411,6 @@ Plus pgTAP for every policy and SQL function. Results are reported plainly: what
 ### Still open
 
 - Supabase account or organization, region, and project names for Champzz.
-- Whether the NGN prices include VAT.
 - Email and SMS provider details (Banks to send).
 - Quiz show name (see `docs/NAMING.md`).
+- Per-currency prices for GBP, USD, EUR, CAD (later discussion).
