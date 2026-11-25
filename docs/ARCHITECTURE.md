@@ -392,6 +392,15 @@ Plus pgTAP for every policy and SQL function. Results are reported plainly: what
 
 ---
 
+## 14b. Foundation build notes (2026-11-25)
+
+Where the build deviated from this proposal, and why (details in `docs/GATE2.md`):
+
+- `cacheComponents` is off, so every tenant page renders per request.
+- TypeScript 5.9.3 (Next 16.4 pins TS 5), not 7.0.
+- Server-only database functions are reached through `public.svc_*` wrappers executable by the service role only. The `app` schema stays unexposed.
+- `/c/{slug}` hosts the Clubhouse (section 7.1).
+
 ## 15. Gate 1 decisions (Banks, 2026-11-25)
 
 | # | Question | Decision |

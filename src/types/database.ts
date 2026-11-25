@@ -609,6 +609,28 @@ isOneToOne: false
 "suspend_organization":
 { Args: { "p_org": string,"p_reason": string }; Returns: undefined
                            },
+"svc_apply_payment":
+{ Args: { "p_amount_minor": number,"p_approved_by"?: string,"p_currency": string,"p_interval": string,"p_method": string,"p_note"?: string,"p_org": string,"p_period_end": string,"p_plan": string,"p_provider": string,"p_ref": string }; Returns: string
+                           },
+"svc_attach_kid_user":
+{ Args: { "p_kid": string,"p_user": string }; Returns: undefined
+                           },
+"svc_discard_kid":
+{ Args: { "p_kid": string }; Returns: undefined
+                           },
+"svc_kid_verify_pin":
+{ Args: { "p_ip": string,"p_pin": string,"p_slug": string,"p_username": string }; Returns: {
+              "locked_until": string,"result": string,"user_id": string
+            }[]
+                           },
+"svc_lifecycle_tick":
+{ Args: { "p_now"?: string }; Returns: number
+                           },
+"svc_register_kid":
+{ Args: { "p_class_id": string,"p_first_name": string,"p_join_code": string,"p_last_initial": string,"p_parent": string,"p_pin": string,"p_policy_version": string,"p_scopes": Json }; Returns: {
+              "kid_id": string,"organization_id": string,"status": Database["public"]['Enums']["kid_status"],"username": string
+            }[]
+                           },
 "unsuspend_organization":
 { Args: { "p_org": string }; Returns: undefined
                            }

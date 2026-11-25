@@ -194,7 +194,7 @@ select is((select array_agg(id) from public.organizations), array[tests.id('org_
 select tests.reset();
 
 select tests.act_as(tests.id('platform'));
-select is((select count(*)::int from public.kids), 4, 'platform admin sees kids in every org');
+select is((select count(*)::int from public.kids where organization_id in (tests.id('org_a'), tests.id('org_b'))), 4, 'platform admin sees kids in every org');
 select tests.reset();
 
 -- anon

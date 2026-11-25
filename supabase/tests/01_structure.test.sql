@@ -2,7 +2,7 @@
 -- RLS, forgets organization_id, or quietly exposes a function or a write path.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(6);
+select plan(7);
 
 select is(
   (select array_agg(c.relname::text order by c.relname) from pg_class c
@@ -60,6 +60,15 @@ select is(
                        'discard_kid', 'new_join_code', 'audit', 'new_username')),
   null,
   'service-only functions are not callable by signed-in users'
+);
+
+select is(
+  (select array_agg(p.proname::text order by p.proname) from pg_proc p
+   join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public' and p.proname like 'svc\_%'
+     and (has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute'))),
+  null,
+  'server-only svc_ wrappers are callable by the service role only'
 );
 
 select * from finish();

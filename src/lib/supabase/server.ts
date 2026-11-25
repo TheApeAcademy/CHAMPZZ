@@ -1,13 +1,14 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
+import type { Database } from "@/types/database";
 import { env } from "@/lib/env";
 
 /** Per-request client acting as the signed-in user. RLS applies. */
 export async function supabaseServer() {
   const cookieStore = await cookies();
   const e = env();
-  return createServerClient(e.NEXT_PUBLIC_SUPABASE_URL, e.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
+  return createServerClient<Database>(e.NEXT_PUBLIC_SUPABASE_URL, e.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll: (items) => {
