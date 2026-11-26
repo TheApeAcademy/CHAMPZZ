@@ -28,3 +28,12 @@ Rules applied when picking:
 | scene-david.webp, scene-noah.webp, scene-daniel.webp, scene-moses.webp | scenes/*.jpg |
 
 All converted to WebP at 240 to 640 px (about 365 KB in total) so slow networks are not punished.
+
+## Landing v2 (2026-11-26)
+
+The landing page (`src/features/marketing/landing-v2/`) is ported from the Claude Design file "Champzz Landing v2".
+
+- `public/landing/`: the crew art made for Champzz (Daye, Conor, Ellie, the group cutout, leader, teacher, parents). Converted to WebP; the four full-bleed scenes went from about 2.5 MB each to under 150 KB.
+- `public/placeholders/landing/`: CCT art the design reuses (village buildings, feature icons, Bible scenes, book covers, the Champ Town map). Same rule as above: replace before launch.
+
+Flag before launch: `public/landing/teacher.webp` carries a visible creator watermark from its source. Replace it or license it.

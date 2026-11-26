@@ -55,28 +55,44 @@ test("features page tags exactly the unfinished features as Coming soon", async 
   await expect(page.locator('[data-status="live"]').getByText("Coming soon")).toHaveCount(0);
 });
 
-test("landing navigation reaches every public page and sign up", async ({ page }) => {
+// The landing (v2) is one long page: its header links scroll to sections, and
+// its footer links reach the other public pages.
+test("landing footer reaches every public page, and the landing reaches sign up and sign in", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  for (const [name, path] of [["Features", "/features"], ["Safety", "/safety"], ["Pricing", "/pricing"]] as const) {
-    await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name, exact: true }).click();
+  for (const [name, path] of [["Features", "/features"], ["Safety", "/safety"], ["Pricing", "/pricing"], ["Privacy", "/privacy"], ["Terms", "/terms"]] as const) {
+    await page.getByRole("navigation", { name: "Product" }).getByRole("link", { name, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`${path}$`));
     await page.goto("/");
   }
-  await page.getByRole("link", { name: "Start your club" }).first().click();
+  await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Start your club" }).click();
+  await expect(page).toHaveURL(/#start$/);
+  await page.locator("#start").getByRole("link", { name: "Start your club" }).click();
   await expect(page).toHaveURL(/\/signup$/);
+  await page.goto("/");
+  await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/login$/);
 });
 
-test("phone header keeps sign in and start, section links live in the footer", async ({ page }) => {
+test("phone header keeps sign in and start on screen", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 780 });
   await page.goto("/");
-  await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Sign in" })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Features", exact: true })).toBeHidden();
-  await page.getByRole("navigation", { name: "Product" }).getByRole("link", { name: "Features" }).click();
-  await expect(page).toHaveURL(/\/features$/);
+  const main = page.getByRole("navigation", { name: "Main" });
+  for (const name of ["Sign in", "Start your club"]) {
+    const box = await main.getByRole("link", { name }).boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.x + box!.width).toBeLessThanOrEqual(360);
+  }
+});
+
+test("landing shows the live NGN prices from the plans table", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#pricing")).toContainText("₦45,000");
 });
 
 test("the logo reads CHAMPZZ, never just CHAMP", async ({ page }) => {
-  await page.goto("/");
+  // The v2 landing uses the "Champions" signature in its header; every other public page keeps the CHAMPZZ logo.
+  await page.goto("/features");
   const logos = page.getByRole("img", { name: "Champzz" });
   await expect(logos.first()).toBeVisible();
   for (const text of await logos.allInnerTexts()) expect(text.replace(/\s/g, "")).toBe("CHAMPZZ");
