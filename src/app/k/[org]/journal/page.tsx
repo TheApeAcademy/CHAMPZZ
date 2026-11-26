@@ -5,16 +5,9 @@ import { getKidSnapshot } from "@/features/kids/server/data";
 import { supabaseServer } from "@/lib/supabase/server";
 import { addJournal, deleteJournal, markAnswered } from "@/features/delight/server/actions";
 import Link from "next/link";
+import { PRAYER_COUNTRIES, flagEmoji } from "@/content/prayer-countries";
 
 export const metadata = { title: "My journal" };
-
-// A gentle prompt for each day of the year. Topics, never named people or places.
-const PRAY_FOR = [
-  "children who are starting a new school", "families who need food today", "doctors and nurses", "people who feel lonely",
-  "children who are sick in hospital", "teachers and club leaders", "people who have to leave their homes", "farmers and their harvests",
-  "friends who are sad", "people who are looking for work", "grandparents", "children all over the world who are learning to read",
-  "peace where there is fighting", "people who help in emergencies",
-];
 
 export default async function JournalPage({ params }: PageProps<"/k/[org]/journal">) {
   const { org } = await params;
@@ -22,6 +15,7 @@ export default async function JournalPage({ params }: PageProps<"/k/[org]/journa
   const supabase = await supabaseServer();
   const { data: entries } = await supabase.from("journal_entries").select("id, kind, body, answered_at, created_at").order("created_at", { ascending: false }).limit(50);
   const day = Math.floor(new Date(`${new Intl.DateTimeFormat("en-CA", { timeZone: k.org.timezone }).format(new Date())}T00:00:00Z`).getTime() / 86_400_000);
+  const country = PRAYER_COUNTRIES[day % PRAYER_COUNTRIES.length];
   const path = `/k/${org}`;
   const label = { prayer: "Prayer", thanks: "Thank you", note: "Note" } as Record<string, string>;
   return (
@@ -33,7 +27,10 @@ export default async function JournalPage({ params }: PageProps<"/k/[org]/journa
       {k.org.faithMode ? (
         <section className="rounded-[20px] bg-ink p-4 text-cream" data-testid="pray-for">
           <p className="text-xs font-extrabold uppercase tracking-widest text-gold">Pray for the world today</p>
-          <p className="text-lg font-bold">Pray for {PRAY_FOR[day % PRAY_FOR.length]}.</p>
+          <p className="text-lg font-bold">
+            <span aria-hidden="true">{flagEmoji(country.code)} </span>Pray for {country.name}.
+          </p>
+          <p className="mt-1 text-sm text-cream/80">{country.focus}</p>
         </section>
       ) : null}
       <ActionForm action={addJournal.bind(null, org)} className="flex flex-col gap-3 rounded-[20px] bg-surface p-4">

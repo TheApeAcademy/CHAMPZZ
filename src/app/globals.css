@@ -40,3 +40,9 @@ body {
   outline: 3px solid var(--brand);
   outline-offset: 2px;
 }
+
+/* Champ Town village map: sprites bob gently, the kid's avatar hops. */
+.village-sprite { rotate: var(--tilt, 0deg); animation: village-bob 3s ease-in-out infinite; }
+.village-avatar { animation: village-bob 1.1s ease-in-out infinite; }
+@keyframes village-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
+@media (prefers-reduced-motion: reduce) { .village-sprite, .village-avatar { animation: none; } }

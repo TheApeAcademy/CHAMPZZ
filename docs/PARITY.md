@@ -19,20 +19,20 @@ Status key: **Live** (on champzz.vercel.app and tested), **Next** (in the curren
 
 | CCT | Champzz | Status |
 |---|---|---|
-| Game Setup, Ground Rules, Gameplay, Results, Match Results, History, Seasons, Question Bank, Training | **Road to Champ**: setup, rules screen, host-led play on one screen, five tiers, Half Time / Ask the Squad / Coach's Call power-ups, Shot Clock, results, match history, seasons, question bank per club plus Champzz default packs, Training Ground solo mode, offline play | **Live** (host results save later when offline; question bank per club; Training Ground answers checked by the server) |
+| Game Setup, Ground Rules, Gameplay, Results, Match Results, History, Seasons, Question Bank (all 434 CCT questions, now 10 default packs by category), Training | **Road to Champ**: setup, rules screen, host-led play on one screen, five tiers, Half Time / Ask the Squad / Coach's Call power-ups, Shot Clock, results, match history, seasons, question bank per club plus Champzz default packs, Training Ground solo mode, offline play | **Live** (host results save later when offline; question bank per club; Training Ground answers checked by the server) |
 
 ## Kids (CCT `/student`) becomes Champ Town `/k/{club}`
 
 | CCT | Champzz | Status |
 |---|---|---|
 | Kid sign-in (name + guessable passcode) | Username + picture PIN with lockout | Live |
-| Village Map home | Champ Town home, Champ and Little Champs age modes | **Live** |
-| Bible Journey lessons | Faith Quest (Quest in secular clubs): steps open in order, checkpoint answers checked by the server, clubs write their own | **Live** |
+| Village Map home | Champ Town home: CCT's full-bleed village map (every building links to its page, the kid's avatar on My House), plus Champ and Little Champs age modes | **Live** (map art is CCT placeholder art) |
+| Bible Journey lessons | Faith Quest (Quest in secular clubs): steps open in order, checkpoint answers checked by the server, clubs write their own. All 11 CCT Genesis lessons ship as default quests; their review questions ship as the Genesis Journey quiz pack | **Live** |
 | XP, streaks, badges | Champ Points ledger, Fire Streak (club time zone), Trophies incl. seasonal, five levels | **Live** (earned by daily visits and teacher stars; games and lessons add more later) |
 | Character collection | Champ collection: 12 collectibles unlocked by Champ Points | **Live** (simple icon art; swap for illustrated characters later) |
 | Leaderboard | Hall of Champs (class scoped, first names only, "new" kids hidden) | **Live** |
 | Bible Arcade (3 games) | The Arena: Verse/Word Scramble, Memory Match, Who Am I?, Word Search, Jigsaw, Ark/Star Catch; Champ Points once per game per day; clubs add their own content | **Live** |
-| Pray for the World, Prayer Journal and Diary | Prayer and journal: daily Pray for the World prompt, prayers marked answered, thanks and notes; private to the child | **Live** |
+| Pray for the World, Prayer Journal and Diary | Prayer and journal: CCT's daily Pray for the World country (114 countries with flag and prayer focus), prayers marked answered, thanks and notes; private to the child | **Live** |
 | Personal Vault | My Stuff: private bucket, checked by a grown-up before parents see it, 1 MB and 20-picture caps | **Live** |
 | Avatar Studio | My Champ avatar that grows with level, extras unlock by level | **Live** |
 | Digital ID card | Champ Card plus printable name tags for teachers | **Live** |

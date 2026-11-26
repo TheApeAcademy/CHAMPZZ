@@ -2,10 +2,13 @@ import Link from "next/link";
 import { KidShell } from "@/features/kids/components/kid-shell";
 import { ChampAvatar } from "@/features/kids/components/champ-avatar";
 import { getKidSnapshot } from "@/features/kids/server/data";
+import { VillageMap } from "@/features/kids/components/village-map";
 
 export const metadata = { title: "Champ Town" };
 
 const LIVE_TILES = [
+  { title: "Road to Champ", path: "road", cls: "bg-ink text-white" },
+  { title: "The Arena", path: "games", cls: "bg-coral text-ink" },
   { title: "My Class", path: "class", cls: "bg-brand text-white" },
   { title: "Quest", path: "quest", cls: "bg-[#E8F5EE] text-ink" },
   { title: "Reading plans", path: "reading", cls: "bg-surface text-ink border-2 border-line", faithOnly: true },
@@ -21,18 +24,12 @@ const LIVE_TILES = [
   { title: "My Champ", path: "my-champ", cls: "bg-coral text-ink" },
   { title: "Champ Card", path: "card", cls: "bg-ink text-white" },
 ];
-const SOON_TILES = [
-  { title: "Road to Champ", faith: false },
-  { title: "The Arena", faith: false },
-  { title: "Faith Quest", faith: true },
-];
 
 export default async function KidHomePage({ params }: PageProps<"/k/[org]/home">) {
   const { org } = await params;
   const k = await getKidSnapshot(org, { recordVisit: true });
   const span = k.next ? k.next.min_points - k.level.min_points : 1;
   const pct = k.next ? Math.max(2, Math.round(((k.points - k.level.min_points) / span) * 100)) : 100;
-  const soon = SOON_TILES.filter((t) => !t.faith || k.org.faithMode);
   const big = k.little;
 
   return (
@@ -53,6 +50,8 @@ export default async function KidHomePage({ params }: PageProps<"/k/[org]/home">
           <div className="h-3 rounded-full bg-gold" style={{ width: `${pct}%` }} />
         </div>
       </section>
+
+      <VillageMap slug={org} faith={k.org.faithMode} avatar={<ChampAvatar a={k.avatar} level={k.level.sort} size={44} />} />
 
       <div className="grid grid-cols-2 gap-3">
         <div className="flex items-center gap-2 rounded-[20px] bg-coral p-4 font-extrabold text-ink">
@@ -77,12 +76,6 @@ export default async function KidHomePage({ params }: PageProps<"/k/[org]/home">
           <Link key={t.title} href={`/k/${org}/${t.path}`} className={`${t.cls} flex ${big ? "h-24 border-[3px] border-ink shadow-[5px_5px_0_var(--ink)]" : "h-28"} items-end rounded-[24px] p-4`}>
             <span className="font-display text-xl font-black italic uppercase leading-tight">{t.title}</span>
           </Link>
-        ))}
-        {soon.map((t) => (
-          <div key={t.title} className={`flex ${big ? "h-24" : "h-28"} flex-col justify-end rounded-[24px] border-2 border-dashed border-line bg-surface p-4 text-muted`}>
-            <span className="font-display text-lg font-black italic uppercase leading-tight">{t.title}</span>
-            <span className="text-xs font-bold">Coming soon</span>
-          </div>
         ))}
       </div>
     </KidShell>
