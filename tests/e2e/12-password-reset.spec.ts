@@ -24,6 +24,7 @@ test("forgot password: email link, new password, old one stops working", async (
 
   await page.goto("/login");
   await page.getByRole("link", { name: "Forgot your password?" }).click();
+  await expect(page.getByRole("heading", { name: "Reset your password" })).toBeVisible();
   await page.getByLabel("Email").fill(email);
   await page.getByRole("button", { name: "Send reset link" }).click();
   await expect(page.getByText("a reset link is on its way")).toBeVisible();
@@ -45,6 +46,7 @@ test("forgot password: email link, new password, old one stops working", async (
   await page.getByLabel("Password").fill(PASSWORD);
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(alert(page)).toContainText("do not match");
+  await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill("brand-new-password-1");
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL(`**/o/${org.slug}`);

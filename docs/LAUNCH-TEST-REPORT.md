@@ -17,8 +17,8 @@ Date: 2026-11-26. Tested by Claude Code on branch `claude/zen-volta-9lkjsc`, usi
 | Area | Result |
 |---|---|
 | Database security and rules (pgTAP) | **1,041 / 1,041 passed** |
-| End-to-end feature tests (Playwright, phone size) | **57 / 57 passed** (plus 3 new password-reset tests, see below) |
-| Page crawl: every page, every role, every button clicked | **CRAWL_SUMMARY** |
+| End-to-end feature tests (Playwright, phone size) | **60 / 60 passed** (57 existing plus 3 new password-reset tests) |
+| Page crawl: every page, every role, every button clicked | **173 page visits, 180 button clicks: 0 crashes, 0 server errors, 0 console errors, 0 broken images, 0 phone overflow** |
 | Type check, lint, production build | Clean (3 lint warnings in the landing file, harmless) |
 | Production wiring | **Not done yet:** see section 4 |
 
@@ -42,6 +42,16 @@ Date: 2026-11-26. Tested by Claude Code on branch `claude/zen-volta-9lkjsc`, usi
    - On every page: recorded load status, crashes and console errors, sideways scroll at phone width, and broken images.
    - **Clicked every non-destructive button on every page**, each on a fresh load, and recorded what happened.
    - Skipped buttons that delete or remove things: they're covered by the scenario tests.
+   - Results by role:
+
+     | Role | Pages | Result |
+     |---|---|---|
+     | Visitor (signed out) | 26 | All public pages load. Every private page sends you to Sign in, then back where you were. An unknown club gives a proper 404 |
+     | Org Admin | 36 | All load; all 27 buttons respond correctly; the 3 CSV downloads work |
+     | Teacher | 31 | All load. Team, Settings and Audit log are correctly blocked (404) |
+     | Parent | 30 | My kids, child progress, every weekly report week. The staff dashboard is correctly blocked |
+     | Kid | 32 | All 19 Champ Town areas, all 6 Arena games, 4 quests. Adult pages are correctly blocked |
+     | Super Admin | 18 | Console and every club's detail page |
 
 ---
 
@@ -189,9 +199,10 @@ Date: 2026-11-26. Tested by Claude Code on branch `claude/zen-volta-9lkjsc`, usi
 
 ### 4.2 Email (must do: without it, nobody can confirm sign-up or reset a password)
 - [ ] Supabase's built-in email only sends a handful per hour and is meant for testing. In Supabase → Authentication → SMTP, use **Resend**: the `zebraish.com` domain is already verified there. Or verify a Champzz domain in Resend and send from it.
-- [ ] Supabase → Authentication → URL configuration:
+- [ ] **Critical.** Supabase → Authentication → URL configuration:
   - **Site URL** = your domain.
-  - Add `https://<domain>/auth/callback` to the redirect allow-list.
+  - Add `https://<domain>/auth/callback**` to the redirect allow-list.
+  - Without this, Supabase ignores the app's link and every confirm or reset email drops people on the homepage instead of signing them in. Found while testing: it happened locally until the URL was allowed.
 - [ ] Supabase → Authentication → Email templates. Set the links so they work on any device:
   - Confirm signup: `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup&next=/onboarding`
   - Reset password: `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/reset-password`
@@ -213,6 +224,8 @@ Date: 2026-11-26. Tested by Claude Code on branch `claude/zen-volta-9lkjsc`, usi
 ---
 
 ## 5. Small notes (not blockers)
+
+- Sign in clears the email box after a wrong password (React's default after a form submits). Re-typing it is mildly annoying; worth keeping the email next pass.
 
 - An invalid team invite link still shows "You have been invited" until the person signs in; **Accept invite** then refuses it. This is on purpose (it doesn't reveal which links are real), but the wording could be softer.
 - 3 lint warnings in `landing-v2.jsx` (unused variables). Harmless.
