@@ -1,3 +1,4 @@
+import { daysUntil } from "@/lib/time";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdultShell } from "@/components/shell";
@@ -37,7 +38,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
       .order("created_at", { ascending: false }),
     supabase.from("join_codes").select("code").eq("organization_id", org.id).eq("active", true).maybeSingle(),
     isAdmin
-      ? supabase.from("subscriptions").select("current_period_end, grace_until, kid_limit_override, plans(name, kid_limit)").eq("organization_id", org.id).maybeSingle()
+      ? supabase.from("subscriptions").select("current_period_end, grace_until, kid_limit_override, provider, plans(name, kid_limit)").eq("organization_id", org.id).maybeSingle()
       : Promise.resolve({ data: null }),
     isAdmin
       ? supabase.from("plan_prices").select("id, currency, billing_interval, amount_minor, plans!inner(name, kid_limit, sort, active)").eq("active", true)
@@ -58,6 +59,9 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
 
   const active = (kids ?? []).filter((k) => k.status === "active").length;
   const limit = sub ? (sub.kid_limit_override ?? sub.plans?.kid_limit ?? 0) : 0;
+  const trial = sub?.provider === "trial" && org.status === "active";
+  const trialDays = trial ? daysUntil(sub!.current_period_end) : 0;
+  const needsPlan = org.status !== "active" || trial;
   const payable = (prices ?? [])
     .filter((p) => p.currency === details.billing_currency && p.plans.active)
     .sort((a, b) => a.plans.sort - b.plans.sort);
@@ -79,10 +83,13 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
       {org.status === "pending" ? (
         <Banner tone="warn">Your club is set up but not active yet. Choose a plan to unlock teachers, parents and kids.</Banner>
       ) : null}
+      {trial && isAdmin ? (
+        <Banner tone="info"><span data-testid="trial-banner">Free trial: {trialDays} {trialDays === 1 ? "day" : "days"} left, up to {limit} kids. Everything works now. Choose a plan below any time to keep going.</span></Banner>
+      ) : null}
       {org.status === "grace" ? <Banner tone="warn">Your plan has ended. Everything still works for a few days. Renew now to avoid read-only mode.</Banner> : null}
       {org.status === "read_only" ? <Banner tone="error">Your club is read-only. Nothing has been deleted. Renew to switch everything back on.</Banner> : null}
 
-      {isAdmin && org.status !== "active" && org.status !== "suspended" ? (
+      {isAdmin && needsPlan && org.status !== "suspended" ? (
         <Card>
           <h2 className="mb-3 text-lg font-extrabold">Choose a plan</h2>
           {!e.FLUTTERWAVE_SECRET_KEY ? (
@@ -118,7 +125,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
         </Card>
       ) : null}
 
-      {isAdmin && bank && org.status !== "active" && org.status !== "suspended" ? (
+      {isAdmin && bank && needsPlan && org.status !== "suspended" ? (
         <Card>
           <h2 className="mb-2 text-lg font-extrabold">Pay by bank transfer</h2>
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm" data-testid="bank-details">
@@ -141,7 +148,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
           <Card>
             <p className="text-sm font-bold text-muted">Plan</p>
             <p className="font-display text-2xl font-extrabold">{sub.plans?.name}</p>
-            <p className="text-sm text-muted">Paid until {new Date(sub.current_period_end).toLocaleDateString("en-GB")}</p>
+            <p className="text-sm text-muted">{trial ? "Free trial until" : "Paid until"} {new Date(sub.current_period_end).toLocaleDateString("en-GB")}</p>
           </Card>
         ) : null}
         {code ? (

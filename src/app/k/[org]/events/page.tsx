@@ -7,7 +7,7 @@ export const metadata = { title: "Events" };
 
 export default async function KidEventsPage({ params }: PageProps<"/k/[org]/events">) {
   const { org } = await params;
-  const k = await getKidSnapshot(org);
+  const k = await getKidSnapshot(org, { clubOnly: true });
   const supabase = await supabaseServer();
   const { data: events } = await supabase.from("events").select("id, title, description, starts_at, location").gte("starts_at", upcomingSince()).order("starts_at");
   const fmt = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: k.org.timezone });

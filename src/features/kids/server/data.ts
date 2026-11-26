@@ -12,6 +12,8 @@ export type KidSnapshot = {
   username: string;
   confirmed: boolean;
   org: { id: string; slug: string; name: string; faithMode: boolean; timezone: string };
+  /** Champzz at home: no club, so no class, teacher, messages or club tools. */
+  home: boolean;
   className: string | null;
   little: boolean;
   avatar: AvatarConfig;
@@ -38,11 +40,11 @@ function dayBefore(iso: string): string {
 /** The signed-in kid for /k/[org]/..., or a redirect to that club's kid sign-in. */
 export async function requireKid(slug: string) {
   const viewer = await getViewer();
-  if (viewer.kind !== "kid" || viewer.org.slug !== slug) redirect(`/k/${encodeURIComponent(slug)}`);
+  if (viewer.kind !== "kid" || viewer.org.slug !== slug) redirect(`/login?kid=1`);
   return viewer;
 }
 
-export async function getKidSnapshot(slug: string, opts: { recordVisit?: boolean } = {}): Promise<KidSnapshot> {
+export async function getKidSnapshot(slug: string, opts: { recordVisit?: boolean; clubOnly?: boolean } = {}): Promise<KidSnapshot> {
   const viewer = await requireKid(slug);
   const supabase = await supabaseServer();
   if (opts.recordVisit) await supabase.rpc("record_my_visit");
@@ -50,14 +52,16 @@ export async function getKidSnapshot(slug: string, opts: { recordVisit?: boolean
   const [{ data: kid }, { data: stats }, { data: levels }, { count: trophies }] = await Promise.all([
     supabase
       .from("kids")
-      .select("id, first_name, username, confirmed_at, avatar, classes(name, age_band), organizations!inner(id, slug, name, faith_mode, timezone)")
+      .select("id, first_name, username, confirmed_at, avatar, classes(name, age_band), organizations!inner(id, slug, name, kind, faith_mode, timezone)")
       .eq("id", viewer.kid.id)
       .single(),
     supabase.from("kid_stats").select("points_total, streak_current, streak_best, last_active_day, stars").eq("kid_id", viewer.kid.id).maybeSingle(),
     supabase.from("levels").select("code, name, min_points, sort").order("sort"),
     supabase.from("kid_badges").select("badge_id", { count: "exact", head: true }).eq("kid_id", viewer.kid.id),
   ]);
-  if (!kid) redirect(`/k/${encodeURIComponent(slug)}`);
+  if (!kid) redirect(`/login?kid=1`);
+  const home = kid.organizations.kind === "home";
+  if (home && opts.clubOnly) redirect(`/k/${encodeURIComponent(slug)}/home`);
 
   const all = levels ?? [];
   const points = stats?.points_total ?? 0;
@@ -74,6 +78,7 @@ export async function getKidSnapshot(slug: string, opts: { recordVisit?: boolean
     username: kid.username,
     confirmed: kid.confirmed_at !== null,
     org: { id: kid.organizations.id, slug: kid.organizations.slug, name: kid.organizations.name, faithMode: kid.organizations.faith_mode, timezone: tz },
+    home,
     className: kid.classes?.name ?? null,
     little: kid.classes?.age_band === "little",
     avatar: parseAvatar(kid.avatar),

@@ -20,7 +20,8 @@ export default async function KidSignInPage({ params }: PageProps<"/k/[org]">) {
   const supabase = await supabaseServer();
   const { data } = await supabase.rpc("get_clubhouse", { p_slug: slug.data });
   const club = data?.[0];
-  if (!club) notFound();
+  // Champzz at home kids (and any unknown club) use the one sign-in page.
+  if (!club) redirect("/login?kid=1");
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-4 py-8">

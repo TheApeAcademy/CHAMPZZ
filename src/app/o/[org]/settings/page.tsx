@@ -52,7 +52,7 @@ export default async function SettingsPage({ params }: PageProps<"/o/[org]/setti
           <Field label="City (shown in the club directory)" name="city" maxLength={60} defaultValue={b?.city ?? ""} />
           <label className="flex items-start gap-2 text-sm font-bold">
             <input type="checkbox" name="listed" defaultChecked={b?.listed} className="mt-0.5 h-5 w-5" data-testid="listed" />
-            <span>List in the club directory<span className="block font-normal text-muted">Adults can find and follow your club and see your news posts. Kids&apos; names and pictures are never shown, and children still join only through a parent and your join code.</span></span>
+            <span>Public club<span className="block font-normal text-muted">On: your club is in the directory, anyone can read your news and follow you, and teachers can ask to join. Off (private): hidden from the directory and your news stays inside the club. Either way, kids&apos; names and pictures are never public, and children join only through a parent with your join code.</span></span>
           </label>
           <div className="sm:col-span-2"><Submit>Save settings</Submit></div>
         </ActionForm>

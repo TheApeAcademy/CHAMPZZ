@@ -1498,6 +1498,40 @@ isOneToOne: false
               "body": string,"club_name": string,"club_slug": string,"created_at": string,"logo_path": string,"post_id": string,"primary_color": string,"title": string
             }[]
                            },
+"decide_teacher_request":
+{ Args: { "p_approve": boolean,"p_request": string }; Returns: undefined
+                           },
+"request_to_teach":
+{ Args: { "p_note"?: string,"p_slug": string }; Returns: string
+                           },
+"teacher_requests_for":
+{ Args: { "p_org": string }; Returns: {
+              "created_at": string,"email": string,"full_name": string,"id": string,"note": string
+            }[]
+                           },
+"svc_kid_club_for_username":
+{ Args: { "p_username": string }; Returns: string
+                           },
+"svc_register_home_kid":
+{ Args: { "p_faith": boolean,"p_first_name": string,"p_last_initial": string,"p_parent": string,"p_pin": string,"p_policy_version": string,"p_scopes": Json }; Returns: {
+              "kid_id": string,"organization_id": string,"username": string
+            }[]
+                           },
+"svc_start_kid_signup":
+{ Args: { "p_first_name": string,"p_ip": string,"p_pin": string }; Returns: {
+              "code": string,"kid_id": string,"username": string
+            }[]
+                           },
+"svc_kid_approval_lookup":
+{ Args: { "p_code": string }; Returns: {
+              "first_name": string,"kid_id": string,"username": string
+            }[]
+                           },
+"svc_approve_kid_signup":
+{ Args: { "p_code": string,"p_faith": boolean,"p_parent": string,"p_policy_version": string,"p_scopes": Json }; Returns: {
+              "kid_id": string,"organization_id": string,"username": string
+            }[]
+                           },
 "give_star":
 { Args: { "p_kid": string,"p_note"?: string }; Returns: number
                            },

@@ -10,7 +10,7 @@ export const metadata = { title: "My Stuff" };
 
 export default async function StuffPage({ params }: PageProps<"/k/[org]/stuff">) {
   const { org } = await params;
-  const k = await getKidSnapshot(org);
+  const k = await getKidSnapshot(org, { clubOnly: true });
   const supabase = await supabaseServer();
   const { data: items } = await supabase.from("kid_uploads").select("id, path, caption, status, created_at").eq("kid_id", k.kidId).neq("status", "rejected").order("created_at", { ascending: false });
   const urls = await signedUploadUrls((items ?? []).filter((i) => i.status === "approved").map((i) => i.path));

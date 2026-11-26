@@ -1,7 +1,11 @@
 import { upcomingSince } from "@/lib/time";
 import Link from "next/link";
 import { AdultShell } from "@/components/shell";
-import { Banner, Card, Pill } from "@/components/ui/primitives";
+import { Banner, Card, Field, Pill, buttonClass } from "@/components/ui/primitives";
+import { ActionForm } from "@/components/ui/action-form";
+import { Submit } from "@/components/ui/submit";
+import { PicturePin } from "@/features/kids/components/picture-pin";
+import { addHomeKid } from "@/features/registration/server/actions";
 import { requireAdult } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 
@@ -9,7 +13,7 @@ export const metadata = { title: "My kids" };
 
 export default async function ParentPage({ searchParams }: PageProps<"/p">) {
   const viewer = await requireAdult("/p");
-  const { added, club } = await searchParams;
+  const { added } = await searchParams;
   const supabase = await supabaseServer();
   const { data: links } = await supabase
     .from("guardians")
@@ -44,8 +48,8 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
       ) : null}
       {typeof added === "string" ? (
         <Banner tone="ok">
-          Added. Their username is <strong data-testid="new-username">{added}</strong>. They sign in at{" "}
-          {typeof club === "string" ? <Link className="underline" href={`/k/${club}`}>/k/{club}</Link> : "their club's kid page"} with that username and the 4 pictures you chose.
+          Added. Their username is <strong data-testid="new-username">{added}</strong>. They sign in on the{" "}
+          <Link className="underline" href="/login?kid=1">sign-in page</Link> with that username and the 4 pictures you chose.
         </Banner>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2" data-testid="parent-kids">
@@ -68,7 +72,38 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
             <div className="mt-2">{k.status === "pending" ? <Pill tone="warn">Waiting for the club to approve</Pill> : k.confirmed_at ? <Pill tone="ok">Confirmed</Pill> : <Pill tone="new">New: confirmed at first visit</Pill>}</div>
           </Card>
         ))}
-        {(links ?? []).length === 0 ? <p className="text-sm text-muted">No kids yet. Open your club&apos;s Clubhouse page to add your child.</p> : null}
+        {(links ?? []).length === 0 ? <p className="text-sm text-muted">No kids yet. Add one below, or open your club&apos;s Clubhouse page to add them to a club.</p> : null}
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card>
+          <h2 className="mb-1 text-lg font-extrabold">Add a child at home</h2>
+          <p className="mb-3 text-sm text-muted">No club needed. They get Champ Town with games, quests, prayer and their collection. You can add them to a club later.</p>
+          <ActionForm action={addHomeKid}>
+            <div className="grid gap-4 sm:grid-cols-[2fr_1fr]">
+              <Field label="Child's first name" name="firstName" required maxLength={40} />
+              <Field label="Surname initial" name="lastInitial" maxLength={1} />
+            </div>
+            <fieldset className="flex flex-col gap-2 text-sm">
+              <legend className="mb-1 font-bold">What should they see?</legend>
+              <label className="flex items-center gap-2"><input type="radio" name="content" value="faith" defaultChecked className="h-5 w-5" /> Bible adventures and games</label>
+              <label className="flex items-center gap-2"><input type="radio" name="content" value="play" className="h-5 w-5" /> Games and quests only</label>
+            </fieldset>
+            <PicturePin />
+            <label className="flex items-start gap-2 text-sm">
+              <input type="checkbox" name="consent" required className="mt-0.5 h-5 w-5" />
+              <span>I am this child&apos;s parent or guardian and I agree to the privacy notice.</span>
+            </label>
+            <Submit>Add my child</Submit>
+          </ActionForm>
+        </Card>
+        <Card>
+          <h2 className="mb-1 text-lg font-extrabold">Did your child start an account?</h2>
+          <p className="mb-3 text-sm text-muted">Kids can start their own account and get a code. Type it in to approve it.</p>
+          <Link className={buttonClass("outline")} href="/approve">Approve with a code</Link>
+          <h2 className="mb-1 mt-6 text-lg font-extrabold">Join a club</h2>
+          <p className="mb-3 text-sm text-muted">Got a join code from a church or club? Find them and add your child there.</p>
+          <Link className={buttonClass("outline")} href="/clubs">Find a club</Link>
+        </Card>
       </div>
       {(certs ?? []).length > 0 ? (
         <>

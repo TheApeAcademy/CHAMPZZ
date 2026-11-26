@@ -13,7 +13,7 @@ export default async function OnboardingPage() {
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
       <Card className="mx-auto w-full max-w-xl">
         <h1 className="mb-1 font-display text-3xl font-extrabold">Set up your club</h1>
-        <p className="mb-5 text-sm text-muted">You can finish setting up before you pay. Teachers, parents and kids get in once your plan is active.</p>
+        <p className="mb-5 text-sm text-muted">Your club works straight away with a 14-day free trial for up to 15 kids. Choose a plan any time from your club page.</p>
         <ActionForm action={createOrganization}>
           <Field label="Club or ministry name" name="name" required maxLength={80} />
           <Field label="Web address" name="slug" required pattern="[a-z0-9][a-z0-9-]{1,38}[a-z0-9]" hint="Lowercase letters, numbers and hyphens, e.g. sunrise-kids. Your Clubhouse will live at /c/your-address." />

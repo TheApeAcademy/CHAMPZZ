@@ -6,6 +6,7 @@ import { Submit } from "@/components/ui/submit";
 import { requireOrgRole } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import { changeRole, createInvite, removeMember, revokeInvite } from "@/features/admin/server/actions";
+import { decideTeacherRequest } from "@/features/clubs/server/actions";
 
 export const metadata = { title: "Team" };
 
@@ -13,9 +14,10 @@ export default async function TeamPage({ params }: PageProps<"/o/[org]/team">) {
   const { org: slug } = await params;
   const { viewer, org } = await requireOrgRole(slug, ["org_admin"]);
   const supabase = await supabaseServer();
-  const [{ data: members }, { data: invites }] = await Promise.all([
+  const [{ data: members }, { data: invites }, { data: requests }] = await Promise.all([
     supabase.rpc("team_members", { p_org: org.id }),
     supabase.from("team_invites").select("id, role, email, created_at, expires_at, accepted_at, revoked_at").eq("organization_id", org.id).order("created_at", { ascending: false }).limit(30),
+    supabase.rpc("teacher_requests_for", { p_org: org.id }),
   ]);
   const now = new Date().toISOString();
   const state = (i: NonNullable<typeof invites>[number]) =>
@@ -24,6 +26,26 @@ export default async function TeamPage({ params }: PageProps<"/o/[org]/team">) {
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
       <StaffNav slug={slug} active="team" />
       <h1 className="font-display text-3xl font-extrabold">Team</h1>
+      {(requests ?? []).length > 0 ? (
+        <Card>
+          <h2 className="mb-1 text-lg font-extrabold">Asking to teach</h2>
+          <p className="mb-3 text-sm text-muted">They found your club and asked to join as a teacher. Only approve people you know.</p>
+          <ul className="flex flex-col gap-3" data-testid="teacher-requests">
+            {(requests ?? []).map((r) => (
+              <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-line p-3">
+                <div>
+                  <p className="font-extrabold">{r.full_name || r.email}</p>
+                  <p className="text-sm text-muted">{r.email}{r.note ? ` · "${r.note}"` : ""}</p>
+                </div>
+                <div className="flex gap-2">
+                  <ActionForm action={decideTeacherRequest.bind(null, slug, r.id, true)}><Submit>Approve</Submit></ActionForm>
+                  <ActionForm action={decideTeacherRequest.bind(null, slug, r.id, false)}><Submit variant="outline">Decline</Submit></ActionForm>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ) : null}
       <Card>
         <h2 className="mb-1 text-lg font-extrabold">Invite someone</h2>
         <p className="mb-3 text-sm text-muted">You get a private link to send them. It works once, for 7 days. They sign in or create an account, then join.</p>

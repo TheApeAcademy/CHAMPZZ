@@ -11,6 +11,33 @@ import { kidPassword } from "@/lib/auth/kid-credentials";
 import { pinSchema, slugSchema, usernameSchema } from "@/lib/validation";
 import type { ActionState } from "@/components/ui/action-form";
 
+/** Kid sign-in from the one sign-in page: username + picture PIN, no club needed. */
+export async function kidSignInAnywhere(_prev: ActionState, data: FormData): Promise<ActionState> {
+  const u = usernameSchema.safeParse(data.get("username"));
+  if (!u.success) return { error: "Type your username and tap your 4 pictures." };
+  const { data: slug } = await supabaseAdmin().rpc("svc_kid_club_for_username", { p_username: u.data });
+  // An unknown username still goes through the same slow PIN check, so it takes the same time.
+  return kidSignIn(typeof slug === "string" && slug ? slug : "champzz-home", _prev, data);
+}
+
+const startSchema = z.object({
+  firstName: z.string().trim().min(1, "Type your first name.").max(40).regex(/^[\p{L}' -]+$/u, "Use letters only."),
+  pin: pinSchema,
+});
+
+/** A kid starts their own account. It stays locked until a grown-up approves it with the code. */
+export async function startKidSignup(_prev: ActionState, data: FormData): Promise<ActionState> {
+  const parsed = startSchema.safeParse(Object.fromEntries(data));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
+  const h = await headers();
+  const ip = (h.get("x-forwarded-for") ?? "").split(",")[0]!.trim() || h.get("x-real-ip") || "unknown";
+  const { data: rows, error } = await supabaseAdmin().rpc("svc_start_kid_signup", { p_first_name: parsed.data.firstName, p_pin: parsed.data.pin, p_ip: ip });
+  const r = rows?.[0];
+  if (error?.message.includes("too_many_signups")) return { error: "Lots of accounts were started on this device. Please try again later." };
+  if (error || !r) return { error: "Something went wrong. Please try again." };
+  redirect(`/start/done?u=${encodeURIComponent(r.username)}&c=${encodeURIComponent(r.code)}`);
+}
+
 /** Kid sign-in: org + username + picture PIN, throttled and locked out in the database. */
 export async function kidSignIn(slug: string, _prev: ActionState, data: FormData): Promise<ActionState> {
   const s = slugSchema.safeParse(slug);

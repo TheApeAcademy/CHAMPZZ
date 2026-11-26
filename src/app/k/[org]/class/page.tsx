@@ -9,7 +9,7 @@ export const metadata = { title: "My Class" };
 
 export default async function KidClassPage({ params }: PageProps<"/k/[org]/class">) {
   const { org } = await params;
-  const k = await getKidSnapshot(org);
+  const k = await getKidSnapshot(org, { clubOnly: true });
   const supabase = await supabaseServer();
   const [{ data: lessons }, { data: work }, { data: subs }] = await Promise.all([
     supabase.from("lessons").select("id, title, body, memory_verse, lesson_date, take_home_talk, take_home_do").order("created_at", { ascending: false }).limit(20),

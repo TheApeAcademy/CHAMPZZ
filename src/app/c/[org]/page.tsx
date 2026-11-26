@@ -10,7 +10,7 @@ import { slugSchema } from "@/lib/validation";
 import { logoUrl, textOn } from "@/lib/branding";
 import { registerKid } from "@/features/registration/server/actions";
 import { PicturePin } from "@/features/kids/components/picture-pin";
-import { setFollow } from "@/features/clubs/server/actions";
+import { requestToTeach, setFollow } from "@/features/clubs/server/actions";
 
 export default async function ClubhousePage({ params }: PageProps<"/c/[org]">) {
   const { org: rawSlug } = await params;
@@ -55,6 +55,7 @@ export default async function ClubhousePage({ params }: PageProps<"/c/[org]">) {
           </div>
         ) : null}
       </section>
+      {!club.listed && !club.demo ? <Banner>This is a private club. Its news is for members. If you are a parent, ask the club leader for the join code.</Banner> : null}
       {club.demo ? <Banner>This is a demo club made up to show what Champzz looks like. It has no members, and children cannot be added to it.</Banner> : null}
       {(posts ?? []).length > 0 ? (
         <section className="flex flex-col gap-3" data-testid="clubhouse-posts">
@@ -110,6 +111,20 @@ export default async function ClubhousePage({ params }: PageProps<"/c/[org]">) {
           </ActionForm>
         )}
       </Card>
+      {!club.demo && club.listed && viewer.kind !== "kid" ? (
+        <Card className="mx-auto w-full max-w-xl">
+          <h2 className="mb-1 font-display text-2xl font-extrabold">Teach here</h2>
+          {viewer.kind === "adult" ? (
+            <ActionForm action={requestToTeach.bind(null, club.slug)}>
+              <p className="text-sm text-muted">Ask to join this club as a teacher. The club leader approves you first.</p>
+              <Field label="A short note for the leader (optional)" name="note" maxLength={300} placeholder="e.g. I help with the 8 to 12s on Sundays" />
+              <Submit variant="outline">Ask to teach here</Submit>
+            </ActionForm>
+          ) : (
+            <p className="text-sm text-muted"><Link className="font-extrabold underline" href={`/login?next=${encodeURIComponent(`/c/${club.slug}`)}`}>Sign in</Link> to ask to teach at this club.</p>
+          )}
+        </Card>
+      ) : null}
     </AdultShell>
   );
 }

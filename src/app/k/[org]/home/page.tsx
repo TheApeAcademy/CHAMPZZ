@@ -9,16 +9,16 @@ export const metadata = { title: "Champ Town" };
 const LIVE_TILES = [
   { title: "Road to Champ", path: "road", cls: "bg-ink text-white" },
   { title: "The Arena", path: "games", cls: "bg-coral text-ink" },
-  { title: "My Class", path: "class", cls: "bg-brand text-white" },
+  { title: "My Class", path: "class", cls: "bg-brand text-white", club: true },
   { title: "Quest", path: "quest", cls: "bg-[#E8F5EE] text-ink" },
-  { title: "Reading plans", path: "reading", cls: "bg-surface text-ink border-2 border-line", faithOnly: true },
-  { title: "Record-a-verse", path: "verse", cls: "bg-gold text-ink", faithOnly: true },
-  { title: "Champ Buddy", path: "buddy", cls: "bg-coral text-ink" },
-  { title: "Messages", path: "messages", cls: "bg-surface text-ink border-2 border-line" },
+  { title: "Reading plans", path: "reading", cls: "bg-surface text-ink border-2 border-line", faithOnly: true, club: true },
+  { title: "Record-a-verse", path: "verse", cls: "bg-gold text-ink", faithOnly: true, club: true },
+  { title: "Champ Buddy", path: "buddy", cls: "bg-coral text-ink", club: true },
+  { title: "Messages", path: "messages", cls: "bg-surface text-ink border-2 border-line", club: true },
   { title: "My Journal", path: "journal", cls: "bg-surface text-ink border-2 border-line" },
-  { title: "My Stuff", path: "stuff", cls: "bg-brand text-white" },
+  { title: "My Stuff", path: "stuff", cls: "bg-brand text-white", club: true },
   { title: "Collection", path: "collection", cls: "bg-gold text-ink" },
-  { title: "Events", path: "events", cls: "bg-gold text-ink" },
+  { title: "Events", path: "events", cls: "bg-gold text-ink", club: true },
   { title: "Trophies", path: "trophies", cls: "bg-gold text-ink" },
   { title: "Hall of Champs", path: "hall", cls: "bg-surface text-ink border-2 border-line" },
   { title: "My Champ", path: "my-champ", cls: "bg-coral text-ink" },
@@ -51,7 +51,7 @@ export default async function KidHomePage({ params }: PageProps<"/k/[org]/home">
         </div>
       </section>
 
-      <VillageMap slug={org} faith={k.org.faithMode} avatar={<ChampAvatar a={k.avatar} level={k.level.sort} size={44} />} />
+      <VillageMap slug={org} faith={k.org.faithMode} home={k.home} avatar={<ChampAvatar a={k.avatar} level={k.level.sort} size={44} />} />
 
       <div className="grid grid-cols-2 gap-3">
         <div className="flex items-center gap-2 rounded-[20px] bg-coral p-4 font-extrabold text-ink">
@@ -66,13 +66,17 @@ export default async function KidHomePage({ params }: PageProps<"/k/[org]/home">
 
       {!k.confirmed ? <p className="rounded-[14px] bg-[#FCEBC4] px-4 py-2 text-sm font-bold text-[#5A3F00]">Welcome! Your teacher will say hi at your first visit.</p> : null}
 
+      {k.home ? (
+        <p className="rounded-[20px] border-2 border-[#9CC8B0] bg-[#E8F5EE] p-4 text-sm text-ink" data-testid="home-grownup"><span className="block font-extrabold">Worried or upset?</span>Tell your mum, dad or a grown-up you trust. You can also ask them to find your church or club on Champzz.</p>
+      ) : (
       <Link href={`/k/${org}/talk`} className="flex items-center gap-3 rounded-[20px] border-2 border-[#9CC8B0] bg-[#E8F5EE] p-4 text-ink" data-testid="talk-tile">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E6B47" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" /></svg>
         <span><span className="block font-extrabold">Talk to Someone</span><span className="text-sm">Worried or upset? Tell a trusted adult. You can stay anonymous.</span></span>
       </Link>
+      )}
 
       <div className={big ? "flex flex-col gap-4" : "grid grid-cols-2 gap-3"}>
-        {LIVE_TILES.filter((t) => !("faithOnly" in t) || k.org.faithMode).map((t) => (
+        {LIVE_TILES.filter((t) => (!("faithOnly" in t) || k.org.faithMode) && (!("club" in t) || !k.home)).map((t) => (
           <Link key={t.title} href={`/k/${org}/${t.path}`} className={`${t.cls} flex ${big ? "h-24 border-[3px] border-ink shadow-[5px_5px_0_var(--ink)]" : "h-28"} items-end rounded-[24px] p-4`}>
             <span className="font-display text-xl font-black italic uppercase leading-tight">{t.title}</span>
           </Link>

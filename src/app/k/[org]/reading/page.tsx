@@ -7,7 +7,7 @@ export const metadata = { title: "Reading plans" };
 
 export default async function ReadingPage({ params }: PageProps<"/k/[org]/reading">) {
   const { org } = await params;
-  const k = await getKidSnapshot(org);
+  const k = await getKidSnapshot(org, { clubOnly: true });
   const supabase = await supabaseServer();
   const [{ data: plans }, { data: days }, { data: done }] = await Promise.all([
     supabase.from("reading_plans").select("id, title, summary").order("created_at"),

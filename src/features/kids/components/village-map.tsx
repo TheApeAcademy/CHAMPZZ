@@ -12,8 +12,8 @@ type Spot = { key: string; label: string; path: string; image: string; x: number
 
 const ART = "/placeholders/landing";
 
-export function VillageMap({ slug, faith, avatar }: { slug: string; faith: boolean; avatar: ReactNode }) {
-  const spots: Spot[] = [
+export function VillageMap({ slug, faith, home = false, avatar }: { slug: string; faith: boolean; home?: boolean; avatar: ReactNode }) {
+  const all: Spot[] = [
     { key: "class", label: "My Class", path: "class", image: `${ART}/village-class-house1.webp`, x: 34, y: 18, width: 30, heightPct: 16.8, tilt: -4, accent: "#2f5bff" },
     { key: "hall", label: "Hall of Champs", path: "hall", image: `${ART}/feature-leaderboard.webp`, x: 77, y: 87, width: 16, heightPct: 11.5, tilt: 5, accent: "#f2b33d" },
     { key: "card", label: "My Card", path: "card", image: `${ART}/village-profile-card.webp`, x: 38, y: 48, width: 16, heightPct: 9.1, tilt: -6, accent: "#c13bff" },
@@ -23,7 +23,9 @@ export function VillageMap({ slug, faith, avatar }: { slug: string; faith: boole
     { key: "games", label: "Games", path: "games", image: `${ART}/village-game-rocket.webp`, x: 73, y: 31, width: 16, heightPct: 8.7, tilt: -5, accent: "#e0531a" },
     { key: "messages", label: "My Teacher", path: "messages", image: `${ART}/village-messages-teacherhome.webp`, x: 75, y: 17, width: 27, heightPct: 13.4, tilt: 4, accent: "#0b1026" },
   ];
-  const home = spots.find((s) => s.key === "home")!;
+  // Kids at home have no club: no class, teacher or Talk to Someone inbox.
+  const spots = home ? all.filter((s) => !["class", "messages", "talk"].includes(s.key)) : all;
+  const house = spots.find((s) => s.key === "home")!;
 
   return (
     <section aria-label="Champ Town map" className="-mx-4 overflow-hidden sm:mx-0 sm:rounded-[28px]" data-testid="village-map">
@@ -61,7 +63,7 @@ export function VillageMap({ slug, faith, avatar }: { slug: string; faith: boole
             {faith ? "Bible World Map" : "World Map"}: soon
           </span>
         </div>
-        <div className="village-avatar pointer-events-none absolute z-20 -translate-x-1/2" style={{ left: `${home.x}%`, top: `${home.y - home.heightPct - 6}%` }}>
+        <div className="village-avatar pointer-events-none absolute z-20 -translate-x-1/2" style={{ left: `${house.x}%`, top: `${house.y - house.heightPct - 6}%` }}>
           {avatar}
         </div>
       </div>

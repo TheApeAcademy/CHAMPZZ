@@ -9,7 +9,7 @@ export const metadata = { title: "Messages" };
 
 export default async function KidMessagesPage({ params }: PageProps<"/k/[org]/messages">) {
   const { org } = await params;
-  const k = await getKidSnapshot(org);
+  const k = await getKidSnapshot(org, { clubOnly: true });
   const supabase = await supabaseServer();
   const { data: msgs } = await supabase.from("messages").select("id, body, from_staff, created_at").eq("kid_id", k.kidId).order("created_at");
   const path = `/k/${org}/messages`;

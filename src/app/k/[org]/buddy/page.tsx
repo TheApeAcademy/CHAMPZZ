@@ -10,7 +10,7 @@ export const metadata = { title: "Champ Buddy" };
 
 export default async function BuddyPage({ params }: PageProps<"/k/[org]/buddy">) {
   const { org } = await params;
-  const k = await getKidSnapshot(org);
+  const k = await getKidSnapshot(org, { clubOnly: true });
   const supabase = await supabaseServer();
   const { data: s } = await supabase.rpc("ai_status");
   const st = s as { plan: boolean; club: boolean; consent: boolean; active: boolean; used_today: number; limit: number } | null;

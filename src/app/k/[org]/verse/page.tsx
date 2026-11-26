@@ -7,7 +7,7 @@ export const metadata = { title: "Record-a-verse" };
 
 export default async function VersePage({ params }: PageProps<"/k/[org]/verse">) {
   const { org } = await params;
-  const k = await getKidSnapshot(org);
+  const k = await getKidSnapshot(org, { clubOnly: true });
   const supabase = await supabaseServer();
   const [{ data: lesson }, { data: mine }] = await Promise.all([
     supabase.from("lessons").select("id, title, memory_verse").not("memory_verse", "is", null).order("created_at", { ascending: false }).limit(1).maybeSingle(),

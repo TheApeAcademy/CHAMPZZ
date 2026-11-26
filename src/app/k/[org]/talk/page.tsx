@@ -10,7 +10,7 @@ export const metadata = { title: "Talk to Someone" };
 // Deliberately calm: no points, no colours that shout, no game language.
 export default async function KidTalkPage({ params }: PageProps<"/k/[org]/talk">) {
   const { org } = await params;
-  const k = await getKidSnapshot(org);
+  const k = await getKidSnapshot(org, { clubOnly: true });
   const supabase = await supabaseServer();
   const { data: mine } = await supabase.rpc("my_concerns");
   const threads = await Promise.all((mine ?? []).map(async (c) => ({ c, replies: (await supabase.rpc("my_concern_replies", { p_concern: c.id })).data ?? [] })));
