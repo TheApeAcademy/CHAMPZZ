@@ -10,7 +10,7 @@ Needs Node 22 and Docker.
 
 ```bash
 npm install
-npx supabase start -x studio,logflare,vector,imgproxy,edge-runtime,realtime,postgres-meta,supavisor,storage-api,mailpit
+npx supabase start -x studio,logflare,vector,imgproxy,edge-runtime,realtime,postgres-meta,supavisor   # keep storage (uploads) and mailpit (auth emails)
 cp .env.example .env.local   # fill from `npx supabase status` plus random secrets
 npm run dev
 ```

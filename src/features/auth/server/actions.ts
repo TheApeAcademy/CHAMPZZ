@@ -60,3 +60,35 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
   redirect(viewer.kind === "kid" ? `/k/${viewer.org.slug}` : "/login");
 }
+
+const forgotSchema = z.object({ email: z.email("Please enter a valid email.") });
+
+/** Sends a reset link. The reply is the same whether or not the account exists, so emails can't be probed. */
+export async function requestPasswordReset(_prev: ActionState, data: FormData): Promise<ActionState> {
+  const parsed = forgotSchema.safeParse(Object.fromEntries(data));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
+  const done = { ok: "If that email has a Champzz account, a reset link is on its way. Check your inbox and spam folder." };
+  // Kid accounts use synthetic addresses and never reset by email.
+  if (parsed.data.email.toLowerCase().endsWith(`@${env().KID_EMAIL_DOMAIN}`)) return done;
+  const supabase = await supabaseServer();
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${env().APP_URL}/auth/callback?next=${encodeURIComponent("/reset-password")}`,
+  });
+  return done;
+}
+
+const resetSchema = z.object({
+  password: z.string().min(10, "Use at least 10 characters.").max(128),
+  confirm: z.string(),
+}).refine((v) => v.password === v.confirm, { message: "The two passwords do not match.", path: ["confirm"] });
+
+export async function setNewPassword(_prev: ActionState, data: FormData): Promise<ActionState> {
+  const viewer = await getViewer();
+  if (viewer.kind !== "adult") return { error: "Your reset link has expired. Ask for a new one." };
+  const parsed = resetSchema.safeParse(Object.fromEntries(data));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
+  const supabase = await supabaseServer();
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) return { error: error.code === "same_password" ? "Choose a password you have not used here before." : "We could not change your password. Please try again." };
+  redirect(homeFor(viewer));
+}

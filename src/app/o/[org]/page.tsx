@@ -85,7 +85,20 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
       {isAdmin && org.status !== "active" && org.status !== "suspended" ? (
         <Card>
           <h2 className="mb-3 text-lg font-extrabold">Choose a plan</h2>
-          {payable.length === 0 ? (
+          {!e.FLUTTERWAVE_SECRET_KEY ? (
+            <div className="flex flex-col gap-3">
+              <div className="grid gap-3 sm:grid-cols-3">
+                {payable.map((p) => (
+                  <div key={p.id} className="flex flex-col gap-1 rounded-[16px] border-2 border-line p-4">
+                    <span className="font-display text-xl font-extrabold">{p.plans.name}</span>
+                    <span className="font-bold">{money(p.amount_minor, p.currency)} / {p.billing_interval}</span>
+                    <span className="text-sm text-muted">{p.plans.kid_limit ? `Up to ${p.plans.kid_limit} kids` : "Custom"}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-muted" data-testid="card-coming-soon">Card payments are coming soon. Pay for your plan by bank transfer below and we will activate your club as soon as it arrives.</p>
+            </div>
+          ) : payable.length === 0 ? (
             <p className="text-sm text-muted">No online prices in {details.billing_currency} yet. Contact Champzz to pay offline.</p>
           ) : (
             <ActionForm action={startCheckout.bind(null, slug)} className="flex flex-col gap-3">
