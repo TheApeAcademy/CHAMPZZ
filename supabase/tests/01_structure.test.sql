@@ -39,8 +39,8 @@ select is(
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname in ('public', 'app') and has_function_privilege('anon', p.oid, 'execute')
      and n.nspname || '.' || p.proname not like 'app.%'),
-  array['get_clubhouse', 'get_clubhouse_posts'],
-  'anon can call exactly two public functions: the Clubhouse page and its published posts'
+  array['get_clubhouse', 'get_clubhouse_posts', 'list_clubs'],
+  'anon can call exactly three public functions: the Clubhouse page, its published posts and the club directory'
 );
 
 select is(
@@ -49,8 +49,8 @@ select is(
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
   array['accept_team_invite', 'add_concern_note', 'ai_status', 'approve_kid', 'archive_kid', 'change_member_role', 'check_in_kid', 'check_out_kid',
         'check_out_override', 'club_insights', 'club_local_to_utc', 'complete_quest_step', 'confirm_kid', 'create_organization', 'create_team_invite', 'finish_arena_game',
-        'get_clubhouse', 'get_clubhouse_posts', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'kid_report', 'mark_as_paid', 'mark_reading_day', 'mark_verse_heard', 'moderate_upload',
-        'my_concern_replies', 'my_concerns', 'my_pickup_codes', 'record_my_visit', 'regenerate_join_code', 'remove_member',
+        'follow_club', 'get_clubhouse', 'get_clubhouse_posts', 'give_star', 'grade_submission', 'hall_of_champs', 'issue_certificate', 'kid_report', 'list_clubs', 'mark_as_paid', 'mark_reading_day', 'mark_verse_heard', 'moderate_upload',
+        'my_concern_replies', 'my_concerns', 'my_feed', 'my_pickup_codes', 'record_my_visit', 'regenerate_join_code', 'remove_member',
         'reply_to_concern', 'reset_kid_pin', 'revoke_team_invite', 'save_quiz_match', 'send_message', 'set_ai_consent', 'set_concern_status', 'staff_concern',
         'staff_concern_notes', 'staff_concern_replies', 'staff_concerns', 'start_training', 'submit_assignment', 'submit_concern',
         'suspend_organization', 'team_members', 'training_answer', 'training_half_time', 'training_state', 'unsuspend_organization', 'update_my_champ'],

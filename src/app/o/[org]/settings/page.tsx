@@ -19,7 +19,7 @@ export default async function SettingsPage({ params }: PageProps<"/o/[org]/setti
   const supabase = await supabaseServer();
   const [{ data: o }, { data: b }] = await Promise.all([
     supabase.from("organizations").select("name, timezone, faith_mode, ai_enabled").eq("id", org.id).single(),
-    supabase.from("org_branding").select("tagline, motto, primary_color, logo_path").eq("organization_id", org.id).maybeSingle(),
+    supabase.from("org_branding").select("tagline, motto, primary_color, logo_path, city, listed").eq("organization_id", org.id).maybeSingle(),
   ]);
   const logo = logoUrl(b?.logo_path);
   const { data: sub } = await supabase.from("subscriptions").select("plan_id").eq("organization_id", org.id).maybeSingle();
@@ -48,6 +48,11 @@ export default async function SettingsPage({ params }: PageProps<"/o/[org]/setti
           <label className="flex items-start gap-2 text-sm font-bold">
             <input type="checkbox" name="faith" defaultChecked={o?.faith_mode} className="mt-0.5 h-5 w-5" />
             <span>Faith mode<span className="block font-normal text-muted">On for churches and ministries: memory verses, Faith Quest and Bible games. Off for clubs and schools.</span></span>
+          </label>
+          <Field label="City (shown in the club directory)" name="city" maxLength={60} defaultValue={b?.city ?? ""} />
+          <label className="flex items-start gap-2 text-sm font-bold">
+            <input type="checkbox" name="listed" defaultChecked={b?.listed} className="mt-0.5 h-5 w-5" data-testid="listed" />
+            <span>List in the club directory<span className="block font-normal text-muted">Adults can find and follow your club and see your news posts. Kids&apos; names and pictures are never shown, and children still join only through a parent and your join code.</span></span>
           </label>
           <div className="sm:col-span-2"><Submit>Save settings</Submit></div>
         </ActionForm>

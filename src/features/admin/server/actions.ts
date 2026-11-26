@@ -171,9 +171,11 @@ export async function updateClubSettings(slug: string, _prev: ActionState, data:
     tagline: z.string().trim().max(140, "Keep the tagline under 140 characters."),
     motto: z.string().trim().max(400, "Keep the motto under 400 characters."),
     color: z.union([z.literal(""), z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Pick a colour.")]),
+    city: z.union([z.literal(""), z.string().trim().min(2, "City is too short.").max(60, "Keep the city under 60 characters.")]),
   }).safeParse({
     name: data.get("name"), timezone: data.get("timezone"), tagline: data.get("tagline") ?? "",
     motto: data.get("motto") ?? "", color: data.get("useColor") === "on" ? data.get("color") ?? "" : "",
+    city: data.get("city") ?? "",
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message };
   const d = parsed.data;
@@ -183,10 +185,14 @@ export async function updateClubSettings(slug: string, _prev: ActionState, data:
   if (error) return { error: friendlyError(error) };
   if (!updated?.length) return { error: friendlyError({ message: "organization_not_active" }) };
   const { error: bErr } = await supabase.from("org_branding")
-    .upsert({ organization_id: org.id, tagline: d.tagline || null, motto: d.motto || null, primary_color: d.color || null, updated_at: new Date().toISOString() });
+    .upsert({
+      organization_id: org.id, tagline: d.tagline || null, motto: d.motto || null, primary_color: d.color || null,
+      city: d.city || null, listed: data.get("listed") === "on", updated_at: new Date().toISOString(),
+    });
   if (bErr) return { error: friendlyError(bErr) };
   revalidatePath(`/o/${slug}`, "layout");
   revalidatePath(`/c/${slug}`);
+  revalidatePath("/clubs");
   return { ok: "Club settings saved." };
 }
 

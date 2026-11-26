@@ -297,6 +297,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"club_follows": {
+                  Row: {
+                    "created_at": string,"organization_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"organization_id": string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"organization_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "club_follows_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"club_posts": {
                   Row: {
                     "body": string,"created_at": string,"created_by": string | null,"id": string,"organization_id": string,"published": boolean,"title": string
@@ -803,14 +823,14 @@ isOneToOne: false
                   ]
                 },"org_branding": {
                   Row: {
-                    "logo_path": string | null,"motto": string | null,"organization_id": string,"primary_color": string | null,"tagline": string | null,"updated_at": string
+                    "city": string | null,"listed": boolean,"logo_path": string | null,"motto": string | null,"organization_id": string,"primary_color": string | null,"tagline": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "logo_path"?: string | null,"motto"?: string | null,"organization_id": string,"primary_color"?: string | null,"tagline"?: string | null,"updated_at"?: string
+                    "city"?: string | null,"listed"?: boolean,"logo_path"?: string | null,"motto"?: string | null,"organization_id": string,"primary_color"?: string | null,"tagline"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "logo_path"?: string | null,"motto"?: string | null,"organization_id"?: string,"primary_color"?: string | null,"tagline"?: string | null,"updated_at"?: string
+                    "city"?: string | null,"listed"?: boolean,"logo_path"?: string | null,"motto"?: string | null,"organization_id"?: string,"primary_color"?: string | null,"tagline"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -823,14 +843,14 @@ isOneToOne: true
                   ]
                 },"organizations": {
                   Row: {
-                    "ai_enabled": boolean,"billing_currency": string,"country": string,"created_at": string,"created_by": string | null,"faith_mode": boolean,"id": string,"joining_paused": boolean,"joining_paused_reason": string | null,"kind": string,"name": string,"registration_mode": string,"slug": string,"status": Database["public"]['Enums']["org_status"],"suspended_from": Database["public"]['Enums']["org_status"] | null,"timezone": string,"updated_at": string
+                    "ai_enabled": boolean,"billing_currency": string,"country": string,"created_at": string,"created_by": string | null,"demo": boolean,"faith_mode": boolean,"id": string,"joining_paused": boolean,"joining_paused_reason": string | null,"kind": string,"name": string,"registration_mode": string,"slug": string,"status": Database["public"]['Enums']["org_status"],"suspended_from": Database["public"]['Enums']["org_status"] | null,"timezone": string,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "ai_enabled"?: boolean,"billing_currency"?: string,"country"?: string,"created_at"?: string,"created_by"?: string | null,"faith_mode"?: boolean,"id"?: string,"joining_paused"?: boolean,"joining_paused_reason"?: string | null,"kind": string,"name": string,"registration_mode"?: string,"slug": string,"status"?: Database["public"]['Enums']["org_status"],"suspended_from"?: Database["public"]['Enums']["org_status"] | null,"timezone"?: string,"updated_at"?: string
+                    "ai_enabled"?: boolean,"billing_currency"?: string,"country"?: string,"created_at"?: string,"created_by"?: string | null,"demo"?: boolean,"faith_mode"?: boolean,"id"?: string,"joining_paused"?: boolean,"joining_paused_reason"?: string | null,"kind": string,"name": string,"registration_mode"?: string,"slug": string,"status"?: Database["public"]['Enums']["org_status"],"suspended_from"?: Database["public"]['Enums']["org_status"] | null,"timezone"?: string,"updated_at"?: string
                   }
                   Update: {
-                    "ai_enabled"?: boolean,"billing_currency"?: string,"country"?: string,"created_at"?: string,"created_by"?: string | null,"faith_mode"?: boolean,"id"?: string,"joining_paused"?: boolean,"joining_paused_reason"?: string | null,"kind"?: string,"name"?: string,"registration_mode"?: string,"slug"?: string,"status"?: Database["public"]['Enums']["org_status"],"suspended_from"?: Database["public"]['Enums']["org_status"] | null,"timezone"?: string,"updated_at"?: string
+                    "ai_enabled"?: boolean,"billing_currency"?: string,"country"?: string,"created_at"?: string,"created_by"?: string | null,"demo"?: boolean,"faith_mode"?: boolean,"id"?: string,"joining_paused"?: boolean,"joining_paused_reason"?: string | null,"kind"?: string,"name"?: string,"registration_mode"?: string,"slug"?: string,"status"?: Database["public"]['Enums']["org_status"],"suspended_from"?: Database["public"]['Enums']["org_status"] | null,"timezone"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -1452,17 +1472,30 @@ isOneToOne: false
 "create_team_invite":
 { Args: { "p_email"?: string,"p_org": string,"p_role": string }; Returns: string
                            },
+"follow_club":
+{ Args: { "p_follow": boolean,"p_slug": string }; Returns: boolean
+                           },
 "finish_arena_game":
 { Args: { "p_game": string,"p_score": number }; Returns: number
                            },
 "get_clubhouse":
 { Args: { "p_slug": string }; Returns: {
-              "faith_mode": boolean,"joinable": boolean,"kind": string,"logo_path": string,"motto": string,"name": string,"organization_id": string,"primary_color": string,"slug": string,"tagline": string
+              "city": string,"demo": boolean,"faith_mode": boolean,"joinable": boolean,"kind": string,"listed": boolean,"logo_path": string,"motto": string,"name": string,"organization_id": string,"primary_color": string,"slug": string,"tagline": string
             }[]
                            },
 "get_clubhouse_posts":
 { Args: { "p_slug": string }; Returns: {
               "body": string,"created_at": string,"id": string,"title": string
+            }[]
+                           },
+"list_clubs":
+{ Args: { "p_query"?: string }; Returns: {
+              "city": string,"country": string,"demo": boolean,"faith_mode": boolean,"joinable": boolean,"kind": string,"logo_path": string,"name": string,"primary_color": string,"slug": string,"tagline": string
+            }[]
+                           },
+"my_feed":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "body": string,"club_name": string,"club_slug": string,"created_at": string,"logo_path": string,"post_id": string,"primary_color": string,"title": string
             }[]
                            },
 "give_star":

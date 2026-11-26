@@ -13,6 +13,8 @@ export async function AdultShell({ children, who, nav }: { children: ReactNode; 
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3 sm:px-8">
         <Link href="/" aria-label="Champzz home"><Logo size={24} /></Link>
         <div className="flex flex-wrap items-center gap-3 text-sm">
+          <Link href="/clubs" className="min-h-11 content-center px-1 font-extrabold">Clubs</Link>
+          {viewer?.kind === "adult" ? <Link href="/feed" className="min-h-11 content-center px-1 font-extrabold">Feed</Link> : null}
           {nav}
           {viewer?.kind === "adult" ? <Bell userId={viewer.userId} href="/notifications" /> : null}
           {who ? <span className="font-bold text-muted">{who}</span> : null}
