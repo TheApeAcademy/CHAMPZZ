@@ -1,0 +1,37 @@
+/* Champzz landing v2. Generated from the design file; hover and press states are cz-h-* and cz-a-*. */
+
+html:has(.cz-landing),html:has(.cz-landing) body{background:#FFF8EC;overflow-x:clip}
+.cz-landing a{color:#2F5BFF}.cz-landing a:hover{color:#0B1026}
+.cz-landing button,.cz-landing input{font-family:inherit}
+.cz-landing :focus-visible{outline:3px solid #2F5BFF;outline-offset:3px}
+@keyframes cz-marquee{to{transform:translateX(-50%)}}
+@keyframes cz-sweep{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
+@keyframes cz-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes cz-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-16px) rotate(2deg)}}
+@keyframes cz-ping{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.9);opacity:0}}
+@keyframes cz-tremble{0%,100%{translate:0 0}25%{translate:-1px 1px}50%{translate:1px 0}75%{translate:0 -1px}}
+@keyframes cz-heave{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}}
+@keyframes cz-drip{0%{translate:0 0;opacity:1}100%{translate:-14px 30px;opacity:0}}
+@keyframes cz-throb{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes cz-cue{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(8px);opacity:.5}}
+@media (prefers-reduced-motion:reduce){.cz-landing *{animation:none!important;transition:none!important}}
+[data-motion="off"] *{animation:none!important;transition:none!important}
+
+.cz-h-0:hover{background:#FFFDF7 !important}
+.cz-h-1:hover{background:#FFFDF7 !important}
+.cz-h-2:hover{background:#FFFDF7 !important}
+.cz-h-3:hover{background:#FFFDF7 !important}
+.cz-h-4:hover{background:#FFFDF7 !important}
+.cz-h-5:hover{background:#FFFDF7 !important}
+.cz-a-6:active{transform:translateY(3px) !important;box-shadow:0 1px 0 #F2B33D !important}
+.cz-a-7:active{transform:translateY(4px) !important;box-shadow:0 2px 0 #0B1026 !important}
+.cz-a-8:active{transform:translateY(4px) !important;box-shadow:0 2px 0 #0B1026 !important}
+.cz-h-9:hover{animation-play-state:paused !important}
+.cz-h-10:hover{transform:translateY(-10px) !important}
+.cz-h-11:hover{transform:rotate(0deg) scale(1.1) !important}
+.cz-a-12:active{transform:translateY(3px) !important}
+.cz-a-13:active{transform:translateY(3px) !important}
+.cz-a-14:active{transform:translateY(3px) !important;box-shadow:0 2px 0 #0B1026 !important}
+.cz-a-15:active{transform:translateY(5px) !important;box-shadow:0 2px 0 #0B1026 !important}
+/* phones: tighter header so Sign in and Start your club both fit */
+@media (max-width:480px){.cz-landing header nav{gap:10px!important;padding:6px 12px!important}.cz-landing header nav>div{display:none!important}.cz-landing header nav>a:first-child{margin-right:auto}.cz-landing header nav>a:first-child>span{font-size:28px!important}.cz-landing header nav>a:first-child>svg{width:104px!important}.cz-landing header nav>a:last-child{padding:0 14px!important;font-size:14px!important}}
