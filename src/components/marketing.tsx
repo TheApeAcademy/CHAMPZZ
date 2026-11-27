@@ -5,6 +5,7 @@ import { Logo } from "@/components/ui/logo";
 import type { Feature } from "@/content/features";
 
 const NAV = [
+  { href: "/guide", label: "Guide" },
   { href: "/features", label: "Features" },
   { href: "/safety", label: "Safety" },
   { href: "/pricing", label: "Pricing" },
@@ -38,6 +39,7 @@ export function SiteFooter() {
         </div>
         <nav aria-label="Product" className="flex flex-col gap-2 text-sm">
           <p className="font-extrabold text-gold">Product</p>
+          <Link href="/guide" className="underline-offset-2 hover:underline">How it works</Link>
           <Link href="/features" className="underline-offset-2 hover:underline">Features</Link>
           <Link href="/pricing" className="underline-offset-2 hover:underline">Pricing</Link>
           <Link href="/safety" className="underline-offset-2 hover:underline">Safety</Link>
