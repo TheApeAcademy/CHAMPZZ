@@ -21,7 +21,7 @@ export default async function ModerationPage({ params }: PageProps<"/o/[org]/mod
       <h1 className="font-display text-3xl font-extrabold">Photo checks</h1>
       <p className="max-w-2xl text-sm text-muted">Kids&apos; pictures for My Stuff wait here until a grown-up checks them. Reject anything showing a child&apos;s face, a name, a school, an address, or anything unkind. Rejected pictures are deleted.</p>
       <Card>
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="moderation-list">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="moderation-list">
           {(items ?? []).map((i) => (
             <li key={i.id} className="flex flex-col gap-2 rounded-[16px] border border-line p-3">
               {urls.get(i.path) ? (

@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Logo } from "@/components/ui/logo";
-import { buttonClass } from "@/components/ui/primitives";
 import type { Feature } from "@/content/features";
 
 const NAV = [
@@ -12,16 +11,17 @@ const NAV = [
 ];
 
 export function SiteHeader({ dark = false }: { dark?: boolean }) {
+  const fg = dark ? "text-cream" : "text-ink";
   return (
-    <header className={`${dark ? "bg-ink" : "border-b border-line bg-surface"} px-4 py-3 sm:px-8`}>
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
-        <Link href="/" aria-label="Champzz home"><Logo size={26} tone={dark ? "cream" : "ink"} /></Link>
-        <nav aria-label="Main" className="flex flex-wrap items-center gap-1 text-sm">
+    <header className={`sticky top-0 z-50 ${dark ? "bg-ink/90" : "border-b border-[rgba(230,220,198,.7)] bg-[rgba(255,248,236,.82)]"} px-3 backdrop-blur-md sm:px-8`}>
+      <div className="mx-auto flex min-h-14 max-w-6xl items-center justify-between gap-2 py-1.5">
+        <Link href="/" aria-label="Champzz home" className="flex-none"><Logo size={30} tone={dark ? "cream" : "ink"} /></Link>
+        <nav aria-label="Main" className="flex min-w-0 items-center gap-0.5 text-[15px]">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className={`hidden min-h-11 rounded-[12px] px-3 py-3 font-extrabold sm:inline-block ${dark ? "text-cream" : "text-ink"}`}>{n.label}</Link>
+            <Link key={n.href} href={n.href} className={`hidden min-h-11 items-center rounded-full px-3 font-extrabold md:inline-flex ${fg}`}>{n.label}</Link>
           ))}
-          <Link href="/login" className={`min-h-11 rounded-[12px] px-3 py-3 font-extrabold ${dark ? "text-cream" : "text-ink"}`}>Sign in</Link>
-          <Link href="/signup" className={buttonClass("primary")}>Start your club</Link>
+          <Link href="/login" className={`inline-flex min-h-11 items-center rounded-full px-2.5 font-extrabold sm:px-3 ${fg}`}>Sign in</Link>
+          <Link href="/signup" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-4 text-sm font-black text-cream sm:text-[15px]">Start your club</Link>
         </nav>
       </div>
     </header>
@@ -33,7 +33,7 @@ export function SiteFooter() {
     <footer className="bg-ink px-4 pb-8 pt-12 text-cream sm:px-8">
       <div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-4">
         <div className="flex flex-col gap-3 sm:col-span-2">
-          <Logo size={28} tone="cream" />
+          <Logo size={40} tone="cream" />
           <p className="max-w-sm text-sm text-[#D8D4C8]">Lessons, games and safe community for kids&apos; clubs and children&apos;s ministries.</p>
         </div>
         <nav aria-label="Product" className="flex flex-col gap-2 text-sm">
@@ -61,7 +61,7 @@ export function SoonChip() {
 
 export function FeatureCard({ f }: { f: Feature }) {
   return (
-    <div className="flex flex-col gap-1.5 rounded-[20px] border border-line bg-surface p-5" data-feature={f.key} data-status={f.status}>
+    <div className="flex min-w-0 flex-col gap-1.5 rounded-[24px] border-[2.5px] border-ink bg-[#FFFDF7] p-5 shadow-[0_5px_0_var(--ink)]" data-feature={f.key} data-status={f.status}>
       {f.art ? <Art name={f.art} size={64} /> : null}
       <p className="font-extrabold">{f.name}{f.status === "soon" ? <SoonChip /> : null}</p>
       <p className="text-sm text-muted">{f.blurb}</p>
@@ -76,7 +76,7 @@ export function Section({ id, eyebrow, title, lead, children, tone = "cream" }: 
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
         <div className="flex max-w-2xl flex-col gap-3">
           {eyebrow ? <p className={`text-sm font-extrabold uppercase tracking-widest ${tone === "ink" || tone === "brand" ? "text-gold" : "text-brand"}`}>{eyebrow}</p> : null}
-          <h2 className="font-display text-3xl font-black italic uppercase leading-tight sm:text-4xl">{title}</h2>
+          <h2 className="cz-display text-[clamp(40px,11vw,64px)]">{title}</h2>
           {lead ? <p className={`text-lg ${tone === "ink" || tone === "brand" ? "text-[#E4E1D6]" : "text-muted"}`}>{lead}</p> : null}
         </div>
         {children}

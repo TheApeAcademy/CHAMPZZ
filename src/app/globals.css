@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Family names used by the landing page's inline styles, pointing at the same
+   self-hosted files as next/font (src/app/fonts). No Google Fonts requests. */
+@font-face { font-family: "Archivo"; src: url("./fonts/archivo-latin-wdth-normal.woff2") format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("./fonts/archivo-latin-wdth-italic.woff2") format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; font-style: italic; font-display: swap; }
+@font-face { font-family: "Nunito Sans"; src: url("./fonts/nunito-sans-latin-wght-normal.woff2") format("woff2"); font-weight: 200 1000; font-style: normal; font-display: swap; }
+@font-face { font-family: "Nunito Sans"; src: url("./fonts/nunito-sans-latin-wght-italic.woff2") format("woff2"); font-weight: 200 1000; font-style: italic; font-display: swap; }
+@font-face { font-family: "Mr Dafoe"; src: url("./fonts/mr-dafoe-latin-400-normal.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Permanent Marker"; src: url("./fonts/permanent-marker-latin-400-normal.woff2") format("woff2"); font-display: swap; }
+
 /* Champzz design tokens, direction D (docs/DESIGN.md). --brand is replaced
    by an org's own colour inside its space; gold, coral and ink never change. */
 :root {
@@ -28,12 +37,20 @@
   --color-danger: var(--danger);
   --font-sans: var(--font-nunito-sans);
   --font-display: var(--font-archivo);
+  --font-script: var(--font-mr-dafoe);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background: var(--cream);
   color: var(--ink);
   font-family: var(--font-nunito-sans), system-ui, sans-serif;
+  overflow-x: clip;
 }
 
 :focus-visible {
@@ -41,8 +58,96 @@ body {
   outline-offset: 2px;
 }
 
+/* Phones: never zoom on focus (iOS zooms inputs under 16px), never scroll sideways. */
+input, select, textarea { font-size: max(16px, 1em); }
+img, video, svg, canvas { max-width: 100%; }
+main { min-width: 0; }
+table { max-width: 100%; }
+pre, code { overflow-wrap: anywhere; }
+h1, h2, h3 { overflow-wrap: break-word; text-wrap: balance; }
+
+/* Condensed display face from the Claude Design screens (Archivo at 62% width). */
+.cz-display {
+  font-family: var(--font-archivo), sans-serif;
+  font-stretch: 62%;
+  font-variation-settings: "wdth" 62;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: -0.005em;
+}
+
+/* Chunky press button: ink outline with a solid drop shadow that squashes on press. */
+.cz-press {
+  border: 2.5px solid var(--ink);
+  box-shadow: 0 5px 0 var(--ink);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.cz-press:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+.cz-press-gold { box-shadow: 0 6px 0 var(--ink), inset 0 3px 0 rgba(255, 255, 255, 0.55), inset 0 -5px 0 rgba(11, 16, 38, 0.12); }
+.cz-press-gold:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+
+/* Design inputs: soft inset, blue ring on focus. */
+.cz-input {
+  background: #fffdf7;
+  box-shadow: inset 0 3px 0 rgba(11, 16, 38, 0.06);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.cz-input:focus { outline: none; border-color: #2f5bff; box-shadow: 0 0 0 4px #dde4ff; }
+.cz-input[aria-invalid="true"] { border-color: #c93a20; }
+
+/* Polka dots used behind hero cards across the designs. */
+.cz-dots { background-image: radial-gradient(circle, rgba(255, 248, 236, 0.16) 0 5px, transparent 6px); background-size: 44px 44px; }
+.cz-dots-ink { background-image: radial-gradient(circle, rgba(11, 16, 38, 0.07) 0 4px, transparent 5px); background-size: 34px 34px; }
+
+.cz-scroll-x { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.cz-scroll-x::-webkit-scrollbar { display: none; }
+
+/* Space for fixed bottom bars plus the phone's home indicator. */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.cz-bottom-gap { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+@media (max-width: 767px) {
+  body:has([data-staff-tabbar]) main { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+}
+
+@keyframes cz-rise { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes cz-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes cz-sig { from { clip-path: inset(-30% 100% -30% 0); } to { clip-path: inset(-30% -5% -30% 0); } }
+.cz-rise { animation: cz-rise 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.cz-bob { animation: cz-bob 6s ease-in-out infinite; }
+.cz-sig { animation: cz-sig 1.6s cubic-bezier(0.6, 0.1, 0.3, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cz-rise, .cz-bob, .cz-sig { animation: none; }
+  .cz-press, .cz-press-gold { transition: none; }
+}
+
+@media print {
+  .no-print { display: none !important; }
+}
+
 /* Champ Town village map: sprites bob gently, the kid's avatar hops. */
 .village-sprite { rotate: var(--tilt, 0deg); animation: village-bob 3s ease-in-out infinite; }
 .village-avatar { animation: village-bob 1.1s ease-in-out infinite; }
 @keyframes village-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
 @media (prefers-reduced-motion: reduce) { .village-sprite, .village-avatar { animation: none; } }
+
+@keyframes cz-pop { 0% { transform: scale(0.4); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+/* Village clouds drift across the map. */
+.village-cloud { animation: village-cloud 60s linear infinite; }
+@keyframes village-cloud { from { transform: translateX(-120%); } to { transform: translateX(520%); } }
+@media (prefers-reduced-motion: reduce) { .village-cloud { animation: none; display: none; } }
+
+/* Champ Arena: icon tiles float gently. */
+.arena-float { animation: arena-float 4.5s ease-in-out infinite; }
+@keyframes arena-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .arena-float { animation: none; } }
+
+/* File pickers: never wider than the screen, and a proper tap target. */
+input[type="file"] { max-width: 100%; min-height: 48px; font-size: 15px; }
+input[type="file"]::file-selector-button {
+  margin-right: 12px; min-height: 44px; padding: 0 16px; border-radius: 999px;
+  border: 2px solid var(--ink); background: #fffdf7; color: var(--ink); font-weight: 800; cursor: pointer;
+}

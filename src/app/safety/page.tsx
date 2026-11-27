@@ -32,12 +32,12 @@ export default function SafetyPage() {
       </section>
       <Section eyebrow="Today" title="How Champzz protects kids" tone="cream">
         <Art name="heart-tree" size={112} />
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {LIVE.map((x) => <div key={x.t} className="rounded-[20px] border border-line bg-surface p-5"><p className="font-extrabold">{x.t}</p><p className="mt-1 text-muted">{x.d}</p></div>)}
         </div>
       </Section>
       <Section eyebrow="Arriving with the next releases" title="More safeguarding on the way" tone="white">
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {SOON.map((x) => <div key={x.t} className="rounded-[20px] border border-line bg-cream p-5"><p className="font-extrabold">{x.t}<SoonChip /></p><p className="mt-1 text-muted">{x.d}</p></div>)}
         </div>
       </Section>

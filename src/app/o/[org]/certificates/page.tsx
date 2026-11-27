@@ -26,7 +26,7 @@ export default async function CertificatesPage({ params }: PageProps<"/o/[org]/c
       <h1 className="font-display text-3xl font-extrabold">Certificates</h1>
       <Card>
         <h2 className="mb-3 text-lg font-extrabold">Give a certificate</h2>
-        <ActionForm action={issueCertificate.bind(null, slug)} className="grid gap-3 sm:grid-cols-2">
+        <ActionForm action={issueCertificate.bind(null, slug)} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Select label="Kid" name="kidId" required defaultValue="">
             <option value="" disabled>Pick a kid</option>
             {(kids ?? []).map((k) => <option key={k.id} value={k.id}>{k.first_name}{k.last_initial ? ` ${k.last_initial}.` : ""}</option>)}

@@ -20,7 +20,7 @@ export default async function MediaPage({ params }: PageProps<"/o/[org]/media">)
       <h1 className="font-display text-3xl font-extrabold">Digital Bank</h1>
       <p className="max-w-2xl text-sm text-muted">Your club&apos;s files in one safe place: rotas, lesson sheets, letters home, colouring pages. Keep them for the team, or share with families.</p>
       <Card>
-        <ActionForm action={uploadMedia.bind(null, slug)} className="grid gap-3 sm:grid-cols-2">
+        <ActionForm action={uploadMedia.bind(null, slug)} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Title" name="title" required maxLength={100} />
           <Select label="Who can see it" name="audience" defaultValue="staff">
             <option value="staff">The team only</option>

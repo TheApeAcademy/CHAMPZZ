@@ -21,7 +21,7 @@ export default async function ArenaContentPage({ params }: PageProps<"/o/[org]/a
       <h1 className="font-display text-3xl font-extrabold">Arena content</h1>
       <p className="max-w-2xl text-sm text-muted">Kids play six games in the Arena with Champzz content. Add your own here and it mixes in for your club only: this week&apos;s memory verse to scramble, a Who Am I? about your lesson, or a word search of class words.</p>
       <Card>
-        <ActionForm action={addArenaContent.bind(null, slug)} className="grid gap-3 sm:grid-cols-2">
+        <ActionForm action={addArenaContent.bind(null, slug)} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Select label="Game" name="game" defaultValue="scramble">
             <option value="scramble">Scramble: a sentence to put in order</option>
             <option value="whoami">Who Am I?: clues, one per line</option>

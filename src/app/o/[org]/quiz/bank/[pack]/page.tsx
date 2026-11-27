@@ -29,7 +29,7 @@ export default async function PackPage({ params }: PageProps<"/o/[org]/quiz/bank
       {mine ? (
         <Card>
           <h2 className="mb-3 text-lg font-extrabold">Add a question</h2>
-          <ActionForm action={addQuestion.bind(null, slug, pack.id)} className="grid gap-3 sm:grid-cols-2">
+          <ActionForm action={addQuestion.bind(null, slug, pack.id)} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Select label="Level" name="tier" defaultValue="1">{TIERS.map((t) => <option key={t.tier} value={t.tier}>{t.name} ({t.points})</option>)}</Select>
             <Field label="Question" name="prompt" required maxLength={300} />
             <Field label="Answer A" name="a" required maxLength={120} />

@@ -31,7 +31,7 @@ export default async function LessonsPage({ params }: PageProps<"/o/[org]/lesson
             <textarea name="body" maxLength={10000} rows={5} className="rounded-[12px] border border-line bg-surface p-3 text-base font-normal" />
           </label>
           {o?.faith_mode ? <Field label="Memory verse (optional)" name="memoryVerse" maxLength={400} /> : null}
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label="Date (optional)" name="lessonDate" type="date" />
             <ClassSelect classes={classes ?? []} />
           </div>

@@ -26,7 +26,7 @@ export default async function EventsPage({ params }: PageProps<"/o/[org]/events"
       {isAdmin ? (
         <Card>
           <h2 className="mb-3 text-lg font-extrabold">New event</h2>
-          <ActionForm action={createEvent.bind(null, slug)} className="grid gap-3 sm:grid-cols-2">
+          <ActionForm action={createEvent.bind(null, slug)} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label="Title" name="title" required maxLength={120} />
             <Field label={`Starts (${o?.timezone ?? "club time"})`} name="startsAt" type="datetime-local" required />
             <Field label="Where (optional)" name="location" maxLength={200} />

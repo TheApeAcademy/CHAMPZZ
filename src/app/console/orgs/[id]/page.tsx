@@ -39,7 +39,7 @@ export default async function ConsoleOrgPage({ params }: PageProps<"/console/org
       <Card>
         <h2 className="mb-3 text-lg font-extrabold">Mark as paid</h2>
         <p className="mb-3 text-sm text-muted">For bank transfers and cash. This is recorded with your name and the time.</p>
-        <ActionForm action={markAsPaid.bind(null, org.id)} className="grid gap-3 sm:grid-cols-2">
+        <ActionForm action={markAsPaid.bind(null, org.id)} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Select label="Plan" name="planId" required>
             {(plans ?? []).map((p) => <option key={p.id} value={p.id}>{p.name}{p.kid_limit ? ` (${p.kid_limit} kids)` : ""}</option>)}
           </Select>

@@ -49,7 +49,7 @@ export default async function TeamPage({ params }: PageProps<"/o/[org]/team">) {
       <Card>
         <h2 className="mb-1 text-lg font-extrabold">Invite someone</h2>
         <p className="mb-3 text-sm text-muted">You get a private link to send them. It works once, for 7 days. They sign in or create an account, then join.</p>
-        <ActionForm action={createInvite.bind(null, slug)} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <ActionForm action={createInvite.bind(null, slug)} className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
           <Select label="Role" name="role" defaultValue="teacher">
             <option value="teacher">Teacher</option>
             <option value="org_admin">Org Admin (can manage everything)</option>

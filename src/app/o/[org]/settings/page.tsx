@@ -30,7 +30,7 @@ export default async function SettingsPage({ params }: PageProps<"/o/[org]/setti
       <StaffNav slug={slug} active="settings" />
       <h1 className="font-display text-3xl font-extrabold">Club settings</h1>
       <Card>
-        <ActionForm action={updateClubSettings.bind(null, slug)} className="grid gap-4 sm:grid-cols-2">
+        <ActionForm action={updateClubSettings.bind(null, slug)} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Club name" name="name" required minLength={2} maxLength={80} defaultValue={o?.name} />
           <Select label="Time zone" name="timezone" defaultValue={o?.timezone ?? "Africa/Lagos"}>
             {ZONES.map((z) => <option key={z} value={z}>{z.replace(/_/g, " ")}</option>)}

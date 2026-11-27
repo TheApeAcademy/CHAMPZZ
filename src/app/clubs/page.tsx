@@ -35,7 +35,7 @@ export default async function ClubsPage({ searchParams }: PageProps<"/clubs">) {
       {(clubs ?? []).length === 0 ? (
         <Banner>{query ? `No clubs match "${query}".` : "No clubs are listed yet."} <Link className="underline" href="/clubs">Show all clubs</Link></Banner>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="club-directory">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="club-directory">
           {(clubs ?? []).map((c) => <ClubCard key={c.slug} club={{ ...c, following: followed.has(c.slug) }} />)}
         </div>
       )}

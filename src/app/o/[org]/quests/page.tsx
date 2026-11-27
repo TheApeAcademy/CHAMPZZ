@@ -23,7 +23,7 @@ export default async function QuestsAdminPage({ params }: PageProps<"/o/[org]/qu
       <h1 className="font-display text-3xl font-extrabold">Quests</h1>
       <p className="max-w-2xl text-sm text-muted">Kids already have the Champzz quests. Make your own here: a short story or lesson in steps, each ending with a checkpoint question.</p>
       <Card>
-        <ActionForm action={createQuest.bind(null, slug)} className="grid gap-3 sm:grid-cols-2">
+        <ActionForm action={createQuest.bind(null, slug)} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Quest title" name="title" required maxLength={80} />
           <Field label="One-line summary (optional)" name="summary" maxLength={200} />
           <div className="sm:col-span-2"><Submit>Create quest</Submit></div>

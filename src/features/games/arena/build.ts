@@ -33,7 +33,8 @@ export type Placed = { word: string; cells: number[] };
 export type WordGrid = { size: number; letters: string[]; placed: Placed[]; title: string };
 const DIRS = [[0, 1], [1, 0], [1, 1]] as const;
 export function buildWordSearch(lists: { title: string; words: string[] }[]): WordGrid {
-  const list = lists[randInt(lists.length)]!;
+  // Champzz ships default lists; this fallback only guards against an empty table.
+  const list = lists[randInt(lists.length)] ?? { title: "Champ words", words: ["CHAMP", "BRAVE", "KIND", "STAR", "JOY", "HOPE", "LOVE", "FRIEND"] };
   const size = 10;
   const letters: string[] = Array(size * size).fill("");
   const placed: Placed[] = [];

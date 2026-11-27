@@ -178,7 +178,7 @@ export function HostGame({ slug, pack, questions, teams, clock }: {
           ) : null}
         </div>
         <h2 className="text-2xl font-extrabold sm:text-3xl" data-testid="quiz-question">{q?.prompt}</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {q?.choices.map((c, i) => {
             const gone = hidden.includes(i);
             const right = revealed && i === q.answer_index;

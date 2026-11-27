@@ -2,71 +2,60 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 /**
- * Champ Town's full-bleed village map, ported from CCT. Each building is a
- * real link into a Champ Town page. x/y is the building's ground point on the
- * map art (bottom-centre of the sprite), width is a percent of the map width
- * and heightPct is the sprite's rendered height as a percent of the map's.
- * Art is CCT placeholder art (docs/ASSETS.md): replace before launch.
+ * Champ Town's full-bleed village map (Claude Design, Champ Town Village).
+ * Each building is a real link into a Champ Town page. x/y is the building's
+ * ground point on the map art (bottom-centre of the sprite) in percent, width
+ * is a percent of the map width. Art: docs/ASSETS.md.
  */
-type Spot = { key: string; label: string; path: string; image: string; x: number; y: number; width: number; heightPct: number; tilt: number; accent: string };
+export type VillageSpot = { key: string; label: string; path: string; image: string; x: number; y: number; width: number; tilt: number };
 
 const ART = "/placeholders/landing";
 
-export function VillageMap({ slug, faith, home = false, avatar }: { slug: string; faith: boolean; home?: boolean; avatar: ReactNode }) {
-  const all: Spot[] = [
-    { key: "class", label: "My Class", path: "class", image: `${ART}/village-class-house1.webp`, x: 34, y: 18, width: 30, heightPct: 16.8, tilt: -4, accent: "#2f5bff" },
-    { key: "hall", label: "Hall of Champs", path: "hall", image: `${ART}/feature-leaderboard.webp`, x: 77, y: 87, width: 16, heightPct: 11.5, tilt: 5, accent: "#f2b33d" },
-    { key: "card", label: "My Card", path: "card", image: `${ART}/village-profile-card.webp`, x: 38, y: 48, width: 16, heightPct: 9.1, tilt: -6, accent: "#c13bff" },
-    { key: "quest", label: faith ? "Bible Journey" : "Quest", path: "quest", image: `${ART}/village-bible-book.webp`, x: 81, y: 59, width: 22, heightPct: 13.0, tilt: 3, accent: "#7d2196" },
-    { key: "home", label: "My House", path: "my-champ", image: `${ART}/village-home-brickbuilding.webp`, x: 33, y: 79, width: 42, heightPct: 21.3, tilt: 2, accent: "#ff5a3c" },
-    { key: "talk", label: "Talk to Someone", path: "talk", image: `${ART}/village-ears-hearttree.webp`, x: 17, y: 20, width: 13, heightPct: 8.0, tilt: -5, accent: "#1e6b47" },
-    { key: "games", label: "Games", path: "games", image: `${ART}/village-game-rocket.webp`, x: 73, y: 31, width: 16, heightPct: 8.7, tilt: -5, accent: "#e0531a" },
-    { key: "messages", label: "My Teacher", path: "messages", image: `${ART}/village-messages-teacherhome.webp`, x: 75, y: 17, width: 27, heightPct: 13.4, tilt: 4, accent: "#0b1026" },
+export function villageSpots(faith: boolean, home: boolean): VillageSpot[] {
+  const all: VillageSpot[] = [
+    { key: "class", label: "My Class", path: "class", image: `${ART}/village-class-house1.webp`, x: 34, y: 18, width: 30, tilt: -4 },
+    { key: "messages", label: "My Teacher", path: "messages", image: `${ART}/village-messages-teacherhome.webp`, x: 75, y: 17, width: 27, tilt: 4 },
+    { key: "talk", label: "Talk to Someone", path: "talk", image: `${ART}/village-ears-hearttree.webp`, x: 14, y: 25, width: 13, tilt: -5 },
+    { key: "games", label: "The Arena", path: "games", image: `${ART}/village-game-rocket.webp`, x: 73, y: 31, width: 16, tilt: -5 },
+    { key: "card", label: "Champ Card", path: "card", image: `${ART}/village-profile-card.webp`, x: 38, y: 48, width: 16, tilt: -6 },
+    { key: "quest", label: faith ? "Sunday School" : "Quest", path: faith ? "sunday" : "quest", image: `${ART}/village-bible-book.webp`, x: 81, y: 59, width: 22, tilt: 3 },
+    { key: "home", label: "My House", path: "my-champ", image: `${ART}/village-home-brickbuilding.webp`, x: 33, y: 76, width: 40, tilt: 2 },
+    { key: "hall", label: "Hall of Champs", path: "hall", image: `${ART}/feature-leaderboard.webp`, x: 79, y: 84, width: 15, tilt: 5 },
   ];
   // Kids at home have no club: no class, teacher or Talk to Someone inbox.
-  const spots = home ? all.filter((s) => !["class", "messages", "talk"].includes(s.key)) : all;
-  const house = spots.find((s) => s.key === "home")!;
+  return home ? all.filter((s) => !["class", "messages", "talk"].includes(s.key)) : all;
+}
 
+export function VillageMap({ slug, spots, avatar }: { slug: string; spots: VillageSpot[]; avatar: ReactNode }) {
+  const house = spots.find((s) => s.key === "home");
   return (
-    <section aria-label="Champ Town map" className="-mx-4 overflow-hidden sm:mx-0 sm:rounded-[28px]" data-testid="village-map">
-      <div className="relative w-full" style={{ aspectRatio: "24 / 43" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`${ART}/kids-village-map.webp`} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" draggable={false} />
-        {spots.map((s) => (
-          <div key={s.key} className="absolute -translate-x-1/2 -translate-y-full" style={{ left: `${s.x}%`, top: `${s.y}%`, width: `${s.width}%` }}>
-            <div
-              aria-hidden="true"
-              className="absolute rounded-[50%]"
-              style={{ left: "50%", bottom: "-2%", width: "80%", height: "18%", transform: "translateX(-50%)", background: "radial-gradient(ellipse at center, rgba(20,15,10,.38) 0%, rgba(20,15,10,0) 72%)" }}
-            />
-            <Link
-              href={`/k/${slug}/${s.path}`}
-              aria-label={s.label}
-              className="village-sprite relative block w-full transition-transform hover:scale-110 active:scale-95"
-              style={{ ["--tilt" as string]: `${s.tilt}deg`, animationDelay: `${s.x / 20}s` }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.image} alt="" className="w-full object-contain" style={{ filter: "drop-shadow(0 6px 8px rgba(0,0,0,.35))" }} draggable={false} />
-            </Link>
-            <span
-              aria-hidden="true"
-              className="absolute left-1/2 top-full mt-[2%] -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-ink shadow-md"
-              style={{ borderBottom: `3px solid ${s.accent}` }}
-            >
-              {s.label}
-            </span>
-          </div>
-        ))}
-        <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: "58%", top: "42%" }}>
-          <span className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-dashed border-white/70 bg-black/30 text-xl" aria-hidden="true">🌍</span>
-          <span className="absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-muted shadow-md">
-            {faith ? "Bible World Map" : "World Map"}: soon
+    <section aria-label="Champ Town map" data-testid="village-map" className="relative mx-auto w-full max-w-[920px] shadow-[0_0_120px_40px_rgba(11,16,38,.4)]" style={{ aspectRatio: "24 / 43" }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`${ART}/kids-village-map.webp`} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" draggable={false} fetchPriority="high" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[60] overflow-hidden">
+        <div className="village-cloud absolute left-0 top-[12%] h-20 w-[260px] rounded-[50%] bg-white/55 blur-[18px]" />
+        <div className="village-cloud absolute left-0 top-[44%] h-[100px] w-[340px] rounded-[50%] bg-white/40 blur-[22px] [animation-delay:-40s] [animation-duration:85s]" />
+        <div className="village-cloud absolute left-0 top-[72%] h-[70px] w-[220px] rounded-[50%] bg-white/45 blur-[18px] [animation-delay:-20s] [animation-duration:70s]" />
+      </div>
+      {spots.map((s) => (
+        <div key={s.key} className="absolute -translate-x-1/2 -translate-y-full" style={{ left: `${s.x}%`, top: `${s.y}%`, width: `${s.width}%`, zIndex: Math.round(s.y) }}>
+          <div aria-hidden="true" className="absolute bottom-[-3%] left-[10%] right-[10%] h-[16%] rounded-[50%] [background:radial-gradient(ellipse_at_center,rgba(20,15,10,.45),transparent_70%)]" />
+          <Link href={`/k/${slug}/${s.path}`} aria-label={s.label}
+            className="village-sprite relative block w-full transition-[filter,scale] duration-300 hover:scale-[1.08] hover:brightness-110 active:scale-95"
+            style={{ ["--tilt" as string]: `${s.tilt}deg`, animationDelay: `${(s.x / 20).toFixed(2)}s` }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={s.image} alt="" className="w-full object-contain drop-shadow-[0_8px_10px_rgba(0,0,0,.4)]" draggable={false} loading="lazy" />
+          </Link>
+          <span aria-hidden="true" className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full border-2 border-ink bg-[#FFF8EC] px-2.5 py-1 text-[clamp(9px,2.6vw,12px)] font-black uppercase tracking-[.06em] text-ink shadow-[0_4px_0_var(--ink)]">
+            {s.label}
           </span>
         </div>
-        <div className="village-avatar pointer-events-none absolute z-20 -translate-x-1/2" style={{ left: `${house.x}%`, top: `${house.y - house.heightPct - 6}%` }}>
-          {avatar}
+      ))}
+      {house ? (
+        <div className="pointer-events-none absolute z-[80] -translate-x-1/2" style={{ left: `${house.x + 8}%`, top: `${house.y - 22}%` }}>
+          <div className="village-avatar overflow-hidden rounded-full border-4 border-cream shadow-[0_0_0_2.5px_var(--ink),0_10px_24px_rgba(0,0,0,.5)]">{avatar}</div>
         </div>
-      </div>
+      ) : null}
     </section>
   );
 }

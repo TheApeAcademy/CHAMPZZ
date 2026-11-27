@@ -41,7 +41,7 @@ export default async function SearchPage({ params, searchParams }: PageProps<"/o
         <button type="submit" className="min-h-11 rounded-full bg-brand px-5 font-extrabold text-white">Search</button>
       </form>
       {q.length >= 2 ? (
-        <div className="grid gap-4 sm:grid-cols-2" data-testid="search-results">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" data-testid="search-results">
           {section("Kids", (kids?.data ?? []).map((k) => ({ key: k.id, href: `/o/${slug}/messages/${k.id}`, label: `${k.first_name}${k.last_initial ? ` ${k.last_initial}.` : ""}`, sub: k.username })))}
           {section("Lessons", (lessons?.data ?? []).map((l) => ({ key: l.id, href: `/o/${slug}/lessons`, label: l.title })))}
           {section("Class work", (work?.data ?? []).map((a) => ({ key: a.id, href: `/o/${slug}/assignments/${a.id}`, label: a.title })))}

@@ -4,7 +4,7 @@ import { formatPrice, type PublicPlan } from "@/features/marketing/plans";
 
 export function PricingCards({ plans }: { plans: PublicPlan[] }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="pricing-cards">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="pricing-cards">
       {plans.map((p, i) => (
         <div key={p.id} className={`flex flex-col gap-3 rounded-[24px] border-2 p-6 ${i === 1 ? "border-brand bg-surface" : "border-line bg-surface"}`}>
           {i === 1 ? <span className="self-start rounded-full bg-gold px-3 py-0.5 text-xs font-extrabold">A good place to start</span> : null}

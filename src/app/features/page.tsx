@@ -22,7 +22,7 @@ export default function FeaturesPage() {
       {AUDIENCES.map((a, i) => (
         <Section key={a.key} id={a.key} eyebrow={a.title} title={a.lead} tone={i % 2 === 0 ? "cream" : "white"}>
           <Art name={a.art} size={112} />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.filter((f) => f.audience === a.key).map((f) => <FeatureCard key={f.key} f={f} />)}
           </div>
         </Section>

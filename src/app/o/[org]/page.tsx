@@ -1,4 +1,4 @@
-import { daysUntil } from "@/lib/time";
+import { daysUntil, todayIn } from "@/lib/time";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdultShell } from "@/components/shell";
@@ -28,7 +28,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
   const supabase = await supabaseServer();
 
   const [{ data: details }, { data: classes }, { data: kids }, { data: code }, { data: sub }, { data: prices }] = await Promise.all([
-    supabase.from("organizations").select("registration_mode, joining_paused, joining_paused_reason, billing_currency").eq("id", org.id).single(),
+    supabase.from("organizations").select("registration_mode, joining_paused, joining_paused_reason, billing_currency, timezone").eq("id", org.id).single(),
     supabase.from("classes").select("id, name, age_band, class_teachers(user_id)").eq("organization_id", org.id).eq("archived", false).order("name"),
     supabase
       .from("kids")
@@ -52,6 +52,21 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
     ? await supabase.from("profiles").select("id, full_name").in("id", teachers.map((t) => t.user_id))
     : { data: [] as { id: string; full_name: string }[] };
   const teacherName = new Map((teacherProfiles ?? []).map((p) => [p.id, p.full_name || "Teacher"]));
+  const tz = details.timezone || "UTC";
+  const todayLocal = todayIn(tz);
+  const [{ data: concerns }, { count: photoChecks }, { count: hereToday }] = await Promise.all([
+    supabase.rpc("staff_concerns", { p_org: org.id }),
+    supabase.from("kid_uploads").select("id", { count: "exact", head: true }).eq("organization_id", org.id).eq("status", "pending"),
+    supabase.from("attendance").select("id", { count: "exact", head: true }).eq("organization_id", org.id).eq("day", todayLocal),
+  ]);
+  const openTalk = (concerns ?? []).filter((c) => c.status === "new" || c.status === "escalated").length;
+  const waiting = (kids ?? []).filter((k) => k.status === "pending").length;
+  const newKids = (kids ?? []).filter((k) => k.status === "active" && !k.confirmed_at).length;
+  const hour = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: tz }).format(new Date()));
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const nameParts = (viewer.fullName || "").trim().split(/\s+/).filter(Boolean);
+  // "Pastor Femi Adeyemi" -> "Pastor Femi"; "Ada Okafor" -> "Ada".
+  const firstName = nameParts.length === 0 ? "there" : /^(pastor|pst|rev|revd|mr|mrs|ms|miss|dr|bro|sis|deacon|deaconess|elder|minister)\.?$/i.test(nameParts[0]!) && nameParts[1] ? `${nameParts[0]} ${nameParts[1]}` : nameParts[0]!;
   const e = env();
   const bank = e.OFFLINE_BANK_NAME && e.OFFLINE_ACCOUNT_NUMBER && e.OFFLINE_ACCOUNT_NAME
     ? { name: e.OFFLINE_BANK_NAME, number: e.OFFLINE_ACCOUNT_NUMBER, accountName: e.OFFLINE_ACCOUNT_NAME }
@@ -69,15 +84,42 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
   return (
     <AdultShell who={viewer.fullName || viewer.email || undefined}>
       <StaffNav slug={slug} active="" />
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-sm font-bold text-muted">{isAdmin ? "Org Admin" : "Teacher"}</p>
-          <h1 className="font-display text-3xl font-extrabold" data-testid="org-name">{org.name}</h1>
-        </div>
-        <Pill tone={org.status === "active" ? "ok" : org.status === "pending" ? "new" : "warn"}>
-          <span data-testid="org-status">{org.status}</span>
-        </Pill>
+      <section className="-mx-1 flex items-center gap-3 rounded-[22px] bg-ink px-3 py-3 text-cream">
+        <span className="grid h-11 w-11 flex-none place-items-center rounded-[14px] bg-[#1E8F5A] font-display text-lg font-black italic">{org.name.trim().charAt(0).toUpperCase()}</span>
+        <span className="min-w-0 flex-1 leading-tight"><b className="block truncate text-[17px]" data-testid="org-name">{org.name}</b><span className="text-[13px] text-[#C9CBE0]">Champzz HQ · {isAdmin ? "Org Admin" : "Teacher"}</span></span>
+        <Link href={`/c/${slug}`} className="inline-flex min-h-11 flex-none items-center rounded-full border border-white/25 px-3.5 text-sm font-extrabold">Clubhouse</Link>
+      </section>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-bold text-muted"><span>{isAdmin ? "Org Admin" : "Teacher"}</span><span> · {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: tz })}</span></p>
+        <h1 className="font-display text-[clamp(30px,8vw,44px)] font-extrabold leading-[1.02]">{greeting}, {firstName}</h1>
+        <span className={`inline-flex items-center gap-2 self-start rounded-full px-3.5 py-1.5 text-[15px] font-extrabold ${org.status === "active" ? "bg-[#DCF5E6] text-[#0B5A2E]" : org.status === "pending" ? "bg-[#FCEBC4] text-[#5A3F00]" : "bg-[#FDE2DE] text-[#8A1B12]"}`}>
+          <span className={`h-2 w-2 rounded-full ${org.status === "active" ? "bg-[#1E8F5A]" : org.status === "pending" ? "bg-gold" : "bg-coral"}`} />
+          <span>Club <span data-testid="org-status">{org.status}</span>{isAdmin && sub?.plans?.name ? <> · {sub.plans.name} plan</> : null}</span>
+        </span>
       </div>
+
+      {openTalk + waiting + newKids + (photoChecks ?? 0) > 0 ? (
+        <section aria-label="Needs you" className="overflow-hidden rounded-[22px] border border-line bg-surface">
+          <h2 className="px-5 pb-1 pt-4 text-xs font-black uppercase tracking-[.14em] text-muted">Needs you</h2>
+          <ul className="divide-y divide-line">
+            {[
+              openTalk ? { href: `/o/${slug}/talk`, title: `${openTalk} Talk to Someone ${openTalk === 1 ? "message" : "messages"}`, sub: "A child wants a trusted adult. Open it calmly and soon.", tone: "bg-[#FDE2DE] text-[#8A1B12]", urgent: true, icon: "M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" } : null,
+              waiting ? { href: "#kids", title: `${waiting} ${waiting === 1 ? "kid" : "kids"} waiting for approval`, sub: "Added by parents with your join code", tone: "bg-[#FCEBC4] text-[#5A3F00]", urgent: false, icon: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" } : null,
+              newKids ? { href: "#kids", title: `${newKids} new ${newKids === 1 ? "kid" : "kids"} to confirm`, sub: "Confirm at their first visit, or check them in", tone: "bg-[#DDE4FF] text-[#1D3BB8]", urgent: false, icon: "M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9" } : null,
+              photoChecks ? { href: `/o/${slug}/moderation`, title: `${photoChecks} ${photoChecks === 1 ? "picture" : "pictures"} to check`, sub: "Kids' My Stuff uploads wait for a grown-up", tone: "bg-[#EADCF5] text-[#4A1D6B]", urgent: false, icon: "M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6" } : null,
+            ].filter((x) => x !== null).map((n) => (
+              <li key={n.title}>
+                <Link href={n.href} className="flex items-center gap-3.5 px-5 py-3.5">
+                  <span className={`grid h-10 w-10 flex-none place-items-center rounded-[12px] ${n.tone}`}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={n.icon} /></svg></span>
+                  <span className="min-w-0 flex-1 leading-snug"><b className="block">{n.title}</b><span className="text-sm text-muted">{n.sub}</span></span>
+                  {n.urgent ? <span className="rounded-full bg-[#FDE2DE] px-2.5 py-0.5 text-xs font-black text-[#8A1B12]">Urgent</span> : null}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true" className="flex-none text-muted"><path d="M9 6l6 6-6 6" /></svg>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {paid === "1" && org.status === "active" ? <Banner tone="ok">Payment received. Your club is active.</Banner> : null}
       {org.status === "pending" ? (
@@ -94,7 +136,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
           <h2 className="mb-3 text-lg font-extrabold">Choose a plan</h2>
           {!e.FLUTTERWAVE_SECRET_KEY ? (
             <div className="flex flex-col gap-3">
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {payable.map((p) => (
                   <div key={p.id} className="flex flex-col gap-1 rounded-[16px] border-2 border-line p-4">
                     <span className="font-display text-xl font-extrabold">{p.plans.name}</span>
@@ -109,7 +151,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
             <p className="text-sm text-muted">No online prices in {details.billing_currency} yet. Contact Champzz to pay offline.</p>
           ) : (
             <ActionForm action={startCheckout.bind(null, slug)} className="flex flex-col gap-3">
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {payable.map((p, i) => (
                   <label key={p.id} className="flex cursor-pointer flex-col gap-1 rounded-[16px] border-2 border-line p-4 has-[:checked]:border-brand">
                     <input type="radio" name="priceId" value={p.id} defaultChecked={i === 0} className="sr-only" />
@@ -138,23 +180,26 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
         </Card>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <p className="text-sm font-bold text-muted">Active kids</p>
-          <p className="font-display text-3xl font-extrabold" data-testid="kid-count">{active}{isAdmin && sub ? <span className="text-lg text-muted"> / {limit}</span> : null}</p>
+          <p className="font-display text-[34px] font-extrabold leading-tight" data-testid="kid-count">{active}{isAdmin && sub ? <span className="text-lg text-muted"> / {limit}</span> : null}</p>
+          {isAdmin && sub && limit ? (
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#EEE6D6]" role="progressbar" aria-label="Kids against your plan limit" aria-valuenow={active} aria-valuemin={0} aria-valuemax={limit}>
+              <div className="h-full rounded-full bg-brand" style={{ width: `${Math.min(100, Math.round((active / limit) * 100))}%` }} />
+            </div>
+          ) : null}
           {isAdmin && sub && active >= limit ? <p className="mt-2 text-sm font-bold text-danger" data-testid="upgrade-prompt">You have reached your kid limit. Upgrade your plan to add more.</p> : null}
         </Card>
-        {isAdmin && sub ? (
-          <Card>
-            <p className="text-sm font-bold text-muted">Plan</p>
-            <p className="font-display text-2xl font-extrabold">{sub.plans?.name}</p>
-            <p className="text-sm text-muted">{trial ? "Free trial until" : "Paid until"} {new Date(sub.current_period_end).toLocaleDateString("en-GB")}</p>
-          </Card>
-        ) : null}
+        <Card>
+          <p className="text-sm font-bold text-muted">Here today</p>
+          <p className="font-display text-[34px] font-extrabold leading-tight">{hereToday ?? 0}</p>
+          <Link href={`/o/${slug}/checkin`} className="text-sm font-extrabold text-brand underline">Open check-in</Link>
+        </Card>
         {code ? (
           <Card>
             <p className="text-sm font-bold text-muted">Join code</p>
-            <p className="font-display text-2xl font-extrabold tracking-widest" data-testid="join-code">{code.code}</p>
+            <p className="font-mono text-[26px] font-extrabold tracking-[.12em]" data-testid="join-code">{code.code}</p>
             <p className="text-sm text-muted">Parents enter it on your <Link className="font-extrabold text-brand underline" href={`/c/${slug}`}>Clubhouse page</Link>.</p>
             {isAdmin ? (
               <form action={regenerateJoinCode.bind(null, slug)} className="mt-3">
@@ -163,10 +208,17 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
             ) : null}
           </Card>
         ) : null}
+        {isAdmin && sub ? (
+          <section className="flex min-w-0 flex-col gap-1 rounded-[22px] bg-ink p-5 text-cream">
+            <p className="text-sm font-bold text-[#C9CBE0]">Plan</p>
+            <p className="font-display text-[30px] font-extrabold leading-tight">{sub.plans?.name}</p>
+            <p className="text-sm text-[#C9CBE0]">{trial ? "Free trial until" : "Paid until"} {new Date(sub.current_period_end).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>
+          </section>
+        ) : null}
       </div>
 
       {isAdmin ? (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Card>
             <h2 className="mb-3 text-lg font-extrabold">Classes</h2>
             <ul className="mb-4 flex flex-col gap-1" data-testid="class-list">
@@ -210,7 +262,7 @@ export default async function OrgPage({ params, searchParams }: PageProps<"/o/[o
         </div>
       ) : null}
 
-      <Card>
+      <Card id="kids" className="scroll-mt-24">
         <h2 className="mb-3 text-lg font-extrabold">Kids</h2>
         {(kids ?? []).length === 0 ? <p className="text-sm text-muted">No kids yet.</p> : null}
         <ul className="flex flex-col divide-y divide-line" data-testid="kid-list">

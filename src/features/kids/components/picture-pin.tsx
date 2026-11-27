@@ -28,24 +28,27 @@ export function PictureIcon({ index, size = 40 }: { index: number; size?: number
 }
 
 /** Tap 4 pictures. Submits as a hidden field: name="pin", value "3-0-11-7". */
-export function PicturePin({ name = "pin", big = false }: { name?: string; big?: boolean }) {
+export function PicturePin({ name = "pin", big = false, legend = "Tap your 4 pictures" }: { name?: string; big?: boolean; legend?: string }) {
   const [picks, setPicks] = useState<number[]>([]);
-  const tile = big ? "h-20" : "h-16";
+  const slot = big ? "h-12 w-12 min-[400px]:h-14 min-[400px]:w-14" : "h-11 w-11 min-[400px]:h-12 min-[400px]:w-12";
   return (
-    <fieldset className="flex flex-col gap-3">
-      <legend className="mb-2 text-sm font-bold">Picture PIN: tap 4 pictures</legend>
+    <fieldset className="flex min-w-0 flex-col gap-3.5">
+      <legend className="mb-3 text-[17px] font-black">{legend}</legend>
       <input type="hidden" name={name} value={picks.length === 4 ? picks.join("-") : ""} />
-      <div className="flex gap-2" aria-live="polite" aria-label={`${picks.length} of 4 pictures chosen`}>
-        {[0, 1, 2, 3].map((slot) => (
-          <div key={slot} className="flex h-14 w-14 items-center justify-center rounded-[14px] border-2 border-ink bg-surface">
-            {picks[slot] !== undefined ? <span className="h-4 w-4 rounded-full bg-ink" aria-hidden="true" /> : null}
-          </div>
-        ))}
-        <button type="button" onClick={() => setPicks([])} className="ml-2 min-h-11 rounded-[12px] px-3 text-sm font-extrabold underline">
+      <div className="flex items-center justify-center gap-2 min-[400px]:gap-3" aria-live="polite" aria-label={`${picks.length} of 4 pictures chosen`}>
+        {[0, 1, 2, 3].map((i) => {
+          const pick = picks[i];
+          return (
+            <span key={i} className={`${slot} grid flex-none place-items-center rounded-[16px] border-[2.5px] border-ink shadow-[0_3px_0_var(--ink)] ${pick !== undefined ? "bg-[#FCEBC4]" : "bg-[#FFFDF7]"}`}>
+              {pick !== undefined ? <span className="h-4 w-4 rounded-full animate-[cz-pop_.3s_both]" style={{ background: PICTURES[pick]!.color }} aria-hidden="true" /> : null}
+            </span>
+          );
+        })}
+        <button type="button" onClick={() => setPicks([])} className="min-h-11 flex-none px-1.5 text-[15px] font-black underline">
           Clear
         </button>
       </div>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-2 sm:gap-2.5">
         {PICTURES.map((p, i) => (
           <button
             key={p.name}
@@ -54,9 +57,9 @@ export function PicturePin({ name = "pin", big = false }: { name?: string; big?:
             data-picture={i}
             disabled={picks.length >= 4}
             onClick={() => setPicks((cur) => (cur.length < 4 ? [...cur, i] : cur))}
-            className={`${tile} flex items-center justify-center rounded-[16px] border-2 border-line bg-surface active:scale-95 disabled:opacity-60`}
+            className="grid aspect-square min-h-14 place-items-center rounded-[18px] border-[2.5px] border-ink bg-[#FFFDF7] p-0 shadow-[0_4px_0_var(--ink)] transition-[transform,box-shadow] duration-100 active:translate-y-[3px] active:shadow-[0_1px_0_var(--ink)] disabled:opacity-50"
           >
-            <PictureIcon index={i} size={big ? 44 : 36} />
+            <PictureIcon index={i} size={big ? 40 : 34} />
           </button>
         ))}
       </div>

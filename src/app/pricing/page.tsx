@@ -19,7 +19,7 @@ export default async function PricingPage() {
         <PricingCards plans={plans} />
       </Section>
       <Section eyebrow="How paying works" title="No surprises" tone="white">
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {[
             ["Set up first, pay when ready", "Create your club, add classes and look around before you pay."],
             ["Online or bank transfer", "Pay online, or by bank transfer and we activate your club when it arrives."],

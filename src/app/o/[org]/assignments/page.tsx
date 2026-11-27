@@ -30,7 +30,7 @@ export default async function AssignmentsPage({ params }: PageProps<"/o/[org]/as
           <label className="flex flex-col gap-1.5 text-sm font-bold">Instructions
             <textarea name="instructions" maxLength={4000} rows={3} className="rounded-[12px] border border-line bg-surface p-3 text-base font-normal" />
           </label>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label="Due (optional)" name="dueDate" type="date" />
             <ClassSelect classes={classes ?? []} />
           </div>

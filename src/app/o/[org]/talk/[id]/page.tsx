@@ -56,7 +56,7 @@ export default async function ConcernPage({ params }: PageProps<"/o/[org]/talk/[
           <div><Submit>Send reply</Submit></div>
         </ActionForm>
       </Card>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Card>
           <h2 className="mb-3 text-lg font-extrabold">Status</h2>
           <ActionForm action={setConcernStatus.bind(null, slug, id)} className="flex flex-col gap-3">

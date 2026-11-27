@@ -29,7 +29,7 @@ export default async function QuizPage({ params }: PageProps<"/o/[org]/quiz">) {
       </section>
       <Card>
         <h2 className="mb-3 text-lg font-extrabold">Start a match</h2>
-        <form action={`/o/${slug}/quiz/play`} className="grid gap-3 sm:grid-cols-2">
+        <form action={`/o/${slug}/quiz/play`} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Select label="Questions" name="pack" required defaultValue={packs[0]?.id}>
             {packs.map((p) => <option key={p.id} value={p.id}>{p.name}{p.organization_id ? " (your club)" : ""}</option>)}
           </Select>

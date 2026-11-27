@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getViewer } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import { parseAvatar, type AvatarConfig } from "@/features/kids/avatar";
+import { todayIn } from "@/lib/time";
 
 export type Level = { code: string; name: string; min_points: number; sort: number };
 
@@ -26,10 +27,6 @@ export type KidSnapshot = {
   next: Level | null;
   levels: Level[];
 };
-
-function todayIn(tz: string): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-}
 
 function dayBefore(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`);

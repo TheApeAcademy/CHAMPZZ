@@ -4,9 +4,13 @@ Direction **D, Champ Mix**, chosen by Banks. Canvas with every board: https://cl
 
 ## Logo
 
-- The wordmark must always read **CHAMPZZ** (Banks, 2026-11-25: the earlier bolt-only zz read as "CHAMP").
-- Archivo, weight 900, italic, tight tracking. `CHAMP` in Night Ink (Warm Cream on dark), `ZZ` in Trophy Gold. Energy and speed, never sleep.
-- Lightning bolts and speed streaks stay as supporting graphics, never in place of the letters.
+- Updated 2026-11-27 to the Claude Design language: the hand-signed **Champzz** wordmark in Mr Dafoe (Night Ink, or Warm Cream on dark) with the Trophy Gold swash and four-point star underneath (`src/components/ui/logo.tsx`, `BRAND_WORD`). It always reads as the brand name.
+- App icon and favicon: a cream script "C" with the gold swash on a Night Ink tile (`src/app/icon.png`, `favicon.ico`, `apple-icon.png`, `public/icons/*`). Share image: `public/og.jpg`.
+- Fonts are self-hosted from `src/app/fonts` (no Google Fonts requests from kids' devices).
+
+## Claude Design screens (2026-11-27)
+
+Ported from the "Mobile-first design scoping" Claude Design project: Accounts (`/login`, `/login?kid=1`, `/signup`, `/forgot-password`, `/reset-password`, `/onboarding`, `/join/*`), Champ Town sign-in (`/k/[org]`), the Village home (`/k/[org]/home`), Champ Arena (`/k/[org]/games`), Sunday School (`/k/[org]/sunday`), the 3D Champ Town (`/k/[org]/town`, faith clubs, three.js loads only on that page), Clubhouse (`/c/[org]`) and Staff HQ (`/o/[org]` plus the phone tab bar). Every other page picks up the language through the shared primitives and shells. Not ported yet: the 3D Bible Heroes collection (needs unlock rules decided).
 
 ## Champ vs Champzz
 

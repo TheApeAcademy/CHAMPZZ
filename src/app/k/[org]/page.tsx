@@ -1,13 +1,9 @@
 import { notFound, redirect } from "next/navigation";
-import { ActionForm } from "@/components/ui/action-form";
-import { Field } from "@/components/ui/primitives";
-import { Submit } from "@/components/ui/submit";
-import { Logo } from "@/components/ui/logo";
 import { getViewer } from "@/lib/auth/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import { slugSchema } from "@/lib/validation";
 import { kidSignIn } from "@/features/kids/server/actions";
-import { PicturePin } from "@/features/kids/components/picture-pin";
+import { ClubChip, KidSignIn } from "@/features/kids/components/kid-sign-in";
 
 export const metadata = { title: "Kids sign in" };
 
@@ -23,19 +19,5 @@ export default async function KidSignInPage({ params }: PageProps<"/k/[org]">) {
   // Champzz at home kids (and any unknown club) use the one sign-in page.
   if (!club) redirect("/login?kid=1");
 
-  return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-4 py-8">
-      <Logo size={30} />
-      <div>
-        <p className="text-sm font-extrabold text-muted">{club.name}</p>
-        <h1 className="font-display text-4xl font-black italic uppercase">Hi, Champ!</h1>
-      </div>
-      <ActionForm action={kidSignIn.bind(null, slug.data)} className="flex flex-col gap-5">
-        <Field label="Your username" name="username" required autoComplete="username" autoCapitalize="none" placeholder="brave-lion-27" />
-        <PicturePin big />
-        <Submit>Let&apos;s go</Submit>
-      </ActionForm>
-      <p className="text-sm text-muted">Forgot your pictures? Ask your teacher to set new ones.</p>
-    </main>
-  );
+  return <KidSignIn action={kidSignIn.bind(null, slug.data)} club={<ClubChip name={club.name} color={club.primary_color} />} />;
 }

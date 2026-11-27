@@ -24,7 +24,7 @@ export default async function SeasonsPage({ params }: PageProps<"/o/[org]/season
       <h1 className="font-display text-3xl font-extrabold">Seasons</h1>
       <p className="max-w-2xl text-sm text-muted">A season is a stretch of time, like a term. The Hall of Champs gets a &quot;This season&quot; board that starts fresh, so newer kids can catch up.</p>
       <Card>
-        <ActionForm action={createSeason.bind(null, slug)} className="grid gap-3 sm:grid-cols-3">
+        <ActionForm action={createSeason.bind(null, slug)} className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <Field label="Name" name="name" required maxLength={60} placeholder="Autumn term" />
           <Field label="Starts" name="startsOn" type="date" required />
           <Field label="Ends" name="endsOn" type="date" required />

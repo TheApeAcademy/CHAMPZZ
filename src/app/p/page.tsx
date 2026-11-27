@@ -52,7 +52,7 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
           <Link className="underline" href="/login?kid=1">sign-in page</Link> with that username and the 4 pictures you chose.
         </Banner>
       ) : null}
-      <div className="grid gap-4 sm:grid-cols-2" data-testid="parent-kids">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" data-testid="parent-kids">
         {(links ?? []).map(({ kids: k }) => (
           <Card key={k.id}>
             <p className="font-display text-2xl font-extrabold">{k.first_name}{k.last_initial ? ` ${k.last_initial}.` : ""}</p>
@@ -74,12 +74,12 @@ export default async function ParentPage({ searchParams }: PageProps<"/p">) {
         ))}
         {(links ?? []).length === 0 ? <p className="text-sm text-muted">No kids yet. Add one below, or open your club&apos;s Clubhouse page to add them to a club.</p> : null}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Card>
           <h2 className="mb-1 text-lg font-extrabold">Add a child at home</h2>
           <p className="mb-3 text-sm text-muted">No club needed. They get Champ Town with games, quests, prayer and their collection. You can add them to a club later.</p>
           <ActionForm action={addHomeKid}>
-            <div className="grid gap-4 sm:grid-cols-[2fr_1fr]">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-[2fr_1fr]">
               <Field label="Child's first name" name="firstName" required maxLength={40} />
               <Field label="Surname initial" name="lastInitial" maxLength={1} />
             </div>

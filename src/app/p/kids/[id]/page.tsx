@@ -64,7 +64,7 @@ export default async function KidProgressPage({ params }: PageProps<"/p/kids/[id
           </div>
         </div>
       ) : null}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Card>
           <h2 className="mb-2 text-lg font-extrabold">Trophies</h2>
           <ul className="flex flex-wrap gap-2">
