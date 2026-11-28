@@ -38,7 +38,8 @@ jobs:
       - run: npm ci
 
       - name: Start local Supabase
-        run: npx supabase start -x studio,logflare,vector,imgproxy,edge-runtime,realtime,postgres-meta,supavisor,storage-api,mailpit
+        # Storage (uploads) and Mailpit (sign-up and reset emails) stay on: the end-to-end tests use both.
+        run: npx supabase start -x studio,logflare,vector,imgproxy,edge-runtime,realtime,postgres-meta,supavisor
 
       - name: Database tests (RLS, org isolation, lifecycle)
         id: db
