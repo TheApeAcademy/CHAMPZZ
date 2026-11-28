@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ActionForm } from "@/components/ui/action-form";
-import { Field } from "@/components/ui/primitives";
+import { Card, Field } from "@/components/ui/primitives";
 import { Submit } from "@/components/ui/submit";
-import { AuthFrame } from "@/components/auth/auth-frame";
+import { AdultShell } from "@/components/shell";
 import { resendConfirmation, signUp } from "@/features/auth/server/actions";
 
 export const metadata = { title: "Create an account" };
@@ -10,8 +10,8 @@ export const metadata = { title: "Create an account" };
 export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
   const { next } = await searchParams;
   return (
-    <AuthFrame>
-      <>
+    <AdultShell>
+      <Card className="mx-auto w-full max-w-md">
         <h1 className="mb-1 font-display text-3xl font-extrabold">Create an account</h1>
         <p className="mb-4 text-sm text-muted">Pick a username and password and you are in. Add an email if you want to run a club or reset your password later. Kids in a club use their picture PIN.</p>
         <ActionForm action={signUp}>
@@ -32,7 +32,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
         <p className="mt-4 text-sm">
           Already have one? <Link className="font-extrabold text-brand underline" href="/login">Sign in</Link>
         </p>
-      </>
-    </AuthFrame>
+      </Card>
+    </AdultShell>
   );
 }
