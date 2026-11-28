@@ -1,0 +1,13 @@
+.cz-auth{min-height:100vh;background:#FFF8EC radial-gradient(#2F5BFF22 2px,transparent 2.5px) 0 0/28px 28px;color:#0B1026;font-family:'Nunito Sans',sans-serif}
+.cz-auth-top{display:flex;align-items:center;padding:12px 20px;border-bottom:2px solid #0B102614;background:#FFF8ECee}
+.cz-auth-logo{font-family:'Mr Dafoe',cursive;font-size:34px;color:#0B1026!important;text-decoration:none!important;line-height:1}
+.cz-auth-main{display:flex;justify-content:center;padding:32px 16px 48px}
+.cz-auth-card{width:100%;max-width:440px;background:#FFFDF7;border:3px solid #0B1026;border-radius:24px;box-shadow:0 8px 0 #0B1026;padding:28px 22px}
+.cz-auth h1{font-family:Archivo,sans-serif;font-stretch:70%;font-weight:900;text-transform:uppercase;font-size:clamp(36px,11vw,52px);line-height:.95;letter-spacing:-.5px;margin:0 0 10px;color:#2F5BFF;text-shadow:2px 2px 0 #0B1026}
+.cz-auth p{color:#3A3F5C}
+.cz-auth label{font-weight:800;color:#0B1026}
+.cz-auth input{min-height:50px!important;border:2.5px solid #0B1026!important;border-radius:14px!important;background:#fff!important;font-size:16px!important}
+.cz-auth input:focus{border-color:#2F5BFF!important;box-shadow:0 0 0 3px #2F5BFF33}
+.cz-auth button[type=submit]{min-height:54px;border-radius:999px;background:#0B1026;color:#FFF8EC;font-family:Archivo,sans-serif;font-weight:900;font-size:17px;box-shadow:0 5px 0 #F2B33D;transition:transform .08s,box-shadow .08s}
+.cz-auth button[type=submit]:active{transform:translateY(3px);box-shadow:0 2px 0 #F2B33D}
+.cz-auth a,.cz-auth summary{color:#2F5BFF}

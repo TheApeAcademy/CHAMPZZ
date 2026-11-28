@@ -15,7 +15,7 @@ export default class LandingV2 extends Component {
     faith: this.props.faithMode ?? true, cutoutOk: false, place: 0, pw: [], pwStatus: 'idle', clubC: 0, motto: 'Shine bright, play fair', chapter: '', readDone: false };
   root = createRef();
   // Stand-in for the live pricing endpoint. Only NGN is confirmed; other currencies are placeholders.
-  PRICING = this.livePricing({ NGN: { sym: '₦', p: [20000, 45000, 85000] }, GBP: { sym: '£', p: [12, 27, 50] }, USD: { sym: '$', p: [15, 34, 64] }, EUR: { sym: '€', p: [14, 31, 58] }, CAD: { sym: 'C$', p: [21, 46, 87] } });
+  PRICING = this.livePricing({ NGN: { sym: '₦', p: [20000, 45000, 85000] }, GBP: { sym: '£', p: [20, 45, 85] }, USD: { sym: '$', p: [20, 45, 85] }, EUR: { sym: '€', p: [20, 45, 85] }, CAD: { sym: 'C$', p: [20, 45, 85] } });
   livePricing(table) { const p = this.props.ngnPrices; if (Array.isArray(p) && p.length === 3) table.NGN = { ...table.NGN, p }; return table; }
   PW = [['Flame', '/placeholders/landing/icons-streak-flame.webp'], ['Rocket', '/placeholders/landing/village-game-rocket.webp'], ['Book', '/placeholders/landing/village-bible-book.webp'], ['Trophy', '/placeholders/landing/feature-leaderboard.webp'], ['House', '/placeholders/landing/village-home-brickbuilding.webp'], ['Heart tree', '/placeholders/landing/village-ears-hearttree.webp'], ['Church', '/placeholders/landing/icons-sunday-school-church.webp'], ['Stone', '/placeholders/landing/stone-render.webp'], ['Question marks', '/placeholders/landing/feature-quiz.webp']];
   PW_KEY = [0, 1, 3, 5];
