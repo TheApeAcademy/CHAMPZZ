@@ -15,7 +15,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         <h1 className="mb-4 font-display text-3xl font-extrabold">Sign in</h1>
         <ActionForm action={signIn}>
           <input type="hidden" name="next" value={typeof next === "string" ? next : ""} />
-          <Field label="Email" name="email" type="email" autoComplete="email" required />
+          <Field label="Username or email" name="login" autoComplete="username" autoCapitalize="none" required />
           <Field label="Password" name="password" type="password" autoComplete="current-password" required />
           <Submit>Sign in</Submit>
         </ActionForm>
